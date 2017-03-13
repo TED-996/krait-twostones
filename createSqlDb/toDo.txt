@@ -1,0 +1,12 @@
+Loadout - done
+Map - done
+Match - ignore
+matchHistory - ignore
+mathcTroop - ignore
+modifier - done
+player - done
+queue - ignore
+skin - done
+troop - done
+troopclass - done
+troopmodifier - done

@@ -1,0 +1,16 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<OSDM_Design class="oracle.dbtools.crest.model.design.Design" name="wegas" id="EEBFA4C7-7C71-3F6B-E986-BA79540C763E" version="3.5">
+<createdBy>mvasilache</createdBy>
+<createdTime>2017-03-12 17:00:27 UTC</createdTime>
+<ownerDesignName>wegas</ownerDesignName>
+<capitalNames>false</capitalNames>
+<designId>EEBFA4C7-7C71-3F6B-E986-BA79540C763E</designId>
+<usedDesignStorageDescriptors>
+<designDescr class="oracle.dbtools.crest.model.design.Design$DesignStorageDesc" id="B1AFE495-0FEE-6E42-8D1C-E55DC447611E">
+<designStoragePath>C:\</designStoragePath>
+</designDescr>
+<designDescr class="oracle.dbtools.crest.model.design.Design$DesignStorageDesc" id="A0E8FBFA-BE59-AA24-7842-B742749D4476">
+<designStoragePath>C:\</designStoragePath>
+</designDescr>
+</usedDesignStorageDescriptors>
+</OSDM_Design>
