@@ -1,9 +1,70 @@
-create or replace package functions as
-    procedure addPlayer(playername player.playername%type,password player.password%type);
+set serverouput on;
+create or replace package sqlFunctions as
+    procedure addPlayer(playername player.playername%type ,password player.password%type);
     procedure deletePlayer(playerId player.id%type);
-    procedure updatePlayer();
+    procedure updatePlayer( v_playerId player.id%type,
+                            v_playername player.playername%type DEFAULT NULL, 
+                            v_password player.password%type DEFAULT NULL,
+                            v_currentLoadout player.currentLoadout%type DEFAULT NULL,
+                            v_inMatch player.inMatch%type DEFAULT NULL,
+                            v_mmr player.mmr%type DEFAULT NULL,
+                            v_playerLevel player.playerLevel%type DEFAULT NULL
+                            );
 end;
-
-create or replace package body functions as
+/
+create or replace package body sqlFunctions as
+    procedure addPlayer(playername player.playername%type, password player.password%type) is
+    begin
+        insert into Player values(playeridseq.nextval, playername, password,null,0,0,1);
+    exception
+        when DUP_VAL_ON_INDEX then
+            raise_application_error(-20001,'A player with the same name already exists!');
+    end addPlayer;
     
+    procedure deletePlayer(playerId player.id%type) is
+    begin
+        delete from Player where
+            id = playerId;
+    exception
+        when NO_DATA_FOUND then
+            raise_application_error(-20001,'No player with this name or id exists!');
+    end deletePlayer;
+    
+    procedure updatePlayer( v_playerId player.id%type,
+                            v_playername player.playername%type DEFAULT NULL, 
+                            v_password player.password%type DEFAULT NULL,
+                            v_currentLoadout player.currentLoadout%type DEFAULT NULL,
+                            v_inMatch player.inMatch%type DEFAULT NULL,
+                            v_mmr player.mmr%type DEFAULT NULL,
+                            v_playerLevel player.playerLevel%type DEFAULT NULL
+                            ) is
+        player_row player%rowtype;
+    begin
+        dbms_output.put_line(v_playerId||' '||v_playername||' '||v_password||' '||v_currentLoadout||' '||v_inMatch||' '||v_mmr||' '||v_playerlevel);
+        select * into player_row from player where id = v_playerId;
+        if v_playername is not null then
+            update player set playername = v_playername where id = v_playerId;
+        end if;
+        if v_password is not null then
+            update player set password = v_password where id = v_playerId;
+        end if;
+        if v_currentLoadout is not null then
+            update player set currentLoadout = v_currentLoadout where id = v_playerId;
+        end if;
+        if v_inMatch is not null then
+            update player set inMatch = v_inMatch where id = v_playerId;
+        end if;
+        if v_mmr is not null then
+            update player set mmr = v_mmr where id = v_playerId;
+        end if;
+        if v_playerLevel is not null then
+            update player set playerLevel = playerLevel where id = v_playerId;
+        end if;
+    exception
+        when DUP_VAL_ON_INDEX then
+            raise_application_error(-20000,'A player with the same name already exists!');
+         when NO_DATA_FOUND then
+            raise_application_error(-20001,'No player with this name or id exists!');
+    end updatePlayer;
 end;
+/
