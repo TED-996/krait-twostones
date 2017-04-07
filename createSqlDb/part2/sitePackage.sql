@@ -10,16 +10,29 @@ create or replace package user_Ops as
                             v_playerLevel player.playerLevel%type DEFAULT NULL
                             );
     type tempTable is table of player%rowtype;
-    FUNCTION getUsers ( v_rowStart player.id%type DEFAULT 0, 
-                        v_rowCount player.id%type DEFAULT 0, 
+    FUNCTION getUsers ( v_rowStart number default 0, 
+                        v_rowCount number default 0, 
                         v_playername player.playername%type DEFAULT null) return tempTable;
+    FUNCTION getUsersById (v_id player.id%type default 0) return tempTable;
 end;
 /
 create or replace package body user_Ops as
     noPlayers_exception exception;
     PRAGMA exception_INIt(noPlayers_exception,-20004);
-    function getUsers ( v_rowStart player.id%type DEFAULT 0, 
-                        v_rowCount player.id%type DEFAULT 0, 
+
+    function getUsersbyId (v_id player.id%type default 0) return tempTable as
+        myReturnTable tempTable;
+    BEGIN
+        select *  bulk collect into myReturnTable from player where id = v_id;
+        return myReturnTable;
+    exception
+    when NO_DATA_FOUND then
+            raise_application_error(-20001,'No player with this name or id exists!');
+            return NULL;
+    end getUsersById;
+    
+    function getUsers ( v_rowStart number DEFAULT 0, 
+                        v_rowCount number DEFAULT 0, 
                         v_playername player.playername%type DEFAULT null)  
     return tempTable as
         cursor lista_player is select id,playername,password,currentLoadout,inMatch,mmr,playerLevel from (
