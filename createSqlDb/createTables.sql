@@ -1,3 +1,5 @@
+set sqlblanklines on
+
 DROP TABLE MAP cascade constraints;
 DROP TABLE MATCH cascade constraints;
 DROP TABLE MATCHTROOP cascade constraints;
@@ -43,8 +45,8 @@ CREATE TABLE MAP(
 
 CREATE TABLE MATCH(
     id NUMBER(4) primary key,
-    player1 NUMBER(10) REFERENCES Player(id),
-    player2 NUMBER(10) REFERENCES Player(id),
+    player1 NUMBER(10) not null,
+    player2 NUMBER(10) not null,
     turn NUMBER(4),
     turnStartTime DATE,
     score1 NUMBER(4),
@@ -52,10 +54,15 @@ CREATE TABLE MATCH(
     mapId NUMBER(4) REFERENCES MAP(id),
     timeStarted TIMESTAMP NOT NULL,
 
-    constraint onDeletePlayerMatch
-        FOREIGN key(player1,player2)
-        REFERENCES Player(id,id)
+    constraint onDeletePlayer1Match
+        FOREIGN key(player1)
+        REFERENCES Player(id)
         on DELETE CASCADE,
+
+    constraint onDeletePlayer2Match
+        FOREIGN key(player2)
+        REFERENCES Player(id)
+	on delete cascade,
 
     constraint onDeleteMapMatch
         FOREIGN KEY (mapId)
@@ -65,17 +72,24 @@ CREATE TABLE MATCH(
 
 CREATE TABLE MATCHHISTORY (
     id NUMBER(10) PRIMARY KEY,
-    player1Id NUMBER(10) REFERENCES Player(id),
-    player2Id NUMBER(10) REFERENCES Player(id),
+    player1Id NUMBER(10) not null,
+    player2Id NUMBER(10) not null,
     score1 NUMBER(1) NOT NULL,
     score2 NUMBER(1) NOT NULL,
-    mapId NUMBER(2) REFERENCES Map(id),
+    mapId NUMBER(2) not null,
     matchStart TIMESTAMP NOT NULL,
     duration NUMBER(10) NOT NULL,
-    constraint onDeletePlayerMatchHistory
-        FOREIGN key(player1Id,player2Id)
-        REFERENCES Player(id,id)
+
+    constraint onDeletePlayer1MatchHistory
+        FOREIGN key(player1Id)
+        REFERENCES Player(id)
         on DELETE CASCADE,
+
+    constraint onDeletePlayer2MatchHistory
+        foreign key(player2Id)
+        references player(id)
+        on delete cascade,
+
 
     constraint onDeleteMapMatchHistpry
         FOREIGN KEY (mapId)
@@ -84,7 +98,7 @@ CREATE TABLE MATCHHISTORY (
 );
 
 CREATE TABLE QUEUE(
-    playerId NUMBER(10) references player(id),
+    playerId NUMBER(10) not null,
     timeStarted TIMESTAMP,
 
     constraint onDeletePlayerQueue
@@ -95,7 +109,7 @@ CREATE TABLE QUEUE(
 
 CREATE TABLE Loadout(
     id NUMBER(10) PRIMARY KEY,
-    playerId NUMBER(10) REFERENCES Player(id),
+    playerId NUMBER(10) not null,
 
     constraint onDeletePlayerLoadout
         FOREIGN key(playerId)
@@ -116,7 +130,7 @@ create table TroopClass (
 
 CREATE TABLE Skin(
     id NUMBER(10) PRIMARY KEY,
-    classId NUMBER(10) NOT NULL REFERENCES TroopClass(id),
+    classId NUMBER(10) NOT NULL,
     filename VARCHAR2(128),
 
     CONSTRAINT onDeleteTroopClassSkin
@@ -137,9 +151,9 @@ create table Modifier (
 
 create table Troop (
     id number(10) primary key,
-    classId number(4) references TroopClass(id),
-    playerId number(10) references Player(id),
-    loadoutId number(10) references Loadout(id),
+    classId number(4) not null,
+    playerId number(10) not null,
+    loadoutId number(10) not null,
     maxHp number(3),
     dmg number(3),
     atkRange number(2),
@@ -168,8 +182,8 @@ create table Troop (
 );
 
 create table TroopModifier (
-    troopId number(10) references Troop(id),
-    modifierId number(4) references Modifier(id),
+    troopId number(10) not null,
+    modifierId number(4) not null,
     constraint PK_TM PRIMARY KEY (troopId, modifierId),
     
     CONSTRAINT onDeleteTroopTroopModifier
@@ -185,26 +199,24 @@ create table TroopModifier (
 
 CREATE TABLE MATCHTROOP(
     id NUMBER(10) primary key,
-    matchId number(10) references match(id),
-    troopId NUMBER(10) REFERENCES TROOP(id),
+    matchId number(10) not null,
+    troopId NUMBER(10) not null,
     xAxis NUMBER(10),
     yAxis NUMBER(10),
     hp NUMBER(3),
-    respawnTime NUMBER(1)
+    respawnTime NUMBER(1),
 
     CONSTRAINT onDeleteMatchMatchTroop
         FOREIGN KEY (matchId)
         REFERENCES Match(id)
         ON DELETE CASCADE,
 
-    CONSTRAINT onDeleteTroopTroopMatchTroop
+    CONSTRAINT onDeleteTroopMatchTroop
         FOREIGN KEY (troopId)
         REFERENCES Troop(id)
         ON DELETE CASCADE
 );
 
-alter table Player
-    modify (currentLoadout references Loadout(id));
 
 ALTER TABLE Player
 Add CONSTRAINT onDeleteLoadoutPlayer

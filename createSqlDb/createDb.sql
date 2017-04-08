@@ -21,7 +21,7 @@ CREATE UNDO TABLESPACE wegas
 /
 
 drop user wegasAdmin cascade;
-create user wegasAdmin identified by 1234;
+create user wegasAdmin identified by &wegas_password;
 alter user wegasAdmin default tablespace wegas quota 4096M on wegas;
 
 grant connect to wegasAdmin;
