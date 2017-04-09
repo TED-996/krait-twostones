@@ -1,3 +1,6 @@
+import json
+import urllib
+
 import db_ops
 from models import user
 
@@ -12,7 +15,12 @@ class UserConsoleController(object):
 		
 		query = request.query
 		self.page = query.get("page", 1)
+		self.max_page = self.get_page_count(db_conn)
 		self.filter = query.get("filter", None)
+		
+		error_msg_json = query.get("errors", None)
+		if errors is not None:
+			self.error_messages += json.loads(error_msg_json)
 		
 		# List of objects of type User 
 		self.users = get_users(db_conn, self.page, self.filter)
@@ -24,6 +32,12 @@ class UserConsoleController(object):
 				fetch_user.name, "****", fetch_user.mmr, fetch_user.playerLevel
 		else:
 			self.fetch_username, self.fetch_password, self.fetch_mmr, self.fetch_level = "", "", "", ""
+
+		self.page_prev_url = None if page == 1 else build_link(self.page - 1, self.filter, self.fetch_id)
+		self.page_next_url = None if page == self.max_page else build_link(self.page + 1, self.filter, self.fetch_id)
+
+		min_page = max(page - 2, 1)
+		self.pages = [(nr, build_link(nr, self.filter, self.fetch_id)) for nr in xrange(min_page, self.max_page + 1)]
 
 		# TODO: handle errors and add error messages
 		
@@ -43,5 +57,34 @@ class UserConsoleController(object):
 		cursor.execute("select * from players where id = :id", {"id": user_id})
 		return users.User(*(cursor.fetchone()))
 
+	def get_page_count(self, conn):
+		cursor = conn.cursor()
+		cursor.execute("select count(*) from players")
+
+
 	def get_view(self):
 		return ".view/admin/user_console.html"
+
+
+def build_link(page, name_filter, fetch_id):
+	link_base = "/admin/user_console"
+	if page is None and filter is None and fetch_id is None:
+		return link_base
+	
+	link_query = link_base + "?"
+	link_chr = ""
+
+	if page is not None:
+		link_query += link_chr + urllib.quote_plus(page)
+		link_ckr = '&'
+
+	if name_filter is not None:
+		 link_query += link_chr + urllib.quote_plus(name_filter)
+		 link_chr = '&'
+
+	if fetch_id is not None:
+		link_query += link_chr + urllib.quote_plus(str(fetch_id))
+		link_chr = '&'
+
+	return link_query
+

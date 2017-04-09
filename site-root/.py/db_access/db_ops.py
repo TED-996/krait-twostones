@@ -10,7 +10,7 @@ def get_connection():
 	port = 49161
 	username = "WegasAdmin"
 	# global password
-	sid = xe
+	sid = "xe"
 
 	dsn_tns = cx_Oracle.makedsn(ip, port, sid)
 

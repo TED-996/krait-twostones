@@ -45,7 +45,7 @@ create or replace package body user_Ops as
     BEGIN
         open lista_player;
         if v_playername is not null then
-            select * bulk collect into myReturnTable from player where playername = v_playername;
+            select * bulk collect into myReturnTable from player where playername like '%' || v_playername '%';
             close lista_player;
             return myReturnTable;
         else if (v_rowCount != 0 and v_rowCount != 0) then
