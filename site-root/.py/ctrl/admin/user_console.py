@@ -1,17 +1,8 @@
 import db_ops
+from models import user
 
 class UserConsoleController(object):
 	items_per_page = 20
-
-	class _User:
-		def __init__(self, id, name, password, loadoutId, inMatch, mmr, playerLevel):
-			self.id = id
-			self.name = name
-			self.password = password
-			self.loadoutId = loadoutId
-			self.inMatch = inMatch
-			self.mmr = mmr
-			self.playerLevel = playerLevel
 
 	def __init__(self, request):
 		# List of strings, each is an error. Add with self.error_messages.append(error_message)
@@ -23,7 +14,7 @@ class UserConsoleController(object):
 		self.page = query.get("page", 1)
 		self.filter = query.get("filter", None)
 		
-		# List of objects of type _User (see above) 
+		# List of objects of type User 
 		self.users = get_users(db_conn, self.page, self.filter)
 
 		self.fetch_id = query.get("fetch_id", "")
@@ -45,12 +36,12 @@ class UserConsoleController(object):
 				"filter": "" if filter is None else filter
 			}
 		)
-		return [_User(*row) for row in cursor]
+		return [users.User(*row) for row in cursor]
 
 	def get_user(self, user_id):
 		cursor = conn.cursor()
 		cursor.execute("select * from players where id = :id", {"id": user_id})
-		return _User(*(cursor.fetchone()))
+		return users.User(*(cursor.fetchone()))
 
 	def get_view(self):
 		return ".view/admin/user_console.html"
