@@ -3,6 +3,7 @@ import urllib
 
 import db_ops
 from models import user
+from exceptions import printException, printf
 
 class UserConsoleController(object):
 	items_per_page = 20
@@ -43,14 +44,19 @@ class UserConsoleController(object):
 		
 	def get_users(self, conn, page, name_filter):
 		cursor = conn.cursor()
-		cursor.execute("select * from table(user_ops.get_users(:row_start, :row_count, :filter))",
-			{
-				"row_start": (page - 1) * items_per_page + 1,
-				"row_count": items_per_page
-				"filter": "" if filter is None else filter
-			}
-		)
-		return [users.User(*row) for row in cursor]
+		try
+			cursor.execute("select * from user_ops.get_users(:row_start, :row_count, :filter",
+				{
+					"row_start": (page - 1) * items_per_page + 1,
+					"row_count": items_per_page
+					"filter": "" if filter is None else filter
+				}
+			)
+			return [users.User(*row) for row in cursor]
+		except cx_Oracle.DatabaseError, exception:
+			printf('Failed to get users from WEGAS\n')
+			printException(exception)
+			exit(1)
 
 	def get_user(self, user_id):
 		cursor = conn.cursor()
