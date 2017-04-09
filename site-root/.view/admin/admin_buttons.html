@@ -4,6 +4,22 @@
 	<input type="text" name="filter">
 </form>
 
+<!-- table -->
+<table ... >
+	<tr> <th ... >...</th>...</tr>
+	@for entry in self.users:
+	<tr>
+		<td>@entry.id@</td>
+		<td>@entry.name@</td>
+		<td>@entry.password@</td>
+		<td>@entry.loadoutId@</td>
+		<td>@entry.inMatch@</td>
+		<td>@entry.mmr@</td>
+		<td>@entry.playerLevel@</td>
+	</tr>
+	@/for
+</table>
+
 <!-- pagination -->
 <nav aria-label="Page navigation">
 <ul class="pagination">
