@@ -1,7 +1,7 @@
 <!-- in filter area -->
-<form>
+<form action="/admin/user_console" method="GET">
 	<label for="filter">Filter</label>
-	<input type="text" id="filter">
+	<input type="text" name="filter">
 </form>
 
 <!-- pagination -->
@@ -27,4 +27,47 @@
 </ul>
 </nav>
 
-<!-- fetch url -->
+<!-- create form -->
+<form action="/admin/user_insert" method="POST">
+	.
+	.
+	.
+	<input type="text" name="username">
+	<input type="password" name="password">
+	.
+	.
+	.
+</form>
+
+<!-- update form -->
+<form action="/admin/user_update" method="POST">
+	.
+	.
+	.
+	<input type="text" name="id" value="@ctrl.fetch_id@">
+	<input type="text" name="username" value="@ctrl.fetch_username@">
+	<input type="text" name="password" value="@ctrl.fetch_password">
+	<input type="text" name="mmr" value="@ctrl.fetch_mmr@">
+	<input type="text" name="level" value="@ctrl.fetch_level@">
+	.
+	.
+	.
+</form>
+
+<!-- delete form -->
+<form action="/admin/user_delete" method="POST">
+	.
+	.
+	.
+	<input type="text" name="id">
+	.
+	.
+	.
+</form>
+
+<!-- errors area -->
+@if len(ctrl.error_messages) != 0:
+<div class="container">
+<textarea ... >@('\n'.join(ctrl.error_messages))@</textarea>
+</div>
+@/if

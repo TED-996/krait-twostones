@@ -24,13 +24,13 @@ class UserConsoleController(object):
 			self.error_messages += json.loads(error_msg_json)
 		
 		# List of objects of type User 
-		self.users = get_users(db_conn, self.page, self.filter)
+		self.users = self.get_users(db_conn, self.page, self.filter)
 
 		self.fetch_id = query.get("fetch_id", "")
 		if self.fetch_id is not "":
-			fetch_user = get_user(self.fetch_id)
+			fetch_user = self.get_user(self.fetch_id)
 			self.fetch_username, self.fetch_password, self.fetch_mmr, self.fetch_level =\
-				fetch_user.name, "****", fetch_user.mmr, fetch_user.playerLevel
+				fetch_user.name, "", fetch_user.mmr, fetch_user.playerLevel
 		else:
 			self.fetch_username, self.fetch_password, self.fetch_mmr, self.fetch_level = "", "", "", ""
 
