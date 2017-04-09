@@ -1,3 +1,15 @@
 <routes>
+	<route>
+		<verb>POST</verb>
+		<regex>admin/user_delete</regex>
+	</route>
+	<route>
+		<verb>POST</verb>
+		<regex>admin/user_update</regex>
+	</route>
+	<route>
+		<verb>POST</verb>
+		<regex>admin/user_insert</regex>
+	</route>
 	<route default="true"/>
 </routes>

@@ -1,6 +1,15 @@
 import krait
+from db_access import db_ops
 
 def get_response(request):
-	# delete logic using request.query["..."] ("id" cel mai probabil)
+	user_id = request.get_post_form().get("id")
 
-	return krait.Response("HTTP/1.1", 302, ...) # TODO
+	if user_id is None:
+		return krait.Response("HTTP/1.1", 400, {}, "<html><body><h1>400 Bad Request</h1></body></html>");
+
+	db_conn = db_ops.get_connection()
+	cursor = db_conn.cursor()
+	cursor.execute("execute user_ops.deletePlayer(:player_id)", {"player_id": user_id})
+	db_conn.commit()
+
+	return krait.Response("HTTP/1.1", 302, {"Location": "admin/user_console"}, "")

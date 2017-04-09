@@ -29,7 +29,7 @@ class UserConsoleController(object):
 		
 	def get_users(self, conn, page, name_filter):
 		cursor = conn.cursor()
-		cursor.execute("select * from user_ops.get_users(:row_start, :row_count, :filter",
+		cursor.execute("select * from table(user_ops.get_users(:row_start, :row_count, :filter))",
 			{
 				"row_start": (page - 1) * items_per_page + 1,
 				"row_count": items_per_page
