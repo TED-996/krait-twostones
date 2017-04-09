@@ -43,6 +43,7 @@ class UserConsoleController(object):
 			printf('Failed to get users from WEGAS\n')
 			printException(exception)
 			exit(1)
+
 	def get_user(self, user_id):
 		cursor = conn.cursor()
 		cursor.execute("select * from players where id = :id", {"id": user_id})
