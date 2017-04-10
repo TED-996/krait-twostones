@@ -1,0 +1,16 @@
+@{
+import json
+result_obj = {
+    "error_messages": ctrl.error_messages,
+    "curr_page": ctrl.page,
+    "max_page": ctrl.max_page,
+    "users" : ctrl.users,
+    "fetch_id" : ctrl.fetch_id,
+    "fetch_user" : ctrl.fetch_user,
+    "page_prev_url" : ctrl.page_prev_url,
+    "page_next_url" : ctrl.page_next_url,
+    "pages" : pages
+}
+result_str = json.dumps(result_obj, indent=True)
+}
+@result_str
