@@ -3,36 +3,8 @@
 
 <head>
     <style>
-        header {
-            padding: 1em;
-            color: white;
-            background-color: black;
-            clear: left;
-            text-align: center;
-        }
         
-        .pagination {
-            display: block;
-        }
-        
-        .pagination a {
-            color: black;
-            float: left;
-            padding: 8px 16px;
-            text-decoration: none;
-            transition: background-color .3s;
-            border: 1px solid #ddd;
-        }
-        
-        .pagination a.active {
-            background-color: #4CAF50;
-            color: white;
-            border: 1px solid #4CAF50;
-        }
-        
-        .pagination a:hover:not(.active) {
-            background-color: #ddd;
-        }
+
     </style>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -42,6 +14,7 @@
     <title>Admin Page</title>
     <link href="../../css/bootstrap.min.css" rel="stylesheet">
     <link href="../../css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/admin.css" rel="stylesheet">
 </head>
 
 <body>
@@ -51,6 +24,8 @@
             <header>
                 <h1>Admin Page</h1>
             </header>
+
+            <br>
 
             <form action="/admin/user_console" method="GET">
                 <label for="filter">Filter</label>
@@ -67,8 +42,7 @@
                         <th>Player level</th>
                         <th>Loadout Identifier</th>
                         <th>In match</th>
-                        <th></th>
-                    </tr>    
+                    </tr>
                 </thead>
                 <tfoot>
                     <tr>
@@ -79,8 +53,7 @@
                         <th>Player level</th>
                         <th>Loadout Identifier</th>
                         <th>In match</th>
-                        <th></th>
-                    </tr>    
+                    </tr>
                 </tfoot>
                 <tbody>
                     @for entry in ctrl.users:
@@ -106,11 +79,9 @@
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>
-                    @/if
-                    @for nr, url in ctrl.pages:
+                    @/if @for nr, url in ctrl.pages:
                     <li><a href="@url@">@nr@</a></li>
-                    @/for
-                    @if ctrl.page_next_url is not None:
+                    @/for @if ctrl.page_next_url is not None:
                     <li>
                         <a href="@ctrl.page_next_url@" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
@@ -121,88 +92,97 @@
             </nav>
 
 
-        <div class="container">
-            <div class="container" id="userInterface">
-                <form>
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <label class="sr-only" for="createUserNameInput">Username</label>
-                            <input type="text" class="form-control" id="createUserNameInput" placeholder="Username">
+
+            <div class="container">
+                <div class="container" id="userInterface">
+                    <br>
+                    <form action="/admin/user_insert" method="POST">
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <label class="sr-only" for="createUserNameInput">Username</label>
+                                <input name="username" type="text" class="form-control" id="createUserNameInput" placeholder="Username">
+                            </div>
+                            <div class="form-group">
+                                <label class="sr-only" for="createUserPasswordInput">Password</label>
+                                <input name="password" type="password" class="form-control" id="createUserPasswordInput" placeholder="Password">
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-default col-md-12">Create</button>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="sr-only" for="createUserPasswordInput">Password</label>
-                            <input type="password" class="form-control" id="createUserPasswordInput" placeholder="Password">
+                    </form>
+                    <br>
+                    <form action="/admin/user_delete" method="POST">
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <label class="sr-only" for="deleteUserIdInput">Id</label>
+                                <input name="id" type="number" class="form-control" id="deleteUserIdInput" placeholder="Id">
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-default col-md-12">Delete</button>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-default col-md-12">Create</button>
-                        </div>
-                    </div>
-                </form>
-                <form>
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <label class="sr-only" for="deleteUserIdInput">Id</label>
-                            <input type="number" class="form-control" id="deleteUserIdInput" placeholder="Id">
-                        </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-default col-md-12">Delete</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <form>
-                <div class="container">
-                    <div class="form-horizontal col-md-8">
-                        <div class="form-group">
-                            <label class="sr-only" for="fetchUserIdInput">Id</label>
-                            <input type="number" class="form-control" id="fetchUserIdInput" placeholder="Id">
-                        </div>
-                        <div class="form-group">
-                            <label class="sr-only" for="fetchUserNameInput">Username</label>
-                            <input type="text" class="form-control" id="fetchUserNameInput" placeholder="Username">
-                        </div>
-                        <div class="form-group col">
-                            <label class="sr-only" for="fetchUserPasswrodInput">Password</label>
-                            <input type="password" class="form-control" id="fetchUserPasswordInput" placeholder="Password">
-                        </div>
-                        <div class="form-group">
-                            <label class="sr-only" for="fetchUserMmrInput">Mmr</label>
-                            <input type="number" class="form-control" id="fetchUserMmrInput" placeholder="Mmr">
-                        </div>
-                        <div class="form-group">
-                            <label class="sr-only" for="fetchUserLevelInput">Level</label>
-                            <input type="number" class="form-control" id="fetchUserLevelInput" placeholder="Level">
-                        </div>
+                    </form>
+                </div>
+                <br>
+                <form action="/admin/user_update" method="POST">
+                    <div class="container">
+                        <div class="form-horizontal col-md-8">
+                            <div class="form-group">
+                                <label class="sr-only" for="fetchUserIdInput">Id</label>
+                                <input name="id" value="@ctrl.fetch_id@" type="number" class="form-control" id="fetchUserIdInput" placeholder="Id">
+                            </div>
+                            <div class="form-group">
+                                <label class="sr-only" for="fetchUserNameInput">Username</label>
+                                <input type="text" name="username" value="@ctrl.fetch_username@" class="form-control" id="fetchUserNameInput" placeholder="Username">
+                            </div>
+                            <div class="form-group col">
+                                <label class="sr-only" for="fetchUserPasswrodInput">Password</label>
+                                <input name="password" value="@ctrl.fetch_password" type="password" class="form-control" id="fetchUserPasswordInput" placeholder="Password">
+                            </div>
+                            <div class="form-group">
+                                <label class="sr-only" for="fetchUserMmrInput">Mmr</label>
+                                <input name="mmr" value="@ctrl.fetch_mmr@" type="number" class="form-control" id="fetchUserMmrInput" placeholder="Mmr">
+                            </div>
+                            <div class="form-group">
+                                <label class="sr-only" for="fetchUserLevelInput">Level</label>
+                                <input name="level" value="@ctrl.fetch_level@" type="number" class="form-control" id="fetchUserLevelInput" placeholder="Level">
+                            </div>
+
+                            <!-- 
                         <div class="form-group">
                             <button type="submit" class="btn btn-default col-md-12">Fetch with ID</button>
                         </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-default col-md-12">Update</button>
+                         -->
+
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-default col-md-12">Update</button>
+                            </div>
                         </div>
                     </div>
+
+                </form>
+                @if len(ctrl.error_messages) != 0:
+                <div class="container">
+                    <textarea readonly class="form-control col-xs-4" rows="7">@('\n'.join(ctrl.error_messages))@</textarea>
                 </div>
-            </form>
-            <div class="container">
-                <textarea readonly class="form-control" rows="7">Error mesage here</textarea>
+                @/if
             </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n"
+        crossorigin="anonymous"></script>
     <script>
         window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
+        crossorigin="anonymous"></script>
     <script src="../../js/bootstrap.min.js"></script>
     <script src="../../js/ie10-viewport-bug-workaround.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#users').DataTable();
-        });
-    </script>
-    <script language="JavaScript" type="text/javascript" src="../../js/jquery-1.12.4.js"></script>
-    <script language="JavaScript" type="text/javascript" src="../../js/jquery.dataTables.min.js"></script>
-    <script language="JavaScript" type="text/javascript" src="../../js/dataTables.bootstrap.min.js"></script>
 
+
+    <script language="JavaScript" type="text/javascript" src="../../js/jquery-1.12.4.js"></script>
 </body>
 
 </html>
