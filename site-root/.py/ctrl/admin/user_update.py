@@ -21,16 +21,8 @@ def get_response(request):
 	redirect_url = "/admin/user_console"
 	try:
 		db_conn = db_ops.get_connection();
-		cursor = conn.cursor()
-		cursor.execute("execute user_ops.updatePlayer(:player_id, :player_user, :player_pass, :player_loadout, :player_in_match, :player_mmr, :player_level", {
-			"player_id": id,
-			"player_user": username,
-			"player_pass": password,
-			"player_loadout": loadout,
-			"player_in_match": in_match,
-			"player_mmr": mmr,
-			"player_level": level
-		})
+		cursor = db_conn.cursor()
+		cursor.callproc("user_ops.updatePlayer", [id, username, password, loadout, in_match, mmr, level])
 		db_conn.commit()
 	except cx_Oracle.DatabaseError, exception:
 		error_messages = ["Could not update user {}: {}".format(username, exception.args[0].message)]

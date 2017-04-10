@@ -45,7 +45,7 @@ class UserConsoleController(object):
 		self.page_prev_url = None if self.page == 1 else build_link(self.page - 1, self.filter, self.fetch_id)
 		self.page_next_url = None if self.page == self.max_page else build_link(self.page + 1, self.filter, self.fetch_id)
 
-		min_page = max(self.page - 2, 1)
+		min_page = max(self.page - 4, 1)
 		max_page = min(self.max_page, min_page + 10)
 		self.pages = [(nr, build_link(nr, self.filter, self.fetch_id)) for nr in xrange(min_page, max_page + 1)]
 

@@ -79,7 +79,7 @@
                         </a>
                     </li>
                     @/if @for nr, url in ctrl.pages:
-                    <li><a href="@url@">@nr@</a></li>
+                    <li><a href="@url@" @if nr == ctrl.page: class="active" @/if >@nr@</a></li>
                     @/for @if ctrl.page_next_url is not None:
                     <li>
                         <a href="@ctrl.page_next_url@" aria-label="Next">
