@@ -1,3 +1,16 @@
+drop type tempTable;
+create or replace type tempTableObject is object(
+    id  NUMBER(10),
+    playername VARCHAR2(30),
+    password VARCHAR2(30),
+    currentLoadout NUMBER(10),
+    inMatch NUMBER(1),
+    mmr NUMBER(5),
+    playerLevel NUMBER(2)
+);
+/
+create or replace type tempTable is table of tempTableObject;
+/
 create or replace package user_Ops as
     procedure addPlayer(playername player.playername%type ,password player.password%type);
     procedure deletePlayer(playerId player.id%type);
@@ -9,7 +22,6 @@ create or replace package user_Ops as
                             v_mmr player.mmr%type DEFAULT NULL,
                             v_playerLevel player.playerLevel%type DEFAULT NULL
                             );
-    type tempTable is table of player%rowtype;
     FUNCTION getUsers ( v_rowStart number default 0, 
                         v_rowCount number default 0, 
                         v_playername player.playername%type DEFAULT null) return tempTable;
@@ -22,13 +34,25 @@ create or replace package body user_Ops as
 
     function getUsersbyId (v_id player.id%type default 0) return tempTable as
         myReturnTable tempTable;
+        n integer := 0;
     BEGIN
-        select *  bulk collect into myReturnTable from player where id = v_id;
+        for item in (select * from player where id = v_id) loop
+          myReturnTable.extend;
+          n := n + 1;
+          myReturnTable(n) :=  tempTableObject(item.id,
+                                                item.playername,
+                                                item.password,
+                                                item.currentLoadout,
+                                                item.inMatch,
+                                                item.mmr,
+                                                item.playerLevel
+                                                );
+        end loop;
         return myReturnTable;
     exception
     when NO_DATA_FOUND then
             raise_application_error(-20001,'No player with this name or id exists!');
-            return NULL;
+            return null;
     end getUsersById;
     
     function getUsers ( v_rowStart number DEFAULT 0, 
@@ -41,15 +65,41 @@ create or replace package body user_Ops as
                 select * from player order by id
             )
         ) where v_rownum >= v_rowStart;
+        lista_player_row lista_player%rowtype;
         myReturnTable tempTable;
+        n integer := 0;
     BEGIN
         open lista_player;
         if v_playername is not null then
-            select * bulk collect into myReturnTable from player where playername like '%' || v_playername '%';
+            for item in (select * from player where playername like '%' || v_playername || '%') loop
+                myReturnTable.extend;
+                n := n + 1;
+                myReturnTable(n) := tempTableObject(item.id,
+                                                    item.playername,
+                                                    item.password,
+                                                    item.currentLoadout,
+                                                    item.inMatch,
+                                                    item.mmr,
+                                                    item.playerLevel
+                                                    );
+            end loop;
             close lista_player;
             return myReturnTable;
         else if (v_rowCount != 0 and v_rowCount != 0) then
-                fetch lista_player bulk collect into myReturnTable limit v_rowCount;
+                loop
+                  fetch lista_player into lista_player_row;
+                  exit when lista_player%notfound or v_rowCount = n;
+                  myReturnTable.extend;
+                  n := n + 1;
+                  myReturnTable(n) := tempTableObject(lista_player_row.id,
+                                                      lista_player_row.playername,
+                                                      lista_player_row.password,
+                                                      lista_player_row.currentLoadout,
+                                                      lista_player_row.inMatch,
+                                                      lista_player_row.mmr,
+                                                      lista_player_row.playerLevel
+                                                      );
+                end loop;
                 if (myReturnTable.count = 0) then
                     raise noPlayers_exception;
                 end if;
