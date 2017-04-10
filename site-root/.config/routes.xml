@@ -1,19 +1,19 @@
 <routes>
 	<route>
 		<verb>POST</verb>
-		<regex>admin/user_delete</regex>
+		<regex>/admin/user_delete</regex>
 	</route>
 	<route>
 		<verb>POST</verb>
-		<regex>admin/user_update</regex>
+		<regex>/admin/user_update</regex>
 	</route>
 	<route>
 		<verb>POST</verb>
-		<regex>admin/user_insert</regex>
+		<regex>/admin/user_insert</regex>
 	</route>
 	<route>
 		<verb>POST</verb>
-		<regex>password-login</regex>
+		<regex>/password_login</regex>
 	</route>
 	<route default="true"/>
 </routes>

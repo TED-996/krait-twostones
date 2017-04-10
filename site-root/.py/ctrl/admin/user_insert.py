@@ -11,28 +11,17 @@ def get_response(request):
 	
 	if username is None or password is None:		
 		return krait.Response("HTTP/1.1", 400, {}, "<html><body><h1>400 Bad Request</h1></body></html>");
-
-	db_conn = db_ops.get_connection();
-	cursor = db_conn.cursor()
-	cursor.execute("execute user_ops.addPlayer(:player_user, :player_pass)", {
-		"player_user": username,
-		"player_pass": password
-	})
-	db_conn.commit()
+	
+	redirect_url = "admin/user_console"
+	try:
+		db_conn = db_ops.get_connection();
+		cursor = db_conn.cursor()
+		cursor.execute("execute user_ops.addPlayer(:player_user, :player_pass)", {
+			"player_user": username,
+			"player_pass": password
+		})
+		db_conn.commit()
+	except cx_Oracle.DatabaseError, exception:
+		error_messages = ["Could not add user {}".format(username)]
 
 	return krait.Response("HTTP/1.1", 302, {"Location": "admin/user_console"}, "")
-
-def add_player(conn, name, password)
-	new_cursor = conn.cursor()
-	try:
-		new_cursor.execute("begin wegasAdmin.USER_OPS.ADDPLAYER(:name, :pass); end;",
-			{
-				"name" : name, 
-				"pass" : password
-			}
-		)
-		conn.commit()
-	except cx_Oracle.DatabaseError, exception:
-		printf('Failed to add player to WEGAS\n')
-		printException(exception)
-		exit(1)

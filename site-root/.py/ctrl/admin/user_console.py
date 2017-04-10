@@ -14,7 +14,7 @@ class UserConsoleController(object):
 		# List of strings, each is an error. Add with self.error_messages.append(error_message)
 		self.error_messages = []
 
-		try 		
+		try:
 			db_conn = db_ops.get_connection()
 		except cx_Oracle.DatabaseError, exception:
 			del self.error_messages[:]
@@ -22,7 +22,7 @@ class UserConsoleController(object):
 			self.error_messages.append(exception)
 			
 		query = request.query
-		self.page = query.get("page", 1)
+		self.page = int(query.get("page", 1))
 		self.max_page = self.get_page_count(db_conn)
 		self.filter = query.get("filter", "")
 		
@@ -60,7 +60,7 @@ class UserConsoleController(object):
 					"filter": str(name_filter)
 				}
 			)
-			return [users.User(*row) for row in cursor]
+			return [user.User(*row) for row in cursor]
 		except cx_Oracle.DatabaseError, exception:
 			print 'Failed to get users from WEGAS'
 			printException(exception)
@@ -71,33 +71,23 @@ class UserConsoleController(object):
 		cursor = conn.cursor()
 
 		cursor.execute("select * from player where id = :id", {"id": user_id})
-		return users.User(*(cursor.fetchone()))
+		return user.User(*(cursor.fetchone()))
 
 	def get_page_count(self, conn):
 		cursor = conn.cursor()
 		cursor.execute("select count(*) from player")
 		return int(math.ceil(cursor.fetchone()[0] / UserConsoleController.items_per_page))
 
-=======
-		try 
+		try:
 			cursor.execute("select * from players where id = :id", {"id": user_id})
 			return users.User(*(cursor.fetchone()))
 		except cx_Oracle.DatabaseError, exception:
-			del self.error_messages[:]
 			self.error_messages.append('Sorry, we couldn\'t find the user for your ID \n')
 			self.error_messages.append(exception)
 
-	def get_page_count(self, conn):
-		cursor = conn.cursor()
-		try 
-			cursor.execute("select count(*) from players")
-		except cx_Oracle.DatabaseError, exception:
-			del self.error_messages[:]
-			self.error_messages.append('Failed to get pages\n')
->>>>>>> 0d31194b55114837abc02e3571fd44112a59b1f0
-
 	def get_view(self):
-		return ".view/admin/admin_console.json.pyml"
+		#return ".view/admin/admin_page.html"
+		return ".view/admin/admin_page.html"
 
 
 def build_link(page, name_filter, fetch_id):

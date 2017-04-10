@@ -4,7 +4,7 @@ result_obj = {
     "error_messages": ctrl.error_messages,
     "curr_page": ctrl.page,
     "max_page": ctrl.max_page,
-    "users" : ctrl.users,
+    "users" : [u.name for u in ctrl.users],
     "fetch_id" : ctrl.fetch_id,
     "fetch_user" : ctrl.fetch_username,
     "page_prev_url" : ctrl.page_prev_url,
