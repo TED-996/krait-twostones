@@ -10,7 +10,13 @@ class UserConsoleController(object):
 
 	def __init__(self, request):
 		# List of strings, each is an error. Add with self.error_messages.append(error_message)
-		self.error_messages = []
+		self.error_messages = [
+				"Soryy, but we couldn't find items related to your search.",
+				"Error: failed to create user! The username you enter is already registered.",
+				"Error: failed to delete user! The user ID doesn't exit in the records.",
+				"Error: failed to fetch user! The ID might be invalid/the user may not exist.",
+				"Error: failed to update user! The fields don't match types or the user may not exist."
+		]
 
 		db_conn = db_ops.get_connection()
 		
