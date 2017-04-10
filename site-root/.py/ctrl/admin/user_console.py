@@ -23,8 +23,8 @@ class UserConsoleController(object):
 			
 		query = request.query
 		self.page = int(query.get("page", 1))
-		self.max_page = self.get_page_count(db_conn)
 		self.filter = query.get("filter", "")
+		self.max_page = self.get_page_count(db_conn, self.filter)
 		
 		error_msg_json = query.get("errors", None)
 		if error_msg_json is not None:
@@ -73,9 +73,12 @@ class UserConsoleController(object):
 		cursor.execute("select * from player where id = :id", {"id": user_id})
 		return user.User(*(cursor.fetchone()))
 
-	def get_page_count(self, conn):
+	def get_page_count(self, conn, name_filter):
 		cursor = conn.cursor()
-		cursor.execute("select count(*) from player")
+		if filter:
+			cursor.execute("select count(*) from player where playername like '%' || :name_filter || '%'", {"name_filter": name_filter})
+		else:
+			cursor.execute("select count(*) from player")			
 		return int(math.ceil(cursor.fetchone()[0] / UserConsoleController.items_per_page))
 
 		try:

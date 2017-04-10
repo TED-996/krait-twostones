@@ -11,3 +11,4 @@ jsconfig.json
 
 # no commit
 **/*.nocommit*
+**/*.pyc

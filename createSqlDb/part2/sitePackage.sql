@@ -36,6 +36,7 @@ create or replace package body user_Ops as
         myReturnTable tempTable;
         n integer := 0;
     BEGIN
+        myReturnTable := tempTable();
         for item in (select * from player where id = v_id) loop
           myReturnTable.extend;
           n := n + 1;
@@ -69,9 +70,11 @@ create or replace package body user_Ops as
         myReturnTable tempTable;
         n integer := 0;
     BEGIN
+        myReturnTable := tempTable();
         open lista_player;
         if v_playername is not null then
             for item in (select * from player where playername like '%' || v_playername || '%') loop
+                exit when n = v_rowCount;
                 myReturnTable.extend;
                 n := n + 1;
                 myReturnTable(n) := tempTableObject(item.id,
