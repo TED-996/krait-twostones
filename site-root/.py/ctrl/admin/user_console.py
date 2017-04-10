@@ -1,9 +1,11 @@
 import json
 import urllib
+import math
+import cx_Oracle
 
-import db_ops
-from models import user
-from exceptions import printException, printf
+from db_access import db_ops
+from model import user
+from db_access.exceptions import printException, printf, get_error_message
 
 class UserConsoleController(object):
 	items_per_page = 20
@@ -11,22 +13,24 @@ class UserConsoleController(object):
 	def __init__(self, request):
 		# List of strings, each is an error. Add with self.error_messages.append(error_message)
 		self.error_messages = [
-				"Soryy, but we couldn't find items related to your search.",
-				"Error: failed to create user! The username you enter is already registered.",
-				"Error: failed to delete user! The user ID doesn't exit in the records.",
-				"Error: failed to fetch user! The ID might be invalid/the user may not exist.",
-				"Error: failed to update user! The fields don't match types or the user may not exist."
+				#"Soryy, but we couldn't find items related to your search.",
+				#"Error: failed to create user! The username you enter is already registered.",
+				#"Error: failed to delete user! The user ID doesn't exit in the records.",
+				#"Error: failed to fetch user! The ID might be invalid/the user may not exist.",
+				#"Error: failed to update user! The fields don't match types or the user may not exist."
 		]
 
 		db_conn = db_ops.get_connection()
+		if db_conn is None:
+			raise RuntimeError("Could not connect to DB")
 		
 		query = request.query
 		self.page = query.get("page", 1)
 		self.max_page = self.get_page_count(db_conn)
-		self.filter = query.get("filter", None)
+		self.filter = query.get("filter", "")
 		
 		error_msg_json = query.get("errors", None)
-		if errors is not None:
+		if error_msg_json is not None:
 			self.error_messages += json.loads(error_msg_json)
 		
 		# List of objects of type User 
@@ -40,42 +44,45 @@ class UserConsoleController(object):
 		else:
 			self.fetch_username, self.fetch_password, self.fetch_mmr, self.fetch_level = "", "", "", ""
 
-		self.page_prev_url = None if page == 1 else build_link(self.page - 1, self.filter, self.fetch_id)
-		self.page_next_url = None if page == self.max_page else build_link(self.page + 1, self.filter, self.fetch_id)
+		self.page_prev_url = None if self.page == 1 else build_link(self.page - 1, self.filter, self.fetch_id)
+		self.page_next_url = None if self.page == self.max_page else build_link(self.page + 1, self.filter, self.fetch_id)
 
-		min_page = max(page - 2, 1)
-		self.pages = [(nr, build_link(nr, self.filter, self.fetch_id)) for nr in xrange(min_page, self.max_page + 1)]
+		min_page = max(self.page - 2, 1)
+		max_page = min(self.max_page, min_page + 10)
+		self.pages = [(nr, build_link(nr, self.filter, self.fetch_id)) for nr in xrange(min_page, max_page + 1)]
 
 		# TODO: handle errors and add error messages
 		
 	def get_users(self, conn, page, name_filter):
 		cursor = conn.cursor()
-		try
-			cursor.execute("select * from user_ops.get_users(:row_start, :row_count, :filter",
+		try:
+			cursor.execute("select * from table(user_ops.getUsers(:row_start, :row_count, :filter))",
 				{
-					"row_start": (page - 1) * items_per_page + 1,
-					"row_count": items_per_page
-					"filter": "" if filter is None else filter
+					"row_start": int((page - 1) * UserConsoleController.items_per_page + 1),
+					"row_count": int(UserConsoleController.items_per_page),
+					"filter": str(name_filter)
 				}
 			)
 			return [users.User(*row) for row in cursor]
 		except cx_Oracle.DatabaseError, exception:
-			printf('Failed to get users from WEGAS\n')
+			print 'Failed to get users from WEGAS'
 			printException(exception)
-			exit(1)
+			self.error_messages.append("Failed to get users.")
+			return []
 
-	def get_user(self, user_id):
+	def get_user(self, conn, user_id):
 		cursor = conn.cursor()
-		cursor.execute("select * from players where id = :id", {"id": user_id})
+		cursor.execute("select * from player where id = :id", {"id": user_id})
 		return users.User(*(cursor.fetchone()))
 
 	def get_page_count(self, conn):
 		cursor = conn.cursor()
-		cursor.execute("select count(*) from players")
+		cursor.execute("select count(*) from player")
+		return int(math.ceil(cursor.fetchone()[0] / UserConsoleController.items_per_page))
 
 
 	def get_view(self):
-		return ".view/admin/user_console.html"
+		return ".view/admin/admin_console.json.pyml"
 
 
 def build_link(page, name_filter, fetch_id):
@@ -87,15 +94,15 @@ def build_link(page, name_filter, fetch_id):
 	link_chr = ""
 
 	if page is not None:
-		link_query += link_chr + urllib.quote_plus(page)
+		link_query += link_chr + "page=" + urllib.quote_plus(str(page))
 		link_ckr = '&'
 
-	if name_filter is not None:
-		 link_query += link_chr + urllib.quote_plus(name_filter)
+	if name_filter:
+		 link_query += link_chr + "filter=" + urllib.quote_plus(str(name_filter))
 		 link_chr = '&'
 
-	if fetch_id is not None:
-		link_query += link_chr + urllib.quote_plus(str(fetch_id))
+	if fetch_id:
+		link_query += link_chr + "fetch_id=" + urllib.quote_plus(str(fetch_id))
 		link_chr = '&'
 
 	return link_query

@@ -6,11 +6,12 @@ result_obj = {
     "max_page": ctrl.max_page,
     "users" : ctrl.users,
     "fetch_id" : ctrl.fetch_id,
-    "fetch_user" : ctrl.fetch_user,
+    "fetch_user" : ctrl.fetch_username,
     "page_prev_url" : ctrl.page_prev_url,
     "page_next_url" : ctrl.page_next_url,
-    "pages" : pages
+    "pages" : ctrl.pages
 }
 result_str = json.dumps(result_obj, indent=True)
 }
-@result_str
+@{set_content_type(ext="json")}
+@!result_str
