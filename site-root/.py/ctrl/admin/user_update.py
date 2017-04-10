@@ -1,4 +1,5 @@
 import krait
+from db_access import db_ops
 
 def get_response(request):
 	# update logic using request.query["..."] (campuri setate din form)
