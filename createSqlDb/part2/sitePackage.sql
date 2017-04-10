@@ -65,7 +65,7 @@ create or replace package body user_Ops as
             (
                 select * from player order by id
             )
-        ) where v_rownum >= v_rowStart;
+        ) where v_rownum >= v_rowStart and v_rownum < v_rowStart + v_rowCount;
         lista_player_row lista_player%rowtype;
         myReturnTable tempTable;
         n integer := 0;
@@ -73,8 +73,14 @@ create or replace package body user_Ops as
         myReturnTable := tempTable();
         open lista_player;
         if v_playername is not null then
-            for item in (select * from player where playername like '%' || v_playername || '%') loop
-                exit when n = v_rowCount;
+            for item in (
+                select id, playername, password, currentLoadout, inMatch, mmr, playerLevel
+                    from (
+                     select id as id, playername, password, currentLoadout, inMatch, mmr, playerLevel, rownum as rn
+                        from player
+                        where playername like '%' || v_playername || '%')
+                    where rn >= v_rowStart and rn < v_rowStart + v_rowCount
+                ) loop
                 myReturnTable.extend;
                 n := n + 1;
                 myReturnTable(n) := tempTableObject(item.id,

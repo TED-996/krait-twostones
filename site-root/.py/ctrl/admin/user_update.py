@@ -36,4 +36,4 @@ def get_response(request):
 		error_messages = ["Could not update user {}: {}".format(username, exception.args[0].message)]
 		redirect_url += "?errors=" + urllib.quote_plus(json.dumps(error_messages))
 
-	return krait.Response("HTTP/1.1", 302, {"Location": redirect_url}, "")
+	return krait.Response("HTTP/1.1", 302, [("Location", redirect_url)], "")
