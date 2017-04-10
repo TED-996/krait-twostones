@@ -10,16 +10,15 @@ class UserConsoleController(object):
 
 	def __init__(self, request):
 		# List of strings, each is an error. Add with self.error_messages.append(error_message)
-		self.error_messages = [
-				"Soryy, but we couldn't find items related to your search.",
-				"Error: failed to create user! The username you enter is already registered.",
-				"Error: failed to delete user! The user ID doesn't exit in the records.",
-				"Error: failed to fetch user! The ID might be invalid/the user may not exist.",
-				"Error: failed to update user! The fields don't match types or the user may not exist."
-		]
+		self.error_messages = []
 
-		db_conn = db_ops.get_connection()
-		
+		try 		
+			db_conn = db_ops.get_connection()
+		except cx_Oracle.DatabaseError, exception:
+			del self.error_messages[:]
+			self.error_messages.append("Sorry, but we could't connect to the WEGAS Database\n")
+			self.error_messages.append(exception)
+			
 		query = request.query
 		self.page = query.get("page", 1)
 		self.max_page = self.get_page_count(db_conn)
@@ -60,19 +59,27 @@ class UserConsoleController(object):
 			)
 			return [users.User(*row) for row in cursor]
 		except cx_Oracle.DatabaseError, exception:
-			printf('Failed to get users from WEGAS\n')
-			printException(exception)
-			exit(1)
+			del self.error_messages[:]
+			self.error_messages.append('Faild to get users from WEGAS\n')
+			self.error_messages.append(exception)
 
 	def get_user(self, user_id):
 		cursor = conn.cursor()
-		cursor.execute("select * from players where id = :id", {"id": user_id})
-		return users.User(*(cursor.fetchone()))
+		try 
+			cursor.execute("select * from players where id = :id", {"id": user_id})
+			return users.User(*(cursor.fetchone()))
+		except cx_Oracle.DatabaseError, exception:
+			del self.error_messages[:]
+			self.error_messages.append('Sorry, we couldn\'t find the user for your ID \n')
+			self.error_messages.append(exception)
 
 	def get_page_count(self, conn):
 		cursor = conn.cursor()
-		cursor.execute("select count(*) from players")
-
+		try 
+			cursor.execute("select count(*) from players")
+		except cx_Oracle.DatabaseError, exception:
+			del self.error_messages[:]
+			self.error_messages.append('Failed to get pages\n')
 
 	def get_view(self):
 		return ".view/admin/user_console.html"
