@@ -131,7 +131,7 @@ create or replace package body user_Ops as
 
     procedure addPlayer(playername player.playername%type, password player.password%type) is
     begin
-        insert into Player values(playeridseq.nextval, playername, password,null,0,0,1);
+        insert into Player values(playeridseq.nextval, playername, password,null,0,1000,1);
     exception
         when DUP_VAL_ON_INDEX then
             raise_application_error(-20001,'A player with the same name already exists!');
@@ -153,7 +153,7 @@ create or replace package body user_Ops as
                             v_password player.password%type DEFAULT NULL,
                             v_currentLoadout player.currentLoadout%type DEFAULT NULL,
                             v_inMatch player.inMatch%type DEFAULT NULL,
-                            v_mmr player.mmr%type DEFAULT 1000,
+                            v_mmr player.mmr%type DEFAULT NULL,
                             v_playerLevel player.playerLevel%type DEFAULT NULL
                             ) is
         player_row player%rowtype;
