@@ -19,7 +19,7 @@ create or replace package user_Ops as
                             v_password player.password%type DEFAULT NULL,
                             v_currentLoadout player.currentLoadout%type DEFAULT NULL,
                             v_inMatch player.inMatch%type DEFAULT NULL,
-                            v_mmr player.mmr%type DEFAULT NULL,
+                            v_mmr player.mmr%type DEFAULT 1000,
                             v_playerLevel player.playerLevel%type DEFAULT NULL
                             );
     FUNCTION getUsers ( v_rowStart number default 0, 
@@ -153,7 +153,7 @@ create or replace package body user_Ops as
                             v_password player.password%type DEFAULT NULL,
                             v_currentLoadout player.currentLoadout%type DEFAULT NULL,
                             v_inMatch player.inMatch%type DEFAULT NULL,
-                            v_mmr player.mmr%type DEFAULT NULL,
+                            v_mmr player.mmr%type DEFAULT 1000,
                             v_playerLevel player.playerLevel%type DEFAULT NULL
                             ) is
         player_row player%rowtype;
