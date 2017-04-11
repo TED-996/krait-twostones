@@ -19,7 +19,7 @@ create or replace package user_Ops as
                             v_password player.password%type DEFAULT NULL,
                             v_currentLoadout player.currentLoadout%type DEFAULT NULL,
                             v_inMatch player.inMatch%type DEFAULT NULL,
-                            v_mmr player.mmr%type DEFAULT 1000,
+                            v_mmr player.mmr%type DEFAULT null,
                             v_playerLevel player.playerLevel%type DEFAULT NULL
                             );
     FUNCTION getUsers ( v_rowStart number default 0, 
@@ -29,6 +29,8 @@ create or replace package user_Ops as
     function getSaltedPassword( password VARCHAR2,
                                 mySalt varchar2 default NULL
                                 ) return player.password%type;
+    function checkSaltedPassword(p_playername player.playername%type,
+                                 p_test_password varchar2) return number;
 end;
 /
 create or replace package body user_Ops as
@@ -153,7 +155,7 @@ create or replace package body user_Ops as
 
     procedure addPlayer(playername player.playername%type, password player.password%type) is
     begin
-        insert into Player values(playeridseq.nextval, playername, password,null,0,1000,1);
+        insert into Player values(playeridseq.nextval, playername, getSaltedPassword(password, null), null, 0, 1000, 1);
     exception
         when DUP_VAL_ON_INDEX then
             raise_application_error(-20001,'A player with the same name already exists!');
@@ -185,7 +187,7 @@ create or replace package body user_Ops as
             update player set playername = v_playername where id = v_playerId;
         end if;
         if v_password is not null then
-            update player set password = v_password where id = v_playerId;
+            update player set password = getSaltedPassword(v_password, null) where id = v_playerId;
         end if;
         if v_currentLoadout is not null then
             update player set currentLoadout = v_currentLoadout where id = v_playerId;
@@ -205,9 +207,33 @@ create or replace package body user_Ops as
          when NO_DATA_FOUND then
             raise_application_error(-20001,'No player with this name or id exists!');
     end updatePlayer;
+
+    function checkSaltedPassword(p_playername player.playername%type,
+                                 p_test_password varchar2)
+        return number as
+        target_password player.password%type;
+        check_salted player.password%type;
+        salt_end number;
+        salt varchar2(97);
+    begin
+        select password into target_password
+            from player
+            where playername = p_playername;
+        
+        salt_end := instr(target_password, '-');
+        salt := utl_raw.cast_to_varchar2(hextoraw((substr(target_password, 1, salt_end - 1))));
+        check_salted := user_ops.getSaltedPassword(p_test_password, salt);
+
+        if check_salted = target_password then
+            return 1;
+        else
+            return 0;
+        end if;
+    end checkSaltedPassword;
 end;
 /
 set serveroutput on;
 begin
   dbms_output.put_line(user_ops.getSaltedPassword('abc',null));
+  dbms_output.put_line(user_ops.checkSaltedPassword('asmith', 'abc'));
 end;

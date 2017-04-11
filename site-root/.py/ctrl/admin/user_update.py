@@ -4,7 +4,6 @@ import json
 import krait
 
 from db_access import db_ops
-from model import password as password_ops
 
 def get_response(request):
 	# update logic using request.query["..."] (campuri setate din form)
@@ -24,7 +23,7 @@ def get_response(request):
 	try:
 		db_conn = db_ops.get_connection();
 		cursor = db_conn.cursor()
-		cursor.callproc("user_ops.updatePlayer", [id, username, password_ops.to_salted_hash(password), loadout, in_match, mmr, level])
+		cursor.callproc("user_ops.updatePlayer", [id, username, password, loadout, in_match, mmr, level])
 		db_conn.commit()
 	except cx_Oracle.DatabaseError, exception:
 		error_messages = ["Could not update user {}: {}".format(username, exception.args[0].message)]
