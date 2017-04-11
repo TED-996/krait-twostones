@@ -14,7 +14,7 @@ begin
   DBMS_OUTPUT.PUT_LINE('preinserts');
 	for v_contor in 1..10000 loop
     v_player_id := playerIdSeq.nextVal;
-    select playername into v_username 
+    select playername,password into v_username,v_password
       from temp
       where id = v_player_id;
 		insert into player values(v_player_id,v_username,v_password,v_loadoutId,v_inMatch,v_mmr,v_level);

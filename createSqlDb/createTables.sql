@@ -27,7 +27,7 @@ drop sequence matchTroopIdSeq;
 CREATE TABLE Player (
     id  NUMBER(10) PRIMARY KEY,
     playername VARCHAR2(30) NOT NULL,
-    password VARCHAR2(30) NOT NULL,
+    password VARCHAR2(97) NOT NULL,
     currentLoadout NUMBER(10),
     inMatch NUMBER(1),
     mmr NUMBER(5),

@@ -2,7 +2,7 @@ drop type tempTable;
 create or replace type tempTableObject is object(
     id  NUMBER(10),
     playername VARCHAR2(30),
-    password VARCHAR2(30),
+    password VARCHAR2(97),
     currentLoadout NUMBER(10),
     inMatch NUMBER(1),
     mmr NUMBER(5),
