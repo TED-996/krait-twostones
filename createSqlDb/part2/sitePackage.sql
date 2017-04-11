@@ -175,7 +175,7 @@ create or replace package body user_Ops as
             update player set mmr = v_mmr where id = v_playerId;
         end if;
         if v_playerLevel is not null then
-            update player set playerLevel = playerLevel where id = v_playerId;
+            update player set playerLevel = v_playerLevel where id = v_playerId;
         end if;
     exception
         when DUP_VAL_ON_INDEX then

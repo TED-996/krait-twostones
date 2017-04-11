@@ -4,15 +4,16 @@ header {
     background-color: black;
     clear: left;
     text-align: center;
+    margin-bottom: 20px;
 }
 
 .pagination {
-    display: block;
+    margin-top: 0px;
 }
-
+/*
 .pagination a {
     color: black;
-    float: left;
+    float: right;
     padding: 8px 16px;
     text-decoration: none;
     transition: background-color .3s;
@@ -27,11 +28,15 @@ header {
 
 .pagination a:hover:not(.active) {
     background-color: #ddd;
-}
+}*/
 
 textarea {
     resize: none;
     margin: 0;
     padding: 0;
     border-width: 0;
+}
+
+.form-inline-margin {
+    margin-bottom: 15px;
 }
