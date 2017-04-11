@@ -26,11 +26,33 @@ create or replace package user_Ops as
                         v_rowCount number default 0, 
                         v_playername player.playername%type DEFAULT null) return tempTable;
     FUNCTION getUsersById (v_id player.id%type default 0) return tempTable;
+    function getSaltedPassword( password VARCHAR2,
+                                mySalt varchar2 default NULL
+                                ) return player.password%type;
 end;
 /
 create or replace package body user_Ops as
     noPlayers_exception exception;
     PRAGMA exception_INIt(noPlayers_exception,-20004);
+
+    function getSaltedPassword( password varchar2,
+                                mySalt varchar2 default NULL
+                                ) return player.password%type 
+    is
+      returnPassword player.password%type;
+      mySaltTwo varchar2(97);
+      tempString RAW(97);
+    begin
+        if mySalt is null then
+            mySaltTwo := dbms_random.string('l',16);
+        else
+            mySaltTwo := mySalt;
+        end if;
+        tempString := dbms_crypto.HASH(src => utl_raw.cast_to_raw(mySaltTwo||password),typ => DBMS_CRYPTO.hash_sh1);
+        returnPassword := rawtohex(utl_raw.cast_to_raw(mySaltTwo))||'-'||rawtohex(tempString);
+        return returnPassword;
+    end getSaltedPassword;
+
 
     function getUsersbyId (v_id player.id%type default 0) return tempTable as
         myReturnTable tempTable;
@@ -183,4 +205,9 @@ create or replace package body user_Ops as
          when NO_DATA_FOUND then
             raise_application_error(-20001,'No player with this name or id exists!');
     end updatePlayer;
+end;
+/
+set serveroutput on;
+begin
+  dbms_output.put_line(user_ops.getSaltedPassword('abc',null));
 end;
