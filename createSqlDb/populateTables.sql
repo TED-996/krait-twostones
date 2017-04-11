@@ -1,5 +1,7 @@
 start "createTables.sql";
 
+start "./part2/sitePackage.sql";
+
 start "createTemp.sql";
 start "populateUser.sql";
 drop table temp;
@@ -8,4 +10,3 @@ start "populateMap.sql";
 start "populateModifiers.sql";
 start "populateSkin.sql";
 start "populateTroops.sql";
-start "./part2/sitePackage.sql";
