@@ -8,3 +8,4 @@ start "populateMap.sql";
 start "populateModifiers.sql";
 start "populateSkin.sql";
 start "populateTroops.sql";
+start "./part2/sitePackage.sql";
