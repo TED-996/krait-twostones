@@ -1,5 +1,6 @@
 import krait
 import mvc
+import json
 
 class LoginFailController(object):
 	def __init__(self, request):
