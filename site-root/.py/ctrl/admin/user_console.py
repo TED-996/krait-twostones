@@ -48,7 +48,6 @@ class UserConsoleController(object):
 		min_page = max(self.page - 4, 1)
 		max_page = min(self.max_page, min_page + 10)
 		self.pages = [(nr, build_link(nr, self.filter, self.fetch_id)) for nr in xrange(min_page, max_page + 1)]
-
 		# TODO: handle errors and add error messages
 		
 	def get_users(self, conn, page, name_filter):
@@ -77,7 +76,12 @@ class UserConsoleController(object):
 	def get_page_count(self, conn, name_filter):
 		cursor = conn.cursor()
 		if filter:
-			cursor.execute("select count(*) from player where playername like '%' || :name_filter || '%'", {"name_filter": name_filter})
+			# SQL injection secured:
+			# cursor.execute("select count(*) from player where playername like '%' || :name_filter || '%'", {"name_filter": name_filter})
+			# SQL injection vulnerable:
+			stmt = "select count(*) from player where playername like '%{}%'".format(name_filter)
+			print stmt
+			cursor.execute(stmt)
 		else:
 			cursor.execute("select count(*) from player")	
 		nr_raw = cursor.fetchone()[0]
