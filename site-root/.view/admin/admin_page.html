@@ -34,8 +34,8 @@
             </div>
             @/if
 
-            
-            <div class=container>
+
+            <div class="container">
                 <div class="col-md-4 col-sm-12">
                     <form class="form-inline" action="/admin/user_console" method="GET">
                         <label for="filter">Filter</label>
@@ -52,7 +52,7 @@
                                 </a>
                             </li>
                             @/if @for nr, url in ctrl.pages:
-                            <li><a href="@url@" @if nr == ctrl.page: class="active" @/if >@nr@</a></li>
+                            <li><a href="@url@" @if nr==c trl.page: class="active" @/if>@nr@</a></li>
                             @/for @if ctrl.page_next_url is not None:
                             <li>
                                 <a href="@ctrl.page_next_url@" aria-label="Next">
@@ -121,7 +121,7 @@
                         </div>
                     </form>
                 </div>
-                <div class="container">                
+                <div class="container">
                     <form class="form-inline form-inline-margin" action="/admin/user_delete" method="POST">
                         <div class="form-group">
                             <label class="sr-only" for="deleteUserIdInput">Id</label>
@@ -132,7 +132,7 @@
                         </div>
                     </form>
                 </div>
-                <div class="container">                                
+                <div class="container">
                     <form class="form-horizontal col-md-8" action="/admin/user_update" method="POST">
                         <div class="form-group">
                             <label class="sr-only" for="fetchUserIdInput">Id</label>
@@ -155,7 +155,7 @@
                             <input name="level" value="@ctrl.fetch_level@" type="number" class="form-control" id="fetchUserLevelInput" placeholder="Level">
                         </div>
 
-                            <!-- 
+                        <!-- 
                         <div class="form-group">
                             <button type="submit" class="btn btn-default col-md-12">Fetch with ID</button>
                         </div>

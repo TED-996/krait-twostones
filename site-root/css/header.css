@@ -1,0 +1,11 @@
+table {
+    border-spacing: 3px;
+}
+
+th {
+    text-align: center;
+}
+
+.search-bar-nav-vertical-center {
+    transform: translateY(40%);
+}
