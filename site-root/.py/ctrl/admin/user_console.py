@@ -77,9 +77,9 @@ class UserConsoleController(object):
 		cursor = conn.cursor()
 		if filter:
 			# SQL injection secured:
-			# cursor.execute("select count(*) from player where playername like '%' || :name_filter || '%'", {"name_filter": name_filter})
+			cursor.execute("select count(*) from player where playername like '%' || :name_filter || '%'", {"name_filter": name_filter})
 			# SQL injection vulnerable:
-			stmt = "select count(*) from player where playername like '%{}%'".format(name_filter)
+			# stmt = "select count(*) from player where playername like '%{}%'".format(name_filter)
 			print stmt
 			cursor.execute(stmt)
 		else:
