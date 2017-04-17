@@ -1,0 +1,35 @@
+.troop {
+	width: 100%;
+}
+
+.loadout-item, .troop-stats-sum {
+	height: 100%
+}
+
+.loadout-item .item-slot, .loadout-item .item-stats-div {
+	height: 100%;
+}
+
+#troop-list {
+	padding-bottom:30%;
+}
+
+.footer {
+	height:30%;
+	width:100%;
+	position:fixed;
+	bottom:0;
+}
+
+
+#options-div {
+	height: 100%;
+}
+
+#save-button {
+	height: 70%;
+}
+
+#cancel-button {
+	height: 30%;
+}
