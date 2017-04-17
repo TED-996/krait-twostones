@@ -14,8 +14,8 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet">
 	<link href="/css/edit_loadout.css" rel="stylesheet">
 
-	<script type="application/json" src="/get_loadout?id=@ctrl.loadout_id@"></script> <!-- or replace </ with <\/ -->
-	<script type="application/json" src="/get_mods_classes"></script>
+	<script type="application/json" src="/get_loadout?id=@ctrl.loadout_id@" id="loadout-json"></script> <!-- or replace </ with <\/ -->
+	<script type="application/json" src="/get_mods_classes" id="available-json"></script>
 </head>
 
 <body>
@@ -71,5 +71,6 @@
 
     <script type="application/javascript" src="/js/jquery-1.12.4.js"></script>
 	<script type="application/javascript" src="/js/bootstrap.min.js"></script>
+	<script type="application/javascript" src="/js/edit_loadout.js"></script>
 </body>
 </html>
