@@ -9,7 +9,7 @@ def get_connection():
 	global password
 
 	ip = "127.0.0.1"
-	port = 49161
+	port = 1521
 	username = "WegasAdmin"
 	# global password
 	sid = "xe"
@@ -18,9 +18,8 @@ def get_connection():
 	try:
 		return cx_Oracle.connect(username, password, dsn_tns)	
 	except cx_Oracle.DatabaseError as exception:
-		printf('Failed to connect to %s\n', databaseName)
-		printException(exception)
-		exit(1)
+		printf('Failed to connect to Oracle')
+		raise
 	
 
 def read_store_password(site_root):

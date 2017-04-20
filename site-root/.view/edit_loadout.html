@@ -15,7 +15,7 @@
 	<link href="/css/edit_loadout.css" rel="stylesheet">
 
 	<script type="application/json" src="/get_loadout?id=@ctrl.loadout_id@" id="loadout-json"></script> <!-- or replace </ with <\/ -->
-	<script type="application/json" src="/get_mods_classes" id="available-json"></script>
+	<script type="application/json" src="/get_options" id="available-json"></script>
 </head>
 
 <body>
@@ -28,7 +28,7 @@
 					@for slot_type in ["class", "mod1", "mod2", "mod3"]
 						<div class="loadout-item col-md-2 col-xs-6" id="troop-@idx@-@slot_type@">
 							<div class="item-slot">
-								<img class="item-img">
+								<img class="item-img" src="about:blank">
 							</div>
 							<div class="item-stats-div">
 								<p class="item-name"></p>
@@ -47,7 +47,7 @@
 							<div class="col-xs-4"><p>Damage</p></div>
 							<div class="col-xs-1"><p class="text-right" id="troop-@idx@-dmg"></p></div>
 							<div class="col-xs-offset-1 col-xs-4"><p>Hit Range</p></div>
-							<div class="col-xs-1"><p class="text-right" id="troop-@idx@-hrange"></p></div>
+							<div class="col-xs-1"><p class="text-right" id="troop-@idx@-arange"></p></div>
 						</div>
 					</div>
 				</li>

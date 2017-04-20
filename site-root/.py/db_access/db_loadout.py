@@ -26,7 +26,7 @@ def get(loadout_id):
         troop_id, skin_fn, class_name, class_desc, hp, dmg, a_range, m_range = troop_tuple
 
         if hp == -1 or dmg == -1 or a_range == -1 or m_range == -1:
-            cursor.callproc("loadout_ops.compute_stats", [loadout_id])
+            cursor.callproc("loadout_ops.compute_stats", [troop_id])
             cursor.execute(
                 "select maxHp, dmg, atkRange, moveRange "
                 "from Troop "

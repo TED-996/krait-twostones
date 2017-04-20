@@ -1,0 +1,9 @@
+{
+  "name": "graved-dammit",
+  "version": "v0.1.0",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jquery": "^2.0.41",
+    "@types/node": "^7.0.13"
+  }
+}

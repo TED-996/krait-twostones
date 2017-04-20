@@ -26,3 +26,4 @@ alter user wegasAdmin default tablespace wegas quota 4096M on wegas;
 
 grant connect to wegasAdmin;
 grant all privileges to wegasAdmin;
+grant execute on DBMS_CRYPTO to wegasAdmin;

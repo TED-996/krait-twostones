@@ -1,6 +1,29 @@
-var jquery_1 = require("jquery");
+"use strict";
+exports.__esModule = true;
+/// <reference path="node_modules/@types/jquery/index.d.ts" />
+var $ = require("jquery");
 function statsToStrings(maxHp, dmg, atkRange, moveRange) {
     return ["HP: " + maxHp, "DMG: " + dmg, "Atk Range: " + atkRange, "Move Range: " + moveRange];
+}
+function htmlEscape(literals) {
+    var placeholders = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        placeholders[_i - 1] = arguments[_i];
+    }
+    var result = "";
+    // interleave the literals with the placeholders
+    for (var i = 0; i < placeholders.length; i++) {
+        result += literals[i];
+        result += placeholders[i]
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+    // add the last literal
+    result += literals[literals.length - 1];
+    return result;
 }
 var TroopClass = (function () {
     function TroopClass(name, description, baseHp, baseDmg, baseAtkRange, baseMoveRange) {
@@ -23,9 +46,9 @@ var TroopClass = (function () {
             return result;
         }
     };
-    TroopClass.classDb = {};
     return TroopClass;
-})();
+}());
+TroopClass.classDb = {};
 var Modifier = (function () {
     function Modifier(id, name, maxHp, dmg, atkRange, moveRange) {
         this.id = id;
@@ -35,6 +58,7 @@ var Modifier = (function () {
         this.atkRangeMod = atkRange;
         this.moveRangeMod = moveRange;
         this.stats = statsToStrings(maxHp, dmg, atkRange, moveRange);
+        this.description = this.name + ": " + this.stats.join(", ");
     }
     Modifier.fromObj = function (obj) {
         var id = obj.id;
@@ -47,9 +71,9 @@ var Modifier = (function () {
             return result;
         }
     };
-    Modifier.modifierDb = {};
     return Modifier;
-})();
+}());
+Modifier.modifierDb = {};
 var Skin = (function () {
     function Skin(filename) {
         this.filename = filename;
@@ -57,8 +81,11 @@ var Skin = (function () {
         this.description = "";
         this.stats = [];
     }
+    Skin.fromObj = function (obj) {
+        return new Skin(obj);
+    };
     return Skin;
-})();
+}());
 var Troop = (function () {
     function Troop(id, troopClass, skin, modifiers, maxHp, dmg, atkRange, moveRange) {
         this.id = id;
@@ -69,12 +96,26 @@ var Troop = (function () {
         this.dmg = dmg;
         this.atkRange = atkRange;
         this.moveRange = moveRange;
+        this.onRecomputeHandlers = [];
     }
+    Troop.prototype.addOnRecompute = function (handler) {
+        this.onRecomputeHandlers.push(handler);
+    };
     Troop.prototype.recompute = function () {
-        this.maxHp = Math.max(this.recompute_one(this.troopClass.baseHp, function (mod) { return mod.maxHpMod; }), 1);
-        this.dmg = this.recompute_one(this.troopClass.baseDmg, function (mod) { return mod.dmgMod; });
-        this.atkRange = this.recompute_one(this.troopClass.baseAtkRange, function (mod) { return mod.atkRangeMod; });
-        this.moveRange = this.recompute_one(this.troopClass.baseMoveRange, function (mod) { return mod.moveRangeMod; });
+        var _this = this;
+        this.maxHp = Math.max(this.recompute_one(this.troopClass.baseHp, function (mod) {
+            return mod.maxHpMod;
+        }), 1);
+        this.dmg = this.recompute_one(this.troopClass.baseDmg, function (mod) {
+            return mod.dmgMod;
+        });
+        this.atkRange = this.recompute_one(this.troopClass.baseAtkRange, function (mod) {
+            return mod.atkRangeMod;
+        });
+        this.moveRange = this.recompute_one(this.troopClass.baseMoveRange, function (mod) {
+            return mod.moveRangeMod;
+        });
+        this.onRecomputeHandlers.forEach(function (h) { return h(_this); });
     };
     Troop.prototype.recompute_one = function (base, extract_func) {
         var mul_percent = 100;
@@ -94,7 +135,7 @@ var Troop = (function () {
         return new Troop(obj.id, troopClass, obj.skin, modifiers, obj.maxHp, obj.dmg, obj.atkRange, obj.moveRange);
     };
     return Troop;
-})();
+}());
 var Loadout = (function () {
     function Loadout(id, owner, troops) {
         this.id = id;
@@ -105,7 +146,7 @@ var Loadout = (function () {
         return new Loadout(obj.id, obj.owner, obj.troops.map(Troop.fromObj));
     };
     return Loadout;
-})();
+}());
 var AllOptions = (function () {
     function AllOptions(troopClassOptions, modifierOptions, skinOptions) {
         this.troopClassOptions = troopClassOptions;
@@ -113,20 +154,161 @@ var AllOptions = (function () {
         this.skinOptions = skinOptions;
     }
     AllOptions.fromObj = function (obj) {
-        return new AllOptions(TroopClassOptions.fromObj(obj.troopClasses), //TOOD: use map
-        ModifierOptions.fromObj(obj.modifiers), SkinOptions.fromObj(obj.skins) //TOOD: implement formObj on skin
-        );
+        return new AllOptions(obj.troopClasses.map(TroopClass.fromObj), obj.modifiers.map(Modifier.fromObj), obj.skins.map(Skin.fromObj));
     };
     return AllOptions;
-})();
-var options = AllOptions.fromObj(JSON.parse(jquery_1["default"]("#available-json").html()));
-var loadout = Loadout.fromObj(JSON.parse(jquery_1["default"]("#loadout-json").html()));
+}());
+var options = AllOptions.fromObj(JSON.parse($("#available-json").html()));
+var loadout = Loadout.fromObj(JSON.parse($("#loadout-json").html()));
 var ClassSlot = (function () {
-    function ClassSlot() {
+    function ClassSlot(troop) {
+        this.troop = troop;
+        this.selectedOption = troop.troopClass;
     }
     ClassSlot.prototype.getOptions = function () {
         return options.troopClassOptions;
     };
+    ClassSlot.prototype.selectOption = function (option) {
+        var optionAsClass = option;
+        this.selectedOption = option;
+        this.troop.troopClass = optionAsClass;
+        this.troop.recompute();
+    };
     return ClassSlot;
-})();
-//# sourceMappingURL=edit_loadout.js.map
+}());
+var ModifierSlot = (function () {
+    function ModifierSlot(troop, modifierIdx) {
+        this.troop = troop;
+        this.modifierIdx = modifierIdx;
+        this.selectedOption = this.troop.modifiers[this.modifierIdx];
+    }
+    ModifierSlot.prototype.getOptions = function () {
+        return options.modifierOptions;
+    };
+    ModifierSlot.prototype.selectOption = function (option) {
+        var optionAsModifier = option;
+        this.selectedOption = option;
+        for (var idx in this.troop.modifiers) {
+            if (this.troop.modifiers[idx] == optionAsModifier) {
+                this.troop.modifiers[idx] = null;
+            }
+        }
+        this.troop.modifiers[this.modifierIdx] = optionAsModifier;
+        this.troop.recompute();
+    };
+    return ModifierSlot;
+}());
+var SkinSlot = (function () {
+    function SkinSlot(troop) {
+        this.troop = troop;
+    }
+    SkinSlot.prototype.getOptions = function () {
+        return options.skinOptions;
+    };
+    SkinSlot.prototype.selectOption = function (option) {
+        this.troop.skin = option;
+        this.selectedOption = option;
+    };
+    return SkinSlot;
+}());
+var OptionButton = (function () {
+    function OptionButton(option, slotManager) {
+        this.option = option;
+        this.slotManager = slotManager;
+        this.domElement = OptionButton.createElement(option);
+        this.domElement.on("click", function () {
+            this.slotManager.selectOption(this.option);
+        });
+    }
+    OptionButton.createElement = function (option) {
+        var result = $("<li></li>", {
+            "class": "option-li"
+        });
+        $((_a = ["<p>", "</p>"], _a.raw = ["<p>", "</p>"], htmlEscape(_a, option.name)), {
+            "class": "text-center"
+        }).appendTo(result);
+        $((_b = ["<p>", "</p>"], _b.raw = ["<p>", "</p>"], htmlEscape(_b, option.stats.join("; "))), {
+            "class": "text-center"
+        });
+        return result;
+        var _a, _b;
+    };
+    OptionButton.prototype.attach = function () {
+        $("options_div").append(this.domElement);
+    };
+    return OptionButton;
+}());
+var SlotManager = (function () {
+    function SlotManager(slot, slotSelector, troopManager) {
+        this.slot = slot;
+        this.slotSelector = slotSelector;
+        this.troopManager = troopManager;
+        this.active = false;
+        slotSelector.on("click", function () {
+            if (!this.active) {
+                this.activate();
+            }
+        });
+        this.updateDomSlot();
+    }
+    SlotManager.prototype.activate = function () {
+        SlotManager.optionsList.html();
+        this.addOptions();
+        this.active = true;
+    };
+    SlotManager.prototype.addOptions = function () {
+        for (var _i = 0, _a = this.slot.getOptions(); _i < _a.length; _i++) {
+            var option = _a[_i];
+            var button = new OptionButton(option, this);
+            button.attach();
+        }
+    };
+    SlotManager.prototype.selectOption = function (option) {
+        this.slot.selectOption(option);
+        this.updateDomSlot();
+    };
+    SlotManager.prototype.updateDomSlot = function () {
+        var domImg = this.slotSelector.find(".item-img");
+        domImg.attr("src", "about:blank");
+        var domName = this.slotSelector.find(".item-name");
+        domName.html((_a = ["", ""], _a.raw = ["", ""], htmlEscape(_a, this.slot.selectedOption.name)));
+        var domStats = this.slotSelector.find(".item-stats");
+        domStats.html((_b = ["", ""], _b.raw = ["", ""], htmlEscape(_b, this.slot.selectedOption.stats.join("; "))));
+        var _a, _b;
+    };
+    return SlotManager;
+}());
+SlotManager.optionsList = $("#options-div");
+var TroopManager = (function () {
+    function TroopManager(troop, troopIdx) {
+        this.troop = troop;
+        this.troopIdx = troopIdx;
+        this.troop.addOnRecompute(this.updateStats);
+        this.slots = [];
+        this.hpStatElem = null;
+        this.dmgStatElem = null;
+        this.mRangeStatElem = null;
+        this.aRangeStatElem = null;
+        this.init();
+        this.updateStats(this.troop);
+    }
+    TroopManager.prototype.init = function () {
+        var rootId = "#troop-" + this.troopIdx;
+        this.slots.push(new SlotManager(new ClassSlot(this.troop), $(rootId + "-class"), this));
+        this.slots.push(new SlotManager(new ModifierSlot(this.troop, 0), $(rootId + "-mod1"), this));
+        this.slots.push(new SlotManager(new ModifierSlot(this.troop, 1), $(rootId + "-mod2"), this));
+        this.slots.push(new SlotManager(new ModifierSlot(this.troop, 2), $(rootId + "-mod3"), this));
+        this.hpStatElem = $(rootId + "-hp");
+        this.dmgStatElem = $(rootId + "-dmg");
+        this.mRangeStatElem = $(rootId + "-mrange");
+        this.aRangeStatElem = $(rootId + "-arange");
+    };
+    TroopManager.prototype.updateStats = function (troop) {
+        this.hpStatElem.html(troop.maxHp.toString());
+        this.dmgStatElem.html(troop.dmg.toString());
+        this.mRangeStatElem.html(troop.moveRange.toString());
+        this.aRangeStatElem.html(troop.atkRange.toString());
+    };
+    return TroopManager;
+}());
+var troopManagers = loadout.troops.map(function (val, idx) { return new TroopManager(val, idx); });
