@@ -1,4 +1,4 @@
 @{
 import json
 set_content_type(ext="json")
-}@json.dumps(ctrl.loadout)@
+}@!json.dumps(ctrl.loadout)@

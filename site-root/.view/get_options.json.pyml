@@ -1,0 +1,25 @@
+@{
+import json
+set_content_type(ext="json")
+result = {
+    "troopClasses": [{
+            "name": troop.name,
+            "description": troop.description,
+            "maxHp": troop.max_hp,
+            "dmg": troop.dmg,
+            "atkRange": troop.atk_range,
+            "moveRange": troop.move_range
+        }
+        for troop in ctrl.troop_classes],
+    "modifiers": [{
+            "id": modifier.id,
+            "name": modifier.name,
+            "maxHp": modifier.max_hp,
+            "dmg": modifier.dmg,
+            "atkRange": modifier.atk_range,
+            "moveRange": modifier.move_range
+        }
+        for modifier in ctrl.modifiers],
+    "skins": []
+}
+}@!json.dumps(result)@

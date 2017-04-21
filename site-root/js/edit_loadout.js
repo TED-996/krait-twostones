@@ -1,7 +1,5 @@
-"use strict";
-exports.__esModule = true;
 /// <reference path="node_modules/@types/jquery/index.d.ts" />
-var $ = require("jquery");
+//import * as $ from "jquery";
 function statsToStrings(maxHp, dmg, atkRange, moveRange) {
     return ["HP: " + maxHp, "DMG: " + dmg, "Atk Range: " + atkRange, "Move Range: " + moveRange];
 }
@@ -41,7 +39,7 @@ var TroopClass = (function () {
             return TroopClass.classDb[name];
         }
         else {
-            var result = new TroopClass(obj.name, obj.description, obj.hp, obj.dmg, obj.aRange, obj.mRange);
+            var result = new TroopClass(obj.name, obj.description, obj.maxHp, obj.dmg, obj.atkRange, obj.moveRange);
             TroopClass.classDb[name] = result;
             return result;
         }
@@ -61,6 +59,9 @@ var Modifier = (function () {
         this.description = this.name + ": " + this.stats.join(", ");
     }
     Modifier.fromObj = function (obj) {
+        if (obj == null) {
+            return null;
+        }
         var id = obj.id;
         if (Modifier.modifierDb[id]) {
             return Modifier.modifierDb[id];
@@ -97,6 +98,7 @@ var Troop = (function () {
         this.atkRange = atkRange;
         this.moveRange = moveRange;
         this.onRecomputeHandlers = [];
+        this.recompute();
     }
     Troop.prototype.addOnRecompute = function (handler) {
         this.onRecomputeHandlers.push(handler);
@@ -121,7 +123,9 @@ var Troop = (function () {
         var mul_percent = 100;
         for (var _i = 0, _a = this.modifiers; _i < _a.length; _i++) {
             var mod = _a[_i];
-            mul_percent += extract_func(mod);
+            if (mod != null) {
+                mul_percent += extract_func(mod);
+            }
         }
         return Math.max(Math.round(base * mul_percent / 100), 0);
     };
@@ -158,8 +162,8 @@ var AllOptions = (function () {
     };
     return AllOptions;
 }());
-var options = AllOptions.fromObj(JSON.parse($("#available-json").html()));
-var loadout = Loadout.fromObj(JSON.parse($("#loadout-json").html()));
+var options = null;
+var loadout = null;
 var ClassSlot = (function () {
     function ClassSlot(troop) {
         this.troop = troop;
@@ -201,6 +205,7 @@ var ModifierSlot = (function () {
 var SkinSlot = (function () {
     function SkinSlot(troop) {
         this.troop = troop;
+        this.selectedOption = troop.skin;
     }
     SkinSlot.prototype.getOptions = function () {
         return options.skinOptions;
@@ -216,7 +221,7 @@ var OptionButton = (function () {
         this.option = option;
         this.slotManager = slotManager;
         this.domElement = OptionButton.createElement(option);
-        this.domElement.on("click", function () {
+        this.domElement.on("click", function (o) {
             this.slotManager.selectOption(this.option);
         });
     }
@@ -270,10 +275,16 @@ var SlotManager = (function () {
     SlotManager.prototype.updateDomSlot = function () {
         var domImg = this.slotSelector.find(".item-img");
         domImg.attr("src", "about:blank");
+        var name = "";
+        var stats = "";
+        if (this.slot.selectedOption != null) {
+            name = this.slot.selectedOption.name;
+            stats = this.slot.selectedOption.stats.join(", ");
+        }
         var domName = this.slotSelector.find(".item-name");
-        domName.html((_a = ["", ""], _a.raw = ["", ""], htmlEscape(_a, this.slot.selectedOption.name)));
+        domName.html((_a = ["", ""], _a.raw = ["", ""], htmlEscape(_a, name)));
         var domStats = this.slotSelector.find(".item-stats");
-        domStats.html((_b = ["", ""], _b.raw = ["", ""], htmlEscape(_b, this.slot.selectedOption.stats.join("; "))));
+        domStats.html((_b = ["", ""], _b.raw = ["", ""], htmlEscape(_b, stats)));
         var _a, _b;
     };
     return SlotManager;
@@ -287,8 +298,8 @@ var TroopManager = (function () {
         this.slots = [];
         this.hpStatElem = null;
         this.dmgStatElem = null;
-        this.mRangeStatElem = null;
-        this.aRangeStatElem = null;
+        this.moveRangeStatElem = null;
+        this.atkRangeStatElem = null;
         this.init();
         this.updateStats(this.troop);
     }
@@ -300,15 +311,38 @@ var TroopManager = (function () {
         this.slots.push(new SlotManager(new ModifierSlot(this.troop, 2), $(rootId + "-mod3"), this));
         this.hpStatElem = $(rootId + "-hp");
         this.dmgStatElem = $(rootId + "-dmg");
-        this.mRangeStatElem = $(rootId + "-mrange");
-        this.aRangeStatElem = $(rootId + "-arange");
+        this.moveRangeStatElem = $(rootId + "-mrange");
+        this.atkRangeStatElem = $(rootId + "-arange");
     };
     TroopManager.prototype.updateStats = function (troop) {
+        console.log(troop);
         this.hpStatElem.html(troop.maxHp.toString());
         this.dmgStatElem.html(troop.dmg.toString());
-        this.mRangeStatElem.html(troop.moveRange.toString());
-        this.aRangeStatElem.html(troop.atkRange.toString());
+        this.moveRangeStatElem.html(troop.moveRange.toString());
+        this.atkRangeStatElem.html(troop.atkRange.toString());
     };
     return TroopManager;
 }());
-var troopManagers = loadout.troops.map(function (val, idx) { return new TroopManager(val, idx); });
+function loadout_init(loadout_url) {
+    var optionsFromJson = null;
+    var loadoutFromJson = null;
+    $.ajax({
+        url: loadout_url,
+        async: false,
+        dataType: "json",
+        success: function (response) {
+            loadoutFromJson = response;
+        }
+    });
+    $.ajax({
+        url: "/get_options",
+        async: false,
+        dataType: "json",
+        success: function (response) {
+            optionsFromJson = response;
+        }
+    });
+    options = AllOptions.fromObj(optionsFromJson);
+    loadout = Loadout.fromObj(loadoutFromJson);
+    loadout.troops.map(function (val, idx) { return new TroopManager(val, idx); });
+}

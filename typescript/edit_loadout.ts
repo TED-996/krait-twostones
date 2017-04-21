@@ -1,5 +1,5 @@
 /// <reference path="node_modules/@types/jquery/index.d.ts" />
-import * as $ from "jquery";
+//import * as $ from "jquery";
 
 interface Option {
     name : string;
@@ -61,7 +61,7 @@ class TroopClass implements Option {
             return TroopClass.classDb[name];
         }
         else {
-            let result = new TroopClass(obj.name, obj.description, obj.hp, obj.dmg, obj.aRange, obj.mRange);
+            let result = new TroopClass(obj.name, obj.description, obj.maxHp, obj.dmg, obj.atkRange, obj.moveRange);
             TroopClass.classDb[name] = result;
             return result;
         }
@@ -94,6 +94,10 @@ class Modifier implements Option {
     }
 
     static fromObj(obj):Modifier {
+        if (obj == null){
+            return null;
+        }
+
         let id:number = obj.id;
         if (Modifier.modifierDb[id]) {
             return Modifier.modifierDb[id];
@@ -152,6 +156,7 @@ class Troop {
         this.moveRange = moveRange;
 
         this.onRecomputeHandlers = [];
+        this.recompute();
     }
 
     addOnRecompute(handler : {(troop : Troop) : void}){
@@ -183,7 +188,9 @@ class Troop {
         let mul_percent = 100;
 
         for (let mod of this.modifiers) {
-            mul_percent += extract_func(mod)
+            if (mod != null) {
+                mul_percent += extract_func(mod)
+            }
         }
 
         return Math.max(Math.round(base * mul_percent / 100), 0)
@@ -239,8 +246,8 @@ class AllOptions {
     }
 }
 
-let options = AllOptions.fromObj(JSON.parse($("#available-json").html()));
-let loadout = Loadout.fromObj(JSON.parse($("#loadout-json").html()));
+let options : AllOptions = null;
+let loadout : Loadout = null;
 
 
 interface Slot {
@@ -309,6 +316,7 @@ class SkinSlot implements Slot {
 
     constructor(troop:Troop) {
         this.troop = troop;
+        this.selectedOption = troop.skin;
     }
 
     getOptions():Option[] {
@@ -331,7 +339,7 @@ class OptionButton {
         this.slotManager = slotManager;
         this.domElement = OptionButton.createElement(option);
 
-        this.domElement.on("click", function(){
+        this.domElement.on("click", function(o){
             this.slotManager.selectOption(this.option);
         });
     }
@@ -403,11 +411,19 @@ class SlotManager {
         let domImg = this.slotSelector.find(".item-img");
         domImg.attr("src", "about:blank");
 
+        let name = "";
+        let stats = "";
+
+        if (this.slot.selectedOption != null){
+            name = this.slot.selectedOption.name;
+            stats = this.slot.selectedOption.stats.join(", ");
+        }
+
         let domName = this.slotSelector.find(".item-name");
-        domName.html(htmlEscape `${this.slot.selectedOption.name}`);
+        domName.html(htmlEscape `${name}`);
 
         let domStats = this.slotSelector.find(".item-stats");
-        domStats.html(htmlEscape `${this.slot.selectedOption.stats.join("; ")}`);
+        domStats.html(htmlEscape `${stats}`);
     }
 }
 
@@ -417,9 +433,9 @@ class TroopManager {
     troopIdx : number;
     slots : SlotManager[];
     hpStatElem : JQuery;
-    mRangeStatElem : JQuery;
+    moveRangeStatElem : JQuery;
     dmgStatElem : JQuery;
-    aRangeStatElem : JQuery;
+    atkRangeStatElem : JQuery;
 
 
     constructor(troop: Troop, troopIdx : number) {
@@ -430,8 +446,8 @@ class TroopManager {
 
         this.hpStatElem = null;
         this.dmgStatElem = null;
-        this.mRangeStatElem = null;
-        this.aRangeStatElem = null;
+        this.moveRangeStatElem = null;
+        this.atkRangeStatElem = null;
 
         this.init();
         this.updateStats(this.troop);
@@ -446,16 +462,42 @@ class TroopManager {
 
         this.hpStatElem = $(rootId + "-hp");
         this.dmgStatElem = $(rootId + "-dmg");
-        this.mRangeStatElem = $(rootId + "-mrange");
-        this.aRangeStatElem = $(rootId + "-arange");
+        this.moveRangeStatElem = $(rootId + "-mrange");
+        this.atkRangeStatElem = $(rootId + "-arange");
     }
 
     updateStats(troop : Troop) : void {
+        console.log(troop);
         this.hpStatElem.html(troop.maxHp.toString());
         this.dmgStatElem.html(troop.dmg.toString());
-        this.mRangeStatElem.html(troop.moveRange.toString());
-        this.aRangeStatElem.html(troop.atkRange.toString());
+        this.moveRangeStatElem.html(troop.moveRange.toString());
+        this.atkRangeStatElem.html(troop.atkRange.toString());
     }
 }
 
-let troopManagers: TroopManager[] = loadout.troops.map((val, idx) => new TroopManager(val, idx));
+function loadout_init(loadout_url : string) : void {
+    let optionsFromJson : string = null;
+    let loadoutFromJson : string = null;
+
+    $.ajax({
+        url: loadout_url,
+        async: false,
+        dataType: "json",
+        success: function(response){
+            loadoutFromJson = response
+        }
+    });
+
+    $.ajax({
+        url: "/get_options",
+        async: false,
+        dataType: "json",
+        success: function(response){
+            optionsFromJson = response
+        }
+    });
+
+    options = AllOptions.fromObj(optionsFromJson);
+    loadout = Loadout.fromObj(loadoutFromJson);
+    loadout.troops.map((val, idx) => new TroopManager(val, idx));
+}

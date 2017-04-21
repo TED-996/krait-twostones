@@ -9,3 +9,11 @@ th {
 .search-bar-nav-vertical-center {
     transform: translateY(40%);
 }
+
+#site-wrapper {
+    padding-top: 15%
+}
+
+#site-navbar {
+    height: 15%;
+}

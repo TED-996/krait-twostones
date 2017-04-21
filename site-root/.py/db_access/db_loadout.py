@@ -11,13 +11,14 @@ def get(loadout_id):
                    "    join Player p on (p.id = l.playerId) "
                    "where l.id = :loadout_id",
                    {"loadout_id": loadout_id})
-    owner_username = cursor.fetch()  # TODO: how write
+    owner_username, = cursor.fetchone()  # TODO: how write
 
     cursor.execute(
         "select t.id, s.filename, tc.name, tc.description, t.maxHp, t.dmg, t.atkRange, t.moveRange "
         "from Troop t "
+        "   join troopClass tc on (t.classId = tc.id)"
         "   join Skin s on (t.skinId = s.id) "
-        "where t.loadout_id = :loadout_id",
+        "where t.loadoutId = :loadout_id",
         {"loadout_id": loadout_id})
     troops = cursor.fetchall()
 
@@ -26,16 +27,17 @@ def get(loadout_id):
         troop_id, skin_fn, class_name, class_desc, hp, dmg, a_range, m_range = troop_tuple
 
         if hp == -1 or dmg == -1 or a_range == -1 or m_range == -1:
-            cursor.callproc("loadout_ops.compute_stats", [troop_id])
+            # cursor.callproc("loadout_ops.compute_stats", [troop_id])
             cursor.execute(
                 "select maxHp, dmg, atkRange, moveRange "
                 "from Troop "
                 "where id = :troop_id",
                 {"troop_id": troop_id})
-            hp, dmg, a_range, m_range = cursor.fetch()
+            hp, dmg, a_range, m_range = cursor.fetchone()
 
         cursor.execute("select modifierId from troopModifier where troopId = :troop_id", {"troop_id": troop_id})
         modifiers = cursor.fetchall()
+        modifiers = modifiers + [(None, )] * (3 - len(modifiers))
 
         troop_dict = {
             "id": troop_id,
@@ -46,7 +48,7 @@ def get(loadout_id):
             "dmg": dmg,
             "aRange": a_range,
             "mRange": m_range,
-            "modifiers": modifiers
+            "modifiers": [m for m, in modifiers]
         }
         troops_out.append(troop_dict)
 

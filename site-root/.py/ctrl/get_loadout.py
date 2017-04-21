@@ -8,7 +8,7 @@ class GetLoadoutController(mvc.CtrlBase):
     def __init__(self, request):
         self.username = username_utils.get_username(request)
     
-        self.loadout_id = int(self.loadout_id)
+        self.loadout_id = int(request.query.get("id"))
         if not db_loadout.check_owner(self.loadout_id, self.username):
             raise RuntimeError("Not your loadout!")
     
