@@ -1,5 +1,6 @@
 .troop {
     width: 100%;
+    border: 1px solid black;
 }
 
 .loadout-item, .troop-stats-sum {
@@ -37,4 +38,8 @@
 
 .item-img {
 	display: none;
+}
+
+.loadout-item {
+    height: 100%;
 }

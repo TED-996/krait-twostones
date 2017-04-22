@@ -339,14 +339,15 @@ class OptionButton {
         this.slotManager = slotManager;
         this.domElement = OptionButton.createElement(option);
 
-        this.domElement.on("click", function(o){
-            this.slotManager.selectOption(this.option);
+        let optionButton = this;
+        this.domElement.on("click", function(){
+            optionButton.slotManager.selectOption(optionButton.option);
         });
     }
 
     static createElement(option : Option) : JQuery{
         let result = $("<li></li>", {
-            "class": "option-li"
+            "class": "option-li btn btn-default"
         });
         $(htmlEscape `<p>${option.name}</p>`, {
             "class": "text-center"
@@ -359,7 +360,7 @@ class OptionButton {
     }
 
     attach() : void {
-        $("options_div").append(this.domElement);
+        this.domElement.appendTo($("#options-div"))
     }
 
 }
@@ -369,19 +370,19 @@ class SlotManager {
     slot:Slot;
     slotSelector : JQuery;
     troopManager: TroopManager;
-    active : boolean;
 
     static optionsList = $("#options-div");
+    static activeSlotManager : SlotManager = null;
 
     constructor(slot:Slot, slotSelector:JQuery, troopManager: TroopManager) {
         this.slot = slot;
         this.slotSelector = slotSelector;
         this.troopManager = troopManager;
-        this.active = false;
 
+        let slotManager = this;
         slotSelector.on("click", function(){
-            if (!this.active){
-                this.activate()
+            if (slotManager != SlotManager.activeSlotManager){
+                slotManager.activate()
             }
         });
 
@@ -389,16 +390,18 @@ class SlotManager {
     }
 
     activate() : void {
-        SlotManager.optionsList.html();
+        SlotManager.optionsList.empty();
         this.addOptions();
 
-        this.active = true;
+        SlotManager.activeSlotManager = this;
     }
 
     addOptions() : void {
         for (let option of this.slot.getOptions()){
             let button = new OptionButton(option, this);
             button.attach();
+            console.log("Attached button");
+            console.log(button)
         }
     }
 
@@ -441,10 +444,12 @@ class TroopManager {
     constructor(troop: Troop, troopIdx : number) {
         this.troop = troop;
         this.troopIdx = troopIdx;
-        this.troop.addOnRecompute(this.updateStats);
+
+        let closureThis = this;
+        this.troop.addOnRecompute((troop) => closureThis.updateStats(troop));
         this.slots = [];
 
-        this.hpStatElem = null;
+        this.hpStatElem = null; // TODO
         this.dmgStatElem = null;
         this.moveRangeStatElem = null;
         this.atkRangeStatElem = null;

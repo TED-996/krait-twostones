@@ -221,13 +221,14 @@ var OptionButton = (function () {
         this.option = option;
         this.slotManager = slotManager;
         this.domElement = OptionButton.createElement(option);
-        this.domElement.on("click", function (o) {
-            this.slotManager.selectOption(this.option);
+        var optionButton = this;
+        this.domElement.on("click", function () {
+            optionButton.slotManager.selectOption(optionButton.option);
         });
     }
     OptionButton.createElement = function (option) {
         var result = $("<li></li>", {
-            "class": "option-li"
+            "class": "option-li btn btn-default"
         });
         $((_a = ["<p>", "</p>"], _a.raw = ["<p>", "</p>"], htmlEscape(_a, option.name)), {
             "class": "text-center"
@@ -239,7 +240,7 @@ var OptionButton = (function () {
         var _a, _b;
     };
     OptionButton.prototype.attach = function () {
-        $("options_div").append(this.domElement);
+        this.domElement.appendTo($("#options-div"));
     };
     return OptionButton;
 }());
@@ -248,24 +249,26 @@ var SlotManager = (function () {
         this.slot = slot;
         this.slotSelector = slotSelector;
         this.troopManager = troopManager;
-        this.active = false;
+        var slotManager = this;
         slotSelector.on("click", function () {
-            if (!this.active) {
-                this.activate();
+            if (slotManager != SlotManager.activeSlotManager) {
+                slotManager.activate();
             }
         });
         this.updateDomSlot();
     }
     SlotManager.prototype.activate = function () {
-        SlotManager.optionsList.html();
+        SlotManager.optionsList.empty();
         this.addOptions();
-        this.active = true;
+        SlotManager.activeSlotManager = this;
     };
     SlotManager.prototype.addOptions = function () {
         for (var _i = 0, _a = this.slot.getOptions(); _i < _a.length; _i++) {
             var option = _a[_i];
             var button = new OptionButton(option, this);
             button.attach();
+            console.log("Attached button");
+            console.log(button);
         }
     };
     SlotManager.prototype.selectOption = function (option) {
@@ -290,13 +293,15 @@ var SlotManager = (function () {
     return SlotManager;
 }());
 SlotManager.optionsList = $("#options-div");
+SlotManager.activeSlotManager = null;
 var TroopManager = (function () {
     function TroopManager(troop, troopIdx) {
         this.troop = troop;
         this.troopIdx = troopIdx;
-        this.troop.addOnRecompute(this.updateStats);
+        var closureThis = this;
+        this.troop.addOnRecompute(function (troop) { return closureThis.updateStats(troop); });
         this.slots = [];
-        this.hpStatElem = null;
+        this.hpStatElem = null; // TODO
         this.dmgStatElem = null;
         this.moveRangeStatElem = null;
         this.atkRangeStatElem = null;
