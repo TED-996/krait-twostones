@@ -29,8 +29,8 @@ def get_response(request):
 
     if not fail:
         if result == 1:
-            redirect_url = "/login_success?login_as={}".format(urllib.quote_plus(username))
+            redirect_url = "/dashboard?user={}".format(urllib.quote_plus(username))
         else:
-            redirect_url = "/login_fail?errors=" + urllib.quote_plus(json.dumps(["Invalid password."]))
+            redirect_url = "/login_fail"
 
     return krait.Response("HTTP/1.1", 302, [("Location", redirect_url)], "")
