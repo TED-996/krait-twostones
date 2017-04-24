@@ -231,9 +231,3 @@ create or replace package body user_Ops as
         end if;
     end checkSaltedPassword;
 end;
-/
-set serveroutput on;
-begin
-  dbms_output.put_line(user_ops.getSaltedPassword('abc',null));
-  dbms_output.put_line(user_ops.checkSaltedPassword('asmith', 'abc'));
-end;

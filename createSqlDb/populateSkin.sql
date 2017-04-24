@@ -1,4 +1,3 @@
-set serveroutput on;
 declare
 v_id skin.id%type;
 begin
