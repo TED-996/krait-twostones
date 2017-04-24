@@ -16,7 +16,12 @@
 
     <!--<script type="application/json" src="/get_loadout?id=@ctrl.loadout_id@" id="loadout-json"></script>
     <script type="application/json" src="/get_options" id="available-json"></script>-->
-    <script type="text/javascript">loadout_url = "/get_loadout?id=@ctrl.loadout_id@"</script>
+    <script type="text/javascript">loadoutUrl = "/get_loadout?id=@ctrl.loadout_id@"</script>
+    <script type="text/javascript" src="/js/ajax_raw.js"></script>
+    <script type="text/javascript">
+        loadoutJson = ajax_raw_sync(loadoutUrl);
+        optionsJson = ajax_raw_sync("/get_options");
+    </script>
 </head>
 
 <body>
@@ -56,7 +61,7 @@
         </ol>
 
         <div class="container-fluid footer">
-            <ul class="list-inline col-md-9" id="options-div">
+            <ul class="list-inline col-md-9 container" id="options-div">
 
             </ul>
             <div class="container-fluid col-md-3">
@@ -73,6 +78,6 @@
     <script type="text/javascript" src="/js/jquery-1.12.4.js"></script>
     <script type="text/javascript" src="/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/js/edit_loadout.js"></script>
-    <script type="text/javascript">loadout_init(loadout_url)</script>
+    <script type="text/javascript">loadoutInit()</script>
 </body>
 </html>

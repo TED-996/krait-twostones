@@ -10,10 +10,20 @@ th {
     transform: translateY(40%);
 }
 
-#site-wrapper {
-    padding-top: 15%
-}
 
 #site-navbar {
     height: 15%;
+}
+
+@media (max-width: 880px) {
+    .navbar-brand {
+        display:none;
+    }
+}
+
+@media (max-width: 800px){
+    #site-navbar {
+        min-height: 15%;
+        position:absolute;
+    }
 }

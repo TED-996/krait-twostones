@@ -8,7 +8,7 @@ interface Option {
 }
 
 function statsToStrings(maxHp:number, dmg:number, atkRange:number, moveRange:number):string[] {
-    return ["HP: " + maxHp, "DMG: " + dmg, "Atk Range: " + atkRange, "Move Range: " + moveRange]
+    return [`${maxHp}/${dmg}/${atkRange}/${moveRange}`]
 }
 
 function htmlEscape(literals, ...placeholders) {
@@ -292,7 +292,7 @@ class ModifierSlot implements Slot {
     }
 
     getOptions():Option[] {
-        return options.modifierOptions;
+        return options.modifierOptions.concat([null]);
     }
 
     selectOption(option:Option) : void {
@@ -347,14 +347,22 @@ class OptionButton {
 
     static createElement(option : Option) : JQuery{
         let result = $("<li></li>", {
-            "class": "option-li btn btn-default"
+            "class": "option-li btn btn-default col-md-2 col-sm-4 col-xs-6"
         });
-        $(htmlEscape `<p>${option.name}</p>`, {
+        let name = "empty";
+        let stats = ["empty"];
+
+        if (option != null){
+            name = option.name;
+            stats = option.stats;
+        }
+
+        $(htmlEscape `<p>${name}</p>`, {
             "class": "text-center"
         }).appendTo(result);
-        $(htmlEscape `<p>${option.stats.join("; ")}</p>`, {
+        $(htmlEscape `<p>${stats.join("; ")}</p>`, {
             "class": "text-center"
-        });
+        }).appendTo(result);
 
         return result;
     }
@@ -414,8 +422,8 @@ class SlotManager {
         let domImg = this.slotSelector.find(".item-img");
         domImg.attr("src", "about:blank");
 
-        let name = "";
-        let stats = "";
+        let name = "empty";
+        let stats = "empty";
 
         if (this.slot.selectedOption != null){
             name = this.slot.selectedOption.name;
@@ -425,7 +433,7 @@ class SlotManager {
         let domName = this.slotSelector.find(".item-name");
         domName.html(htmlEscape `${name}`);
 
-        let domStats = this.slotSelector.find(".item-stats");
+        let domStats = this.slotSelector.find(".item-stats-text");
         domStats.html(htmlEscape `${stats}`);
     }
 }
@@ -449,7 +457,7 @@ class TroopManager {
         this.troop.addOnRecompute((troop) => closureThis.updateStats(troop));
         this.slots = [];
 
-        this.hpStatElem = null; // TODO
+        this.hpStatElem = null;
         this.dmgStatElem = null;
         this.moveRangeStatElem = null;
         this.atkRangeStatElem = null;
@@ -480,29 +488,13 @@ class TroopManager {
     }
 }
 
-function loadout_init(loadout_url : string) : void {
-    let optionsFromJson : string = null;
-    let loadoutFromJson : string = null;
 
-    $.ajax({
-        url: loadout_url,
-        async: false,
-        dataType: "json",
-        success: function(response){
-            loadoutFromJson = response
-        }
-    });
+declare let optionsJson : string;
+declare let loadoutJson : string;
 
-    $.ajax({
-        url: "/get_options",
-        async: false,
-        dataType: "json",
-        success: function(response){
-            optionsFromJson = response
-        }
-    });
 
-    options = AllOptions.fromObj(optionsFromJson);
-    loadout = Loadout.fromObj(loadoutFromJson);
+function loadoutInit() : void {
+    options = AllOptions.fromObj(JSON.parse(optionsJson));
+    loadout = Loadout.fromObj(JSON.parse(loadoutJson));
     loadout.troops.map((val, idx) => new TroopManager(val, idx));
 }
