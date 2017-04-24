@@ -18,7 +18,7 @@ def get_connection():
 def get_connection_on_port(ip, port):
     global password
 
-    username = "WegasAdmin"
+    username = "wegasAdmin"
     # global password
     sid = "xe"
 

@@ -258,4 +258,4 @@ create sequence matchTroopIdSeq
     start with 1;
 
 create index skinByClass on skin(classId);
-create index troopModfierByTroop on troopModifier(troopId)
+create index troopModfierByTroop on troopModifier(troopId);
