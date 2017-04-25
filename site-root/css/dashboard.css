@@ -2,7 +2,7 @@ body {
     /*font-family: "Lato", sans-serif;*/
     transition: background-color .5s;
     height: 100%;
-    background-image: url(".../img/background.jpg");
+    background-image: url("../img/background.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -30,9 +30,24 @@ body {
     height: 30%
 }
 
+.loader {
+    display: block;
+    margin: auto;
+    border: 16px solid #f3f3f3;
+    border-top: 16px solid #000;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin{
+    0% { transform: rotate(0deg);}
+    100% {transform: rotate(360deg);}
+}
 .topButton {
     border-radius: 7px;
-    background-image: url(".../img/candles1.jpg");
+    background-image: url("../img/candles1.jpg");
     background-position: center;
     background-size: 20ch;
     border: none;
