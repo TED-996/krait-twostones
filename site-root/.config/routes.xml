@@ -19,5 +19,9 @@
 		<verb>POST</verb>
 		<regex>/login_test</regex>
 	</route>
+	<route>
+		<verb>POST</verb>
+		<regex>/register_test</regex>
+	</route>
 	<route default="true"/>
 </routes>
