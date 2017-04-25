@@ -18,6 +18,10 @@ th {
     height: 15%;
 }
 
+#header-sm-brand {
+    margin-right: 20px;
+}
+
 .loader {
     border: 7px solid #f3f3f3;
     /* Light grey */
