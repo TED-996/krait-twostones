@@ -12,11 +12,11 @@ def get_response(request):
     password = post_form.get("password")
 
     if username is None or password is None:
-        return krait.Response("HTTP/1.1", 400, {}, "<html><body><h1>400 Bad Request</h1></body></html>")
+        return krait.ResponseBadRequest()
 
     redirect_url = "/login"
     try:
-        db_conn = db_ops.get_connection();
+        db_conn = db_ops.get_connection()
         cursor = db_conn.cursor()
         cursor.callproc("user_ops.addPlayer", [username, password])
         db_conn.commit()
@@ -25,5 +25,5 @@ def get_response(request):
         redirect_url = "/register_fail"
         redirect_url += "?errors=" + urllib.quote_plus(json.dumps(error_messages))
 
-    return krait.Response("HTTP/1.1", 302, [("Location", redirect_url)], "")
+    return krait.ResponseRedirect(redirect_url)
 
