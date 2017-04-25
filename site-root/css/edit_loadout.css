@@ -1,5 +1,7 @@
 .troop {
     width: 100%;
+    border: 1px solid black;
+    padding: 15px;
 }
 
 .loadout-item, .troop-stats-sum {
@@ -20,7 +22,21 @@
     position:fixed;
     bottom:0;
     background-color: #eeeeee;
+    padding: 15px;
 }
+
+@media (max-width: 991px) {
+    .footer {
+        height:auto;
+        position:static;
+        bottom:auto;
+    }
+
+    #troop-list {
+        padding-bottom:inherit;
+    }
+}
+
 
 
 #options-div {
@@ -37,4 +53,8 @@
 
 .item-img {
 	display: none;
+}
+
+.loadout-item {
+    height: 100%;
 }

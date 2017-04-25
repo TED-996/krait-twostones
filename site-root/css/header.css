@@ -10,14 +10,30 @@ th {
     transform: translateY(40%);
 }
 
-#site-wrapper {
-    padding-top: 15%
-}
 
 #site-navbar {
     height: 15%;
 }
 
+<<<<<<< HEAD
+#header-sm-brand {
+    margin-right: 20px;
+}
+
+=======
+<<<<<<< HEAD
+@media (max-width: 880px) {
+    .navbar-brand {
+        display:none;
+    }
+}
+
+@media (max-width: 800px){
+    #site-navbar {
+        min-height: 15%;
+        position:absolute;
+=======
+>>>>>>> 2cccdd734c4155d409401c394cc609dabfe8f3be
 .loader {
     border: 7px solid #f3f3f3;
     /* Light grey */
@@ -35,5 +51,6 @@ th {
     }
     100% {
         transform: rotate(360deg);
+>>>>>>> 7c633182c72a1690a01ab095d0806c50c2abd781
     }
 }
