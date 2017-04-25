@@ -10,44 +10,24 @@ th {
     transform: translateY(40%);
 }
 
-/*
-#site-navbar {
-    height: 15%;
-}*/
-
 #header-sm-brand {
     margin-right: 20px;
 }
-/*
-@media (max-width: 880px) {
-    .navbar-brand {
-        display:none;
-    }
-}*/
 
-@media (max-width: 800px){
+#site-wrapper{
+    margin-top: 100px;
+}
+
+#site-navbar {
+    height:100px;
+}
+
+@media(max-height: 991px) {
+    #site-wrapper{
+        margin-top: 50px;
+    }
+
     #site-navbar {
-        /*min-height: 15%;*/
-        /*position: absolute;*/
-    }
-
-    .loader {
-        border: 7px solid #f3f3f3;
-        /* Light grey */
-        border-top: 7px solid #3498db;
-        /* Blue */
-        border-radius: 50%;
-        width: 60px;
-        height: 60px;
-        animation: spin 2s linear infinite;
-    }
-
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-        100% {
-            transform: rotate(360deg);
-        }
+        height: 50px;
     }
 }
