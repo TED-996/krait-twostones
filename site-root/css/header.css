@@ -22,7 +22,7 @@ th {
     height:100px;
 }
 
-@media(max-height: 991px) {
+@media(max-width: 991px) {
     #site-wrapper{
         margin-top: 50px;
     }
