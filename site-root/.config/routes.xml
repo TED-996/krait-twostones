@@ -23,5 +23,9 @@
 		<verb>POST</verb>
 		<regex>/register_test</regex>
 	</route>
+	<route>
+		<verb>POST</verb>
+		<regex>/save_loadout</regex>
+	</route>
 	<route default="true"/>
 </routes>
