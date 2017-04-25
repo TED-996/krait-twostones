@@ -1,5 +1,5 @@
 /// <reference path="node_modules/@types/phaser/phaser.d.ts" />
-
+/// <reference path="ajax_raw.ts"/>
 import Game = Phaser.Game;
 class Tile {
     x : number;
@@ -36,11 +36,26 @@ class Tileset {
 class Map {
     // add here!
     tileset : Tileset;
+    height : number;
+    width : number;
+    tileArray : Array<Tile>;
+    tileCount : number;
 
 
     constructor(map_url){
         let map_data = ajax_raw_sync(map_url);
         let map_json = JSON.parse(map_data);
+        let tempTileset = JSON.parse(map_json.tilesets);
+        this.tileset = new Tileset(tempTileset.image,tempTileset.firstgid,tempTileset.columns,tempTileset.spacing,tempTileset.tileheight,tempTileset.tilewidth);
+        this.height = map_json.height;
+        this.width = map_json.width;
+        this.tileCount = tempTileset.tilecount;
+        let tempData = JSON.parse(JSON.parse(map_json).layers[0]).data;
+        for(var _i = 0;_i < this.tileCount;_i++){
+            let tempTile = new Tile(tempData[_i*3],tempData[_i*3 + 1],tempData[_i*3 + 2],0);
+            this.tileArray.push(tempTile);
+        }
+        
         // map_json e efectiv un obiect JS (nu dictionar)
         // de exemplu, in {"abc": "def", "zzz": "23"}, json.parse("...").abc = "def" (nu "abc", ["abc"], etc
         // seteaza membri (nu uita sa-i adaugi sus), construieste this.tileset
