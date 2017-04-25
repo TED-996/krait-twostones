@@ -10,21 +10,21 @@ def get_response(request):
     post_form = request.get_post_form()
     username = post_form.get("username")
     password = post_form.get("password")
-	
-	
+    
+    print username
     if username is None or password is None:
         return krait.Response("HTTP/1.1", 400, {}, "<html><body><h1>400 Bad Request</h1></body></html>")
 
-	redirect_url = "/login"
-	try:
-		db_conn = db_ops.get_connection();
-		cursor = db_conn.cursor()
-		cursor.callproc("user_ops.addPlayer", [username, password])
-		db_conn.commit()
-	except cx_Oracle.DatabaseError, exception:
-		error_messages = ["Could not add user {}: {}".format(username, exception.args[0].message)]
-		redirect_url = "/register_fail"
-		redirect_url += "?errors=" + urllib.quote_plus(json.dumps(error_messages))
-	
-	return krait.Response("HTTP/1.1", 302, [("Location", redirect_url)], "")
+    redirect_url = "/login"
+    try:
+        db_conn = db_ops.get_connection()
+        cursor = db_conn.cursor()
+        cursor.callproc("user_ops.addPlayer", [username, password])
+        db_conn.commit()
+    except cx_Oracle.DatabaseError, exception:
+        error_messages = ["Could not add user {}: {}".format(username, exception.args[0].message)]
+        redirect_url = "/register_fail"
+        redirect_url += "?errors=" + urllib.quote_plus(json.dumps(error_messages))
+    
+    return krait.Response("HTTP/1.1", 302, [("Location", redirect_url)], "")
 
