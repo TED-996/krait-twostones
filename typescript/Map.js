@@ -25,12 +25,11 @@ var Map = (function () {
     function Map(map_url) {
         var map_data = ajax_raw_sync(map_url);
         var map_json = JSON.parse(map_data);
-        var tempTileset = JSON.parse(map_json.tilesets);
-        this.tileset = new Tileset(tempTileset.image, tempTileset.firstgid, tempTileset.columns, tempTileset.spacing, tempTileset.tileheight, tempTileset.tilewidth);
+        this.tileset = new Tileset(map_json.tilesets.image, map_json.tilesets.firstgid, map_json.tilesets.columns, map_json.tilesets.spacing, map_json.tilesets.tileheight, map_json.tilesets.tilewidth);
         this.height = map_json.height;
         this.width = map_json.width;
-        this.tileCount = tempTileset.tilecount;
-        var tempData = JSON.parse(JSON.parse(map_json).layers[0]).data;
+        this.tileCount = map_json.layers[0].data.length;
+        var tempData = map_json.layers[0].data;
         for (var _i = 0; _i < this.tileCount; _i++) {
             var tempTile = new Tile(tempData[_i * 3], tempData[_i * 3 + 1], tempData[_i * 3 + 2], 0);
             this.tileArray.push(tempTile);

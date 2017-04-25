@@ -28,20 +28,15 @@ var Map = (function () {
     function Map(map_url) {
         var map_data = ajax_raw_sync(map_url);
         var map_json = JSON.parse(map_data);
-        var tempTileset = JSON.parse(map_json.tilesets);
-        this.tileset = new Tileset(tempTileset.image, tempTileset.firstgid, tempTileset.columns, tempTileset.spacing, tempTileset.tileheight, tempTileset.tilewidth);
+        this.tileset = new Tileset(map_json.tilesets[0].image, map_json.tilesets[0].firstgid, map_json.tilesets[0].columns, map_json.tilesets[0].spacing, map_json.tilesets[0].tileheight, map_json.tilesets[0].tilewidth);
         this.height = map_json.height;
         this.width = map_json.width;
-        this.tileCount = tempTileset.tilecount;
-        var tempData = JSON.parse(JSON.parse(map_json).layers[0]).data;
+        this.tileCount = map_json.layers[0].data.length;
+        var tempData = map_json.layers[0].data;
         for (var idx = 0; idx < this.tileCount; idx++) {
             var tempTile = new Tile(idx % this.width, idx / this.width, tempData[idx], 0);
             this.tileArray.push(tempTile);
         }
-        // map_json e efectiv un obiect JS (nu dictionar)
-        // de exemplu, in {"abc": "def", "zzz": "23"}, json.parse("...").abc = "def" (nu "abc", ["abc"], etc
-        // seteaza membri (nu uita sa-i adaugi sus), construieste this.tileset
-        // in typescript e important "this.", altfel nu merge
     }
     Map.prototype.getTiles = function () {
         return this.tileArray;
