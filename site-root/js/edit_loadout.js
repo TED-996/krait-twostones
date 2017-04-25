@@ -167,16 +167,16 @@ var loadout = null;
 var ClassSlot = (function () {
     function ClassSlot(troop) {
         this.troop = troop;
-        this.selectedOption = troop.troopClass;
     }
     ClassSlot.prototype.getOptions = function () {
         return options.troopClassOptions;
     };
     ClassSlot.prototype.selectOption = function (option) {
-        var optionAsClass = option;
-        this.selectedOption = option;
-        this.troop.troopClass = optionAsClass;
+        this.troop.troopClass = option;
         this.troop.recompute();
+    };
+    ClassSlot.prototype.getSelectedOption = function () {
+        return this.troop.troopClass;
     };
     return ClassSlot;
 }());
@@ -184,14 +184,12 @@ var ModifierSlot = (function () {
     function ModifierSlot(troop, modifierIdx) {
         this.troop = troop;
         this.modifierIdx = modifierIdx;
-        this.selectedOption = this.troop.modifiers[this.modifierIdx];
     }
     ModifierSlot.prototype.getOptions = function () {
         return options.modifierOptions.concat([null]);
     };
     ModifierSlot.prototype.selectOption = function (option) {
         var optionAsModifier = option;
-        this.selectedOption = option;
         for (var idx in this.troop.modifiers) {
             if (this.troop.modifiers[idx] == optionAsModifier) {
                 this.troop.modifiers[idx] = null;
@@ -200,19 +198,23 @@ var ModifierSlot = (function () {
         this.troop.modifiers[this.modifierIdx] = optionAsModifier;
         this.troop.recompute();
     };
+    ModifierSlot.prototype.getSelectedOption = function () {
+        return this.troop.modifiers[this.modifierIdx];
+    };
     return ModifierSlot;
 }());
 var SkinSlot = (function () {
     function SkinSlot(troop) {
         this.troop = troop;
-        this.selectedOption = troop.skin;
     }
     SkinSlot.prototype.getOptions = function () {
         return options.skinOptions;
     };
     SkinSlot.prototype.selectOption = function (option) {
         this.troop.skin = option;
-        this.selectedOption = option;
+    };
+    SkinSlot.prototype.getSelectedOption = function () {
+        return this.troop.skin;
     };
     return SkinSlot;
 }());
@@ -286,9 +288,9 @@ var SlotManager = (function () {
         domImg.attr("src", "about:blank");
         var name = "empty";
         var stats = "empty";
-        if (this.slot.selectedOption != null) {
-            name = this.slot.selectedOption.name;
-            stats = this.slot.selectedOption.stats.join(", ");
+        if (this.slot.getSelectedOption() != null) {
+            name = this.slot.getSelectedOption().name;
+            stats = this.slot.getSelectedOption().stats.join(", ");
         }
         var domName = this.slotSelector.find(".item-name");
         domName.html((_a = ["", ""], _a.raw = ["", ""], htmlEscape(_a, name)));
@@ -331,6 +333,10 @@ var TroopManager = (function () {
         this.dmgStatElem.html(troop.dmg.toString());
         this.moveRangeStatElem.html(troop.moveRange.toString());
         this.atkRangeStatElem.html(troop.atkRange.toString());
+        for (var _i = 0, _a = this.slots; _i < _a.length; _i++) {
+            var slot = _a[_i];
+            slot.updateDomSlot();
+        }
     };
     return TroopManager;
 }());

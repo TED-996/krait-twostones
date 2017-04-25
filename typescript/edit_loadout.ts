@@ -251,19 +251,16 @@ let loadout : Loadout = null;
 
 
 interface Slot {
-    selectedOption : Option;
-
     getOptions() : Option[];
     selectOption(option:Option) : void;
+    getSelectedOption() : Option;
 }
 
 class ClassSlot implements Slot {
-    selectedOption:Option;
     troop:Troop;
 
     constructor(troop:Troop) {
         this.troop = troop;
-        this.selectedOption = troop.troopClass;
     }
 
     getOptions():Option[] {
@@ -271,15 +268,16 @@ class ClassSlot implements Slot {
     }
 
     selectOption(option:Option) : void {
-        let optionAsClass = <TroopClass> option;
-        this.selectedOption = option;
-        this.troop.troopClass = optionAsClass;
+        this.troop.troopClass = <TroopClass> option;
         this.troop.recompute();
+    }
+
+    getSelectedOption(): Option {
+        return this.troop.troopClass;
     }
 }
 
 class ModifierSlot implements Slot {
-    selectedOption:Option;
     troop:Troop;
     modifierIdx:number;
 
@@ -287,8 +285,6 @@ class ModifierSlot implements Slot {
     constructor(troop:Troop, modifierIdx:number) {
         this.troop = troop;
         this.modifierIdx = modifierIdx;
-
-        this.selectedOption = this.troop.modifiers[this.modifierIdx];
     }
 
     getOptions():Option[] {
@@ -297,7 +293,6 @@ class ModifierSlot implements Slot {
 
     selectOption(option:Option) : void {
         let optionAsModifier = <Modifier> option;
-        this.selectedOption = option;
 
         for (let idx in this.troop.modifiers){
             if (this.troop.modifiers[idx] == optionAsModifier){
@@ -308,15 +303,18 @@ class ModifierSlot implements Slot {
         this.troop.modifiers[this.modifierIdx] = optionAsModifier;
         this.troop.recompute();
     }
+
+    getSelectedOption(): Option {
+        return this.troop.modifiers[this.modifierIdx];
+    }
+
 }
 
 class SkinSlot implements Slot {
-    selectedOption:Option;
     troop:Troop;
 
     constructor(troop:Troop) {
         this.troop = troop;
-        this.selectedOption = troop.skin;
     }
 
     getOptions():Option[] {
@@ -325,7 +323,10 @@ class SkinSlot implements Slot {
 
     selectOption(option:Option) : void {
         this.troop.skin = <Skin>option;
-        this.selectedOption = option;
+    }
+
+    getSelectedOption() : Option {
+        return this.troop.skin;
     }
 }
 
@@ -425,9 +426,9 @@ class SlotManager {
         let name = "empty";
         let stats = "empty";
 
-        if (this.slot.selectedOption != null){
-            name = this.slot.selectedOption.name;
-            stats = this.slot.selectedOption.stats.join(", ");
+        if (this.slot.getSelectedOption() != null){
+            name = this.slot.getSelectedOption().name;
+            stats = this.slot.getSelectedOption().stats.join(", ");
         }
 
         let domName = this.slotSelector.find(".item-name");
@@ -485,6 +486,10 @@ class TroopManager {
         this.dmgStatElem.html(troop.dmg.toString());
         this.moveRangeStatElem.html(troop.moveRange.toString());
         this.atkRangeStatElem.html(troop.atkRange.toString());
+
+        for (let slot of this.slots){
+            slot.updateDomSlot();
+        }
     }
 }
 
