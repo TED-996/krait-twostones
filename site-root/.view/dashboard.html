@@ -12,6 +12,7 @@
 
 <body>
     @import ".view/header.html"@
+    <div id="site-wrapper">
     <div id="loadoutMenu" class="sidenav">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
         <button class="accordion">loadout 1</button>
@@ -20,7 +21,7 @@
             <p>Infantry:2</p>
             <p>Archers:3</p>
             <p>Runners:1</p>
-            <button id="1" class="edit">EDIT</button>
+            <button id="1" class="edit"><a href="edit_loadout?loadout_id=10">EDIT</a></button>
         </div>
         <button class="accordion">loadout 2</button>
         <div class="stats">
@@ -28,7 +29,7 @@
             <p>Infantry:2</p>
             <p>Archers:3</p>
             <p>Runners:1</p>
-            <button id="2" class="edit">EDIT</button>
+            <button id="2" class="edit"><a href="edit_loadout?loadout_id=10">EDIT</a></button>
         </div>
         <button class="accordion">loadout 3</button>
         <div class="stats">
@@ -36,7 +37,7 @@
             <p>Infantry:2</p>
             <p>Archers:3</p>
             <p>Runners:1</p>
-            <button id="3" class="edit">EDIT</button>
+            <button id="3" class="edit"><a href="edit_loadout?loadout_id=20">EDIT</a></button>
         </div>
         <button class="accordion">loadout 4</button>
         <div class="stats">
@@ -45,7 +46,7 @@
             <p>Archers:3</p>
             <p>Runners:1</p>
             <p>EDIT</p>
-            <button id="4" class="edit">EDIT</button>
+            <button id="4" class="edit"><a href="edit_loadout?loadout_id=11">EDIT</a></button>
         </div>
     </div>
 
@@ -61,6 +62,8 @@
         <div id="play">
             <button id="findMatchBtn" class="button">Find Match</button>
         </div>
+    </div>
+
     </div>
     <div id="searchMatch" class="modal">
         <div class="modal-content">
