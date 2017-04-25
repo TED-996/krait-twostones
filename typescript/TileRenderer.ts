@@ -110,18 +110,22 @@ class TileSourceUtils {
 
 class TileRenderer {
     sources : SortedTileSource[];
-    group : Phaser.Group;
-    game : Phaser.Game;
+    tileset : Tileset;
+    spriteBatch : Phaser.SpriteBatch;
+
 
     constructor(immutableSources : TileSource[],
                 sortedSources : SortedTileSource[],
                 mutableSources : TileSource[],
+                tileset : Tileset,
                 game : Phaser.Game){
         this.sources =
             [<SortedTileSource>new ImmutableTileSource(TileSourceUtils.concatSort(immutableSources))]
                 .concat(sortedSources).concat(mutableSources.map(s => new SortingTileSource(s)));
 
-        this.group = game.add.group(null, "tiles", true, false);
+        this.tileset = tileset;
+        this.spriteBatch = game.add.spriteBatch(null, "tiles", true);
+        this.spriteBatch.cacheAsBitmap = true;
         this.init();
     }
 
@@ -130,9 +134,18 @@ class TileRenderer {
     }
 
     public update() : void{
-        this.group.removeAll();
+        this.spriteBatch.removeAll();
+        let tileWidth = this.tileset.tileWidth;
+        let tileHeight = this.tileset.tileHeight;
+        let hexSizeLength = tileHeight / 2;
+
         for (let t  of TileSourceUtils.concatMerge(this.sources)){
-            this.group.add(new Phaser.Spri)
+            this.spriteBatch.create(
+                t.x * tileWidth + (t.y % 2 == 0 ? 0 : tileWidth / 2),
+                t.y * hexSizeLength,
+                this.tileset.sourceImage,
+                t.tileIndex
+            );
         }
     }
 }

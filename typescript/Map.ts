@@ -31,6 +31,11 @@ class Tileset {
         this.tileHeight = tileHeight;
         this.tileWidth = tileWidth;
     }
+
+    public load(game : Phaser.Game) : void {
+        game.load.spritesheet(this.sourceImage, "/map/" + this.sourceImage, this.tileWidth,
+            this.tileHeight, -1, 0, this.spacing, 0);
+    }
 }
 
 class Map {
@@ -51,8 +56,8 @@ class Map {
         this.width = map_json.width;
         this.tileCount = tempTileset.tilecount;
         let tempData = JSON.parse(JSON.parse(map_json).layers[0]).data;
-        for(var _i = 0;_i < this.tileCount;_i++){
-            let tempTile = new Tile(tempData[_i*3],tempData[_i*3 + 1],tempData[_i*3 + 2],0);
+        for(var idx = 0;idx < this.tileCount;idx++){
+            let tempTile = new Tile(idx % this.width, idx / this.width, tempData[idx], 0);
             this.tileArray.push(tempTile);
         }
         
@@ -60,5 +65,10 @@ class Map {
         // de exemplu, in {"abc": "def", "zzz": "23"}, json.parse("...").abc = "def" (nu "abc", ["abc"], etc
         // seteaza membri (nu uita sa-i adaugi sus), construieste this.tileset
         // in typescript e important "this.", altfel nu merge
+
+    }
+
+    public getTiles() : Tile[] {
+        return this.tileArray;
     }
 }

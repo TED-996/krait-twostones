@@ -1,4 +1,6 @@
 /// <reference path="node_modules/@types/phaser/phaser.d.ts" />
+/// <reference path="Map.ts" />
+/// <reference path="TileRenderer.ts" />
 var WegasGame = (function () {
     function WegasGame() {
         // create our phaser game
@@ -17,6 +19,10 @@ var WegasGame = (function () {
     WegasGame.prototype.preload = function () {
         this.game.load.image('moveSprite', "assets/moveSprite.jpg");
         this.game.stage.backgroundColor = 0xB20059;
+        this.map = new Map("/map/map");
+        this.map.tileset.load(this.game);
+        tileRenderer =
+        ;
     };
     WegasGame.prototype.create = function () {
         var logo = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'moveSprite');

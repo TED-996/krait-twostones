@@ -1,9 +1,13 @@
 /// <reference path="node_modules/@types/phaser/phaser.d.ts" />
+/// <reference path="Map.ts" />
+/// <reference path="TileRenderer.ts" />
 
 class WegasGame
 {
     game:Phaser.Game;
     cursors:Phaser.CursorKeys;
+    map : Map;
+    tileRenderer : TileRenderer;
 
     constructor()
     {
@@ -26,6 +30,10 @@ class WegasGame
         this.game.load.image( 'moveSprite', "assets/moveSprite.jpg" );
         this.game.stage.backgroundColor = 0xB20059;
 
+        this.map = new Map("/map/map");
+        this.map.tileset.load(this.game);
+
+        tileRenderer =
     }
 
     create()

@@ -83,21 +83,26 @@ var TileSourceUtils = (function () {
     return TileSourceUtils;
 }());
 var TileRenderer = (function () {
-    function TileRenderer(immutableSources, sortedSources, mutableSources, game) {
+    function TileRenderer(immutableSources, sortedSources, mutableSources, tileset, game) {
         this.sources =
             [new ImmutableTileSource(TileSourceUtils.concatSort(immutableSources))]
                 .concat(sortedSources).concat(mutableSources.map(function (s) { return new SortingTileSource(s); }));
-        this.group = game.add.group(null, "tiles", true, false);
+        this.tileset = tileset;
+        this.spriteBatch = game.add.spriteBatch(null, "tiles", true);
+        this.spriteBatch.cacheAsBitmap = true;
         this.init();
     }
     TileRenderer.prototype.init = function () {
         this.update();
     };
     TileRenderer.prototype.update = function () {
-        this.group.removeAll();
+        this.spriteBatch.removeAll();
+        var tileWidth = this.tileset.tileWidth;
+        var tileHeight = this.tileset.tileHeight;
+        var hexSizeLength = tileHeight / 2;
         for (var _i = 0, _a = TileSourceUtils.concatMerge(this.sources); _i < _a.length; _i++) {
             var t = _a[_i];
-            this.group.add(new Phaser.Spri);
+            this.spriteBatch.create(t.x * tileWidth + (t.y % 2 == 0 ? 0 : tileWidth / 2), t.y * hexSizeLength, this.tileset.sourceImage, t.tileIndex);
         }
     };
     return TileRenderer;
