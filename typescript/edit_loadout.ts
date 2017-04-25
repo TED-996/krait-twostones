@@ -8,7 +8,7 @@ interface Option {
 }
 
 function statsToStrings(maxHp:number, dmg:number, atkRange:number, moveRange:number):string[] {
-    return ["HP: " + maxHp, "DMG: " + dmg, "Atk Range: " + atkRange, "Move Range: " + moveRange]
+    return [`${maxHp}/${dmg}/${atkRange}/${moveRange}`]
 }
 
 function htmlEscape(literals, ...placeholders) {
@@ -251,19 +251,16 @@ let loadout : Loadout = null;
 
 
 interface Slot {
-    selectedOption : Option;
-
     getOptions() : Option[];
     selectOption(option:Option) : void;
+    getSelectedOption() : Option;
 }
 
 class ClassSlot implements Slot {
-    selectedOption:Option;
     troop:Troop;
 
     constructor(troop:Troop) {
         this.troop = troop;
-        this.selectedOption = troop.troopClass;
     }
 
     getOptions():Option[] {
@@ -271,15 +268,16 @@ class ClassSlot implements Slot {
     }
 
     selectOption(option:Option) : void {
-        let optionAsClass = <TroopClass> option;
-        this.selectedOption = option;
-        this.troop.troopClass = optionAsClass;
+        this.troop.troopClass = <TroopClass> option;
         this.troop.recompute();
+    }
+
+    getSelectedOption(): Option {
+        return this.troop.troopClass;
     }
 }
 
 class ModifierSlot implements Slot {
-    selectedOption:Option;
     troop:Troop;
     modifierIdx:number;
 
@@ -287,17 +285,14 @@ class ModifierSlot implements Slot {
     constructor(troop:Troop, modifierIdx:number) {
         this.troop = troop;
         this.modifierIdx = modifierIdx;
-
-        this.selectedOption = this.troop.modifiers[this.modifierIdx];
     }
 
     getOptions():Option[] {
-        return options.modifierOptions;
+        return options.modifierOptions.concat([null]);
     }
 
     selectOption(option:Option) : void {
         let optionAsModifier = <Modifier> option;
-        this.selectedOption = option;
 
         for (let idx in this.troop.modifiers){
             if (this.troop.modifiers[idx] == optionAsModifier){
@@ -308,15 +303,18 @@ class ModifierSlot implements Slot {
         this.troop.modifiers[this.modifierIdx] = optionAsModifier;
         this.troop.recompute();
     }
+
+    getSelectedOption(): Option {
+        return this.troop.modifiers[this.modifierIdx];
+    }
+
 }
 
 class SkinSlot implements Slot {
-    selectedOption:Option;
     troop:Troop;
 
     constructor(troop:Troop) {
         this.troop = troop;
-        this.selectedOption = troop.skin;
     }
 
     getOptions():Option[] {
@@ -325,7 +323,10 @@ class SkinSlot implements Slot {
 
     selectOption(option:Option) : void {
         this.troop.skin = <Skin>option;
-        this.selectedOption = option;
+    }
+
+    getSelectedOption() : Option {
+        return this.troop.skin;
     }
 }
 
@@ -339,27 +340,36 @@ class OptionButton {
         this.slotManager = slotManager;
         this.domElement = OptionButton.createElement(option);
 
-        this.domElement.on("click", function(o){
-            this.slotManager.selectOption(this.option);
+        let optionButton = this;
+        this.domElement.on("click", function(){
+            optionButton.slotManager.selectOption(optionButton.option);
         });
     }
 
     static createElement(option : Option) : JQuery{
         let result = $("<li></li>", {
-            "class": "option-li"
+            "class": "option-li btn btn-default col-md-2 col-sm-4 col-xs-6"
         });
-        $(htmlEscape `<p>${option.name}</p>`, {
+        let name = "empty";
+        let stats = ["empty"];
+
+        if (option != null){
+            name = option.name;
+            stats = option.stats;
+        }
+
+        $(htmlEscape `<p>${name}</p>`, {
             "class": "text-center"
         }).appendTo(result);
-        $(htmlEscape `<p>${option.stats.join("; ")}</p>`, {
+        $(htmlEscape `<p>${stats.join("; ")}</p>`, {
             "class": "text-center"
-        });
+        }).appendTo(result);
 
         return result;
     }
 
     attach() : void {
-        $("options_div").append(this.domElement);
+        this.domElement.appendTo($("#options-div"))
     }
 
 }
@@ -369,19 +379,19 @@ class SlotManager {
     slot:Slot;
     slotSelector : JQuery;
     troopManager: TroopManager;
-    active : boolean;
 
     static optionsList = $("#options-div");
+    static activeSlotManager : SlotManager = null;
 
     constructor(slot:Slot, slotSelector:JQuery, troopManager: TroopManager) {
         this.slot = slot;
         this.slotSelector = slotSelector;
         this.troopManager = troopManager;
-        this.active = false;
 
+        let slotManager = this;
         slotSelector.on("click", function(){
-            if (!this.active){
-                this.activate()
+            if (slotManager != SlotManager.activeSlotManager){
+                slotManager.activate()
             }
         });
 
@@ -389,16 +399,18 @@ class SlotManager {
     }
 
     activate() : void {
-        SlotManager.optionsList.html();
+        SlotManager.optionsList.empty();
         this.addOptions();
 
-        this.active = true;
+        SlotManager.activeSlotManager = this;
     }
 
     addOptions() : void {
         for (let option of this.slot.getOptions()){
             let button = new OptionButton(option, this);
             button.attach();
+            console.log("Attached button");
+            console.log(button)
         }
     }
 
@@ -411,18 +423,18 @@ class SlotManager {
         let domImg = this.slotSelector.find(".item-img");
         domImg.attr("src", "about:blank");
 
-        let name = "";
-        let stats = "";
+        let name = "empty";
+        let stats = "empty";
 
-        if (this.slot.selectedOption != null){
-            name = this.slot.selectedOption.name;
-            stats = this.slot.selectedOption.stats.join(", ");
+        if (this.slot.getSelectedOption() != null){
+            name = this.slot.getSelectedOption().name;
+            stats = this.slot.getSelectedOption().stats.join(", ");
         }
 
         let domName = this.slotSelector.find(".item-name");
         domName.html(htmlEscape `${name}`);
 
-        let domStats = this.slotSelector.find(".item-stats");
+        let domStats = this.slotSelector.find(".item-stats-text");
         domStats.html(htmlEscape `${stats}`);
     }
 }
@@ -441,7 +453,9 @@ class TroopManager {
     constructor(troop: Troop, troopIdx : number) {
         this.troop = troop;
         this.troopIdx = troopIdx;
-        this.troop.addOnRecompute(this.updateStats);
+
+        let closureThis = this;
+        this.troop.addOnRecompute((troop) => closureThis.updateStats(troop));
         this.slots = [];
 
         this.hpStatElem = null;
@@ -472,32 +486,20 @@ class TroopManager {
         this.dmgStatElem.html(troop.dmg.toString());
         this.moveRangeStatElem.html(troop.moveRange.toString());
         this.atkRangeStatElem.html(troop.atkRange.toString());
+
+        for (let slot of this.slots){
+            slot.updateDomSlot();
+        }
     }
 }
 
-function loadout_init(loadout_url : string) : void {
-    let optionsFromJson : string = null;
-    let loadoutFromJson : string = null;
 
-    $.ajax({
-        url: loadout_url,
-        async: false,
-        dataType: "json",
-        success: function(response){
-            loadoutFromJson = response
-        }
-    });
+declare let optionsJson : string;
+declare let loadoutJson : string;
 
-    $.ajax({
-        url: "/get_options",
-        async: false,
-        dataType: "json",
-        success: function(response){
-            optionsFromJson = response
-        }
-    });
 
-    options = AllOptions.fromObj(optionsFromJson);
-    loadout = Loadout.fromObj(loadoutFromJson);
+function loadoutInit() : void {
+    options = AllOptions.fromObj(JSON.parse(optionsJson));
+    loadout = Loadout.fromObj(JSON.parse(loadoutJson));
     loadout.troops.map((val, idx) => new TroopManager(val, idx));
 }
