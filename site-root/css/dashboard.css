@@ -2,7 +2,7 @@ body {
     /*font-family: "Lato", sans-serif;*/
     transition: background-color .5s;
     height: 100%;
-    background-image: url(".../img/background.jpg");
+    background-image: url("../img/background.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -32,7 +32,7 @@ body {
 
 .topButton {
     border-radius: 7px;
-    background-image: url(".../img/candles1.jpg");
+    background-image: url("../img/candles1.jpg");
     background-position: center;
     background-size: 20ch;
     border: none;
