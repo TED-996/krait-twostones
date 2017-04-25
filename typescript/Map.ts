@@ -1,3 +1,6 @@
+/// <reference path="node_modules/@types/phaser/phaser.d.ts" />
+
+import Game = Phaser.Game;
 class Tile {
     x : number;
     y : number;
@@ -27,5 +30,20 @@ class Tileset {
         this.spacing = spacing;
         this.tileHeight = tileHeight;
         this.tileWidth = tileWidth;
+    }
+}
+
+class Map {
+    // add here!
+    tileset : Tileset;
+
+
+    constructor(map_url){
+        let map_data = ajax_raw_sync(map_url);
+        let map_json = JSON.parse(map_data);
+        // map_json e efectiv un obiect JS (nu dictionar)
+        // de exemplu, in {"abc": "def", "zzz": "23"}, json.parse("...").abc = "def" (nu "abc", ["abc"], etc
+        // seteaza membri (nu uita sa-i adaugi sus), construieste this.tileset
+        // in typescript e important "this.", altfel nu merge
     }
 }

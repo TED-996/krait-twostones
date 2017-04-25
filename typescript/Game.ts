@@ -1,6 +1,6 @@
 /// <reference path="node_modules/@types/phaser/phaser.d.ts" />
 
-class SimpleGame
+class WegasGame
 {
     game:Phaser.Game;
     cursors:Phaser.CursorKeys;
@@ -67,5 +67,5 @@ class SimpleGame
 
 // when the page has finished loading, create our game
 window.onload = () => {
-    new SimpleGame();
+    new WegasGame();
 };
