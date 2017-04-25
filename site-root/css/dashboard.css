@@ -132,7 +132,7 @@ body {
 }
 
 .sidenav {
-    height: 700px;
+    height: 600px;
     width: 0; /* 0 width - change this with JavaScript*/
     position: absolute;
     z-index: 1; /*stay on top*/
