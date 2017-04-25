@@ -38,7 +38,7 @@ class Tileset {
     }
 }
 
-class Map {
+class GameMap {
     // add here!
     tileset : Tileset;
     height : number;
@@ -57,9 +57,11 @@ class Map {
         this.width = map_json.width;
         this.tileCount = map_json.layers[0].data.length;
         let tempData = map_json.layers[0].data;
+        this.tileArray = [];
 
         for(let idx = 0; idx < this.tileCount; idx++){
-            let tempTile = new Tile(idx % this.width, idx / this.width, tempData[idx], 0);
+            let tempTile = new Tile(idx % this.width,
+                Math.floor(idx / this.width), tempData[idx], 0);
             this.tileArray.push(tempTile);
         }
 

@@ -17,19 +17,19 @@ var WegasGame = (function () {
         });
     }
     WegasGame.prototype.preload = function () {
-        this.game.load.image('moveSprite', "assets/moveSprite.jpg");
-        this.game.stage.backgroundColor = 0xB20059;
-        this.map = new Map("/map/map");
+        this.game.load.image('moveSprite', "img/moveSprite.jpg");
+        this.game.stage.backgroundColor = 0x222222;
+        this.map = new GameMap("/map/map.json");
         this.map.tileset.load(this.game);
-        tileRenderer =
-        ;
     };
     WegasGame.prototype.create = function () {
-        var logo = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'moveSprite');
-        logo.anchor.setTo(0.5, 0.5);
         this.game.world.setBounds(-2000, -2000, 4000, 4000);
-        console.log(this.game.camera.x);
         this.cursors = this.game.input.keyboard.createCursorKeys();
+        this.tileGroup = this.game.add.group();
+        this.fgGroup = this.game.add.group();
+        var logo = this.tileGroup.create(this.game.world.centerX, this.game.world.centerY, 'moveSprite');
+        logo.anchor.setTo(0.5, 0.5);
+        this.tileRenderer = new TileRenderer([this.map], [], [], this.map.tileset, this.tileGroup);
     };
     WegasGame.prototype.update = function () {
         if (this.cursors.up.isDown) {

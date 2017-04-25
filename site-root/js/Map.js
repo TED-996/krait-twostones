@@ -24,8 +24,8 @@ var Tileset = (function () {
     };
     return Tileset;
 }());
-var Map = (function () {
-    function Map(map_url) {
+var GameMap = (function () {
+    function GameMap(map_url) {
         var map_data = ajax_raw_sync(map_url);
         var map_json = JSON.parse(map_data);
         this.tileset = new Tileset(map_json.tilesets[0].image, map_json.tilesets[0].firstgid, map_json.tilesets[0].columns, map_json.tilesets[0].spacing, map_json.tilesets[0].tileheight, map_json.tilesets[0].tilewidth);
@@ -33,13 +33,14 @@ var Map = (function () {
         this.width = map_json.width;
         this.tileCount = map_json.layers[0].data.length;
         var tempData = map_json.layers[0].data;
+        this.tileArray = [];
         for (var idx = 0; idx < this.tileCount; idx++) {
-            var tempTile = new Tile(idx % this.width, idx / this.width, tempData[idx], 0);
+            var tempTile = new Tile(idx % this.width, Math.floor(idx / this.width), tempData[idx], 0);
             this.tileArray.push(tempTile);
         }
     }
-    Map.prototype.getTiles = function () {
+    GameMap.prototype.getTiles = function () {
         return this.tileArray;
     };
-    return Map;
+    return GameMap;
 }());
