@@ -5,9 +5,9 @@ import krait
 
 from db_access import db_ops
 
-def get_response(request):
+def get_response():
 	# update logic using request.query["..."] (campuri setate din form)
-	post_form = request.get_post_form()
+	post_form = krait.request.get_post_form()
 	id = post_form.get("id")
 	username = post_form.get("username")
 	password = post_form.get("password")
@@ -21,7 +21,7 @@ def get_response(request):
 
 	redirect_url = "/admin/user_console"
 	try:
-		db_conn = db_ops.get_connection();
+		db_conn = db_ops.get_connection()
 		cursor = db_conn.cursor()
 		cursor.callproc("user_ops.updatePlayer", [id, username, password, loadout, in_match, mmr, level])
 		db_conn.commit()

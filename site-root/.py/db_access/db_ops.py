@@ -1,6 +1,8 @@
 import os
 import cx_Oracle
 from exceptions import printException, printf
+import krait
+
 
 password = None
 
@@ -29,11 +31,11 @@ def get_connection_on_port(ip, port):
         return None
 
 
-def read_store_password(site_root):
+def read_store_password():
     global password
-    password = get_password(site_root)
+    password = get_password()
 
 
-def get_password(site_root):
-    with open(os.path.join(site_root, ".private", "oracle_password.nocommit.txt")) as file_obj:
+def get_password():
+    with open(os.path.join(krait.site_root, ".private", "oracle_password.nocommit.txt")) as file_obj:
         return file_obj.read()

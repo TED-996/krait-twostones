@@ -5,10 +5,10 @@ from db_access import db_loadout
 
 
 class GetLoadoutController(mvc.CtrlBase):
-    def __init__(self, request):
-        self.username = username_utils.get_username(request)
+    def __init__(self):
+        self.username = username_utils.get_username(krait.request)
     
-        self.loadout_id = int(request.query.get("id"))
+        self.loadout_id = int(krait.request.query.get("id"))
         if not db_loadout.check_owner(self.loadout_id, self.username):
             raise RuntimeError("Not your loadout!")
     

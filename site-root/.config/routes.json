@@ -1,0 +1,29 @@
+[
+  {
+    "verb": "POST",
+    "url": "/admin/user_delete"
+  },
+  {
+    "verb": "POST",
+    "url": "/admin/user_update"
+  },
+  {
+    "verb": "POST",
+    "url": "/admin/user_insert"
+  },
+  {
+    "verb": "POST",
+    "url": "/login_test"
+  },
+  {
+    "verb": "POST",
+    "url": "/register_test"
+  },
+  {
+    "verb": "POST",
+    "url": "/save_loadout"
+  },
+  {
+    "verb": "GET"
+  }
+]

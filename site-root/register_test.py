@@ -1,4 +1,4 @@
 from ctrl import register_test
-print "vreau response"
-response = register_test.get_response(request)
-print response
+import krait
+
+krait.response = register_test.get_response()

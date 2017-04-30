@@ -1,2 +1,5 @@
 from ctrl import login_test
-response = login_test.get_response(request)
+import mvc
+import krait
+
+krait.response = login_test.get_response()

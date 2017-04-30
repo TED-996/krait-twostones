@@ -1,2 +1,4 @@
 from ctrl.admin import user_update
-response = user_update.get_response(request)
+import krait
+
+krait.response = user_update.get_response()

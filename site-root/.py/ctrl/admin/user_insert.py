@@ -5,9 +5,9 @@ import krait
 from db_access import db_ops
 
 
-def get_response(request):
+def get_response():
 	# insert logic using request.query["..."] (campuri setate din form)
-	post_form = request.get_post_form()
+	post_form = krait.request.get_post_form()
 
 	username = post_form.get("username")
 	password = post_form.get("password")

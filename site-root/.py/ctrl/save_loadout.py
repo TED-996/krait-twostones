@@ -1,5 +1,5 @@
 import krait
 
 
-def get_response(request):
+def get_response():
     return krait.ResponseRedirect("/dashboard")

@@ -6,8 +6,8 @@ import cx_Oracle
 import json
 
 
-def get_response(request):
-    post_form = request.get_post_form()
+def get_response():
+    post_form = krait.request.get_post_form()
     username = post_form.get("username")
     password = post_form.get("password")
 

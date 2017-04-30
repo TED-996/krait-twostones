@@ -2,11 +2,12 @@ import mvc
 from auth_utils import username_utils
 from db_access import db_ops
 from model import troop
+import krait
 
 
 class GetOptionsController(mvc.CtrlBase):
-    def __init__(self, request):
-        self.username = username_utils.get_username(request)
+    def __init__(self):
+        self.username = username_utils.get_username(krait.request)
 
         conn = db_ops.get_connection()
 

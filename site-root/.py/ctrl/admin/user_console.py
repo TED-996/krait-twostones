@@ -2,6 +2,8 @@ import json
 import urllib
 import math
 import cx_Oracle
+import krait
+
 
 from db_access import db_ops
 from model import user
@@ -10,10 +12,11 @@ from db_access.exceptions import printException, printf, get_error_message
 class UserConsoleController(object):
     items_per_page = 20
 
-    def __init__(self, request):
+    def __init__(self):
         # List of strings, each is an error. Add with self.error_messages.append(error_message)
         self.error_messages = []
 
+        db_conn = None
         try:
             db_conn = db_ops.get_connection()
         except cx_Oracle.DatabaseError, exception:
@@ -21,7 +24,8 @@ class UserConsoleController(object):
             self.error_messages.append("Sorry, but we could't connect to the WEGAS Database\n")
             self.error_messages.append(exception)
 
-        query = request.query
+
+        query = krait.request.query
         self.page = int(query.get("page", 1))
         self.filter = query.get("filter", "")
         self.max_page = self.get_page_count(db_conn, self.filter)
@@ -36,7 +40,7 @@ class UserConsoleController(object):
 
         self.fetch_id = query.get("fetch_id", "")
         if self.fetch_id is not "":
-            fetch_user = self.get_user(self.fetch_id)
+            fetch_user = self.get_user(db_conn, self.fetch_id)
             self.fetch_username, self.fetch_password, self.fetch_mmr, self.fetch_level =\
                 fetch_user.name, "", fetch_user.mmr, fetch_user.playerLevel
         else:

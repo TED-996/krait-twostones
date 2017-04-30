@@ -3,9 +3,10 @@ import urllib
 import json
 import krait
 from db_access import db_ops
+import krait
 
-def get_response(request):
-	user_id = request.get_post_form().get("id")
+def get_response():
+	user_id = krait.request.get_post_form().get("id")
 	if user_id is None:
 		return krait.Response("HTTP/1.1", 400, [], "<html><body><h1>400 Bad Request</h1></body></html>");
 	

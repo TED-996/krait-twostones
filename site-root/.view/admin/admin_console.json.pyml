@@ -13,5 +13,5 @@ result_obj = {
 }
 result_str = json.dumps(result_obj, indent=True)
 }
-@{set_content_type(ext="json")}
+@{krait.set_content_type(ext="json")}
 @!result_str

@@ -5,10 +5,10 @@ from db_access import db_loadout
 
 
 class EditLoadoutController(mvc.CtrlBase):
-    def __init__(self, request):
+    def __init__(self):
         super(EditLoadoutController, self).__init__()
-        self.username = username_utils.get_username(request)
-        self.loadout_id = request.query.get("loadout_id")
+        self.username = username_utils.get_username(krait.request)
+        self.loadout_id = krait.request.query.get("loadout_id")
         
         if self.loadout_id == "new":
             self.loadout_id = db_loadout.create(self.username)
