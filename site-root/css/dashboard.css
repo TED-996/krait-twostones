@@ -52,7 +52,7 @@ body {
     background-image: url("../img/candles1.jpg");
     background-position: center;
     background-size: 20ch;
-    margin-top: 80px;
+    margin-top: 60px;
     border: none;
     color: #FFFFFF;
     text-align: center;
@@ -132,7 +132,7 @@ body {
 }
 
 .sidenav {
-    height: 550px;
+    height: 600px;
     width: 0; /* 0 width - change this with JavaScript*/
     position: absolute;
     z-index: 1; /*stay on top*/
