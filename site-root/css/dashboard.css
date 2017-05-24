@@ -52,7 +52,7 @@ body {
     background-image: url("../img/candles1.jpg");
     background-position: center;
     background-size: 20ch;
-    margin-top: 80px;
+    margin-top: 60px;
     border: none;
     color: #FFFFFF;
     text-align: center;
@@ -141,6 +141,8 @@ a.a-to-button {
 }
 
 .sidenav {
+
+    height: 600px;
     min-height: 100%;
     width: 0; /* 0 width - change this with JavaScript*/
     position: absolute;
