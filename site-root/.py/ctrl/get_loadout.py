@@ -1,12 +1,12 @@
 import krait
 import mvc
-from auth_utils import username_utils
+from auth_utils import auth_tests
 from db_access import db_loadout
 
 
 class GetLoadoutController(mvc.CtrlBase):
     def __init__(self):
-        self.username = username_utils.get_username(krait.request)
+        self.username = auth_tests.get_auth()
     
         self.loadout_id = int(krait.request.query.get("id"))
         if not db_loadout.check_owner(self.loadout_id, self.username):

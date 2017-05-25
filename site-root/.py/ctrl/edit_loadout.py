@@ -1,13 +1,13 @@
 import krait
 import mvc
-from auth_utils import username_utils
+from auth_utils import auth_tests
 from db_access import db_loadout
 
 
 class EditLoadoutController(mvc.CtrlBase):
     def __init__(self):
         super(EditLoadoutController, self).__init__()
-        self.username = username_utils.get_username(krait.request)
+        self.username = auth_tests.get_auth()
         self.loadout_id = krait.request.query.get("loadout_id")
         
         if self.loadout_id == "new":

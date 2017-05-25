@@ -1,5 +1,5 @@
 import mvc
-from auth_utils import username_utils
+from auth_utils import auth_tests
 from db_access import db_ops
 from model import troop
 import krait
@@ -7,7 +7,7 @@ import krait
 
 class GetOptionsController(mvc.CtrlBase):
     def __init__(self):
-        self.username = username_utils.get_username(krait.request)
+        self.username = auth_tests.get_auth()
 
         conn = db_ops.get_connection()
 
