@@ -53,5 +53,17 @@ var WegasNetworking = (function () {
     WegasNetworking.prototype.sendJoin = function () {
         this.send("join", AuthUtils.getUsername());
     };
+    WegasNetworking.prototype.sendDisconnect = function (reason) {
+        this.send("disconnect", reason);
+    };
+    WegasNetworking.prototype.sendEndTurn = function () {
+        this.send("end_turn");
+    };
+    WegasNetworking.prototype.sendError = function (message) {
+        this.send("error", message);
+    };
+    WegasNetworking.prototype.sendMove = function (from, to) {
+        this.send("move", { from: from, to: to });
+    };
     return WegasNetworking;
 }());

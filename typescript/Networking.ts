@@ -64,5 +64,19 @@ class WegasNetworking {
         this.send("join", AuthUtils.getUsername());
     }
 
+    public sendDisconnect(reason : string) {
+        this.send("disconnect", reason)
+    }
 
+    public sendEndTurn() {
+        this.send("end_turn")
+    }
+
+    public sendError(message : string) {
+        this.send("error", message)
+    }
+
+    public sendMove(from : {x: number, y : number}, to : {x: number, y: number}){
+        this.send("move", {from: from, to: to});
+    }x
 }
