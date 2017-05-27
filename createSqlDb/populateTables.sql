@@ -1,6 +1,6 @@
 start "createTables.sql";
 
-start "./part2/sitePackage.sql"
+start "./part2/sitePackage.sql";
 
 start "createTemp.sql";
 start "populateUser.sql";

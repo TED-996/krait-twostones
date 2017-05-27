@@ -62,7 +62,7 @@ CREATE TABLE MATCH(
     constraint onDeletePlayer2Match
         FOREIGN key(player2)
         REFERENCES Player(id)
-	on delete cascade,
+    on delete cascade,
 
     constraint onDeleteMapMatch
         FOREIGN KEY (mapId)
@@ -172,7 +172,7 @@ create table Troop (
 
     CONSTRAINT onDeleteLoadoutTroop
         FOREIGN KEY (loadoutId)
-        REFERENCES	Loadout(id)
+        REFERENCES  Loadout(id)
         ON DELETE CASCADE,
     
     CONSTRAINT onDeleteSkinTroop
@@ -221,7 +221,7 @@ CREATE TABLE MATCHTROOP(
 ALTER TABLE Player
 Add CONSTRAINT onDeleteLoadoutPlayer
     FOREIGN KEY (currentLoadout)
-    REFERENCES	Loadout(id)
+    REFERENCES  Loadout(id)
     ON DELETE CASCADE;
 
 create sequence playerIdSeq
@@ -259,3 +259,6 @@ create sequence matchTroopIdSeq
 
 create index skinByClass on skin(classId);
 create index troopModfierByTroop on troopModifier(troopId);
+create or replace view highQueues as
+  select * from queue where (select current_timestamp from dual) - timestarted > '+000000000 00:01:00.000000';
+alter table player add token varchar(32); 
