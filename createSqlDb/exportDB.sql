@@ -313,7 +313,8 @@ begin
     end if;
   end loop;
   close cursor_constraints;
-
+  
+  --generate index and views
   open walk;
   loop
     fetch walk into walk_row;

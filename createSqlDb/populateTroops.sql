@@ -54,12 +54,7 @@ begin
       insert into troop values(
         v_troop_id,
         v_class_id,
-        v_player_id,
         v_loadout_id,
-        -1,
-        -1,
-        -1,
-        -1,
         v_skin_id
       );
       

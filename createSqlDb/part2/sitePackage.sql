@@ -6,6 +6,7 @@ create or replace type tempTableObject is object(
     currentLoadout NUMBER(10),
     inMatch NUMBER(1),
     mmr NUMBER(5),
+    token varchar2(32),
     playerLevel NUMBER(2)
 );
 /
@@ -20,6 +21,7 @@ create or replace package user_Ops as
                             v_currentLoadout player.currentLoadout%type DEFAULT NULL,
                             v_inMatch player.inMatch%type DEFAULT NULL,
                             v_mmr player.mmr%type DEFAULT null,
+                            v_token player.token%type DEFAULT null,
                             v_playerLevel player.playerLevel%type DEFAULT NULL
                             );
     FUNCTION getUsers ( v_rowStart number default 0, 
@@ -70,6 +72,7 @@ create or replace package body user_Ops as
                                                 item.currentLoadout,
                                                 item.inMatch,
                                                 item.mmr,
+                                                item.token,
                                                 item.playerLevel
                                                 );
         end loop;
@@ -84,8 +87,8 @@ create or replace package body user_Ops as
                         v_rowCount number DEFAULT 0, 
                         v_playername player.playername%type DEFAULT null)  
     return tempTable as
-        cursor lista_player is select id,playername,password,currentLoadout,inMatch,mmr,playerLevel from (
-            select rownum as v_rownum,id,playername,password,currentLoadout,inMatch,mmr,playerLevel from 
+        cursor lista_player is select id,playername,password,currentLoadout,inMatch,mmr,token,playerLevel from (
+            select rownum as v_rownum,id,playername,password,currentLoadout,inMatch,mmr,token,playerLevel from 
             (
                 select * from player order by id
             )
@@ -98,9 +101,9 @@ create or replace package body user_Ops as
         open lista_player;
         if v_playername is not null then
             for item in (
-                select id, playername, password, currentLoadout, inMatch, mmr, playerLevel
+                select id, playername, password, currentLoadout, inMatch, mmr, token, playerLevel
                     from (
-                     select id as id, playername, password, currentLoadout, inMatch, mmr, playerLevel, rownum as rn
+                     select id as id, playername, password, currentLoadout, inMatch, mmr, token, playerLevel, rownum as rn
                         from player
                         where playername like '%' || v_playername || '%')
                     where rn >= v_rowStart and rn < v_rowStart + v_rowCount
@@ -113,6 +116,7 @@ create or replace package body user_Ops as
                                                     item.currentLoadout,
                                                     item.inMatch,
                                                     item.mmr,
+                                                    item.token,
                                                     item.playerLevel
                                                     );
             end loop;
@@ -130,6 +134,7 @@ create or replace package body user_Ops as
                                                       lista_player_row.currentLoadout,
                                                       lista_player_row.inMatch,
                                                       lista_player_row.mmr,
+                                                      lista_player_row.token,
                                                       lista_player_row.playerLevel
                                                       );
                 end loop;
@@ -155,7 +160,7 @@ create or replace package body user_Ops as
 
     procedure addPlayer(playername player.playername%type, password player.password%type) is
     begin
-        insert into Player values(playeridseq.nextval, playername, getSaltedPassword(password, null), null, 0, 1000, 1);
+        insert into Player values(playeridseq.nextval, playername, getSaltedPassword(password, null), null, 0, 1000,null, 1);
     exception
         when DUP_VAL_ON_INDEX then
             raise_application_error(-20001,'A player with the same name already exists!');
@@ -178,6 +183,7 @@ create or replace package body user_Ops as
                             v_currentLoadout player.currentLoadout%type DEFAULT NULL,
                             v_inMatch player.inMatch%type DEFAULT NULL,
                             v_mmr player.mmr%type DEFAULT NULL,
+                            v_token player.token%type DEFAULT null,
                             v_playerLevel player.playerLevel%type DEFAULT NULL
                             ) is
         player_row player%rowtype;
@@ -197,6 +203,9 @@ create or replace package body user_Ops as
         end if;
         if v_mmr is not null then
             update player set mmr = v_mmr where id = v_playerId;
+        end if;
+        if v_token is not null then
+            update player set token = v_token where id = v_playerId;
         end if;
         if v_playerLevel is not null then
             update player set playerLevel = v_playerLevel where id = v_playerId;
