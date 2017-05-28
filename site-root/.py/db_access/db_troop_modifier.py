@@ -3,7 +3,7 @@ from db_access import db_ops
 from model import troop_modifier
 
 
-def get_by_id(troop_id):
+def get_by_troop_id(troop_id):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
 

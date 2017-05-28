@@ -1,10 +1,15 @@
+from db_access import db_troop
+
 class Troop(object):
-    def __init__(self, troop_id, troop_class, skin_filename, modifiers, max_hp, dmg, atk_range, move_range):
+    def __init__(self, troop_id, class_id, loadout_id, skin_id):
         self.id = troop_id
-        self.troop_class = troop_class
-        self.skin_filename = skin_filename
-        self.modifiers = modifiers + [None] * (3 - len(modifiers ))
-        self.max_hp = max_hp
-        self.dmg = dmg
-        self.atk_range = atk_range
-        self.move_range = move_range
+        self.class_id = class_id
+        self.troop_class = None
+        self.skin_id = skin_id
+        self.skin = None
+        self.loadout_id = loadout_id
+
+        self.modifiers = None
+
+    def populate(self):
+        db_troop.populate(self)

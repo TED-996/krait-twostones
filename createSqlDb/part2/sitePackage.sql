@@ -79,7 +79,7 @@ create or replace package body user_Ops as
         return myReturnTable;
     exception
     when NO_DATA_FOUND then
-            raise_application_error(-20001,'No player with this name or id exists!');
+            raise_application_error(-20001,'No player.py with this name or id exists!');
             return null;
     end getUsersById;
     
@@ -151,7 +151,7 @@ create or replace package body user_Ops as
     exception
         when NO_DATA_FOUND then
             close lista_player;
-            raise_application_error(-20001,'No player with this name or id exists!');
+            raise_application_error(-20001,'No player.py with this name or id exists!');
             return NULL;
         when noPlayers_exception then
             raise_application_error(-20004,'No more players!');
@@ -163,7 +163,7 @@ create or replace package body user_Ops as
         insert into Player values(playeridseq.nextval, playername, getSaltedPassword(password, null), null, 0, 1000,null, 1);
     exception
         when DUP_VAL_ON_INDEX then
-            raise_application_error(-20001,'A player with the same name already exists!');
+            raise_application_error(-20001,'A player.py with the same name already exists!');
     end addPlayer;
     
     procedure deletePlayer(playerId player.id%type) is
@@ -172,7 +172,7 @@ create or replace package body user_Ops as
             id = playerId;
     exception
         when NO_DATA_FOUND then
-            raise_application_error(-20001,'No player with this name or id exists!');
+            raise_application_error(-20001,'No player.py with this name or id exists!');
         when INVALID_NUMBER then
             raise_application_error(-20003,'Invalid number');
     end deletePlayer;
@@ -212,9 +212,9 @@ create or replace package body user_Ops as
         end if;
     exception
         when DUP_VAL_ON_INDEX then
-            raise_application_error(-20000,'A player with the same name already exists!');
+            raise_application_error(-20000,'A player.py with the same name already exists!');
          when NO_DATA_FOUND then
-            raise_application_error(-20001,'No player with this name or id exists!');
+            raise_application_error(-20001,'No player.py with this name or id exists!');
     end updatePlayer;
 
     function checkSaltedPassword(p_playername player.playername%type,

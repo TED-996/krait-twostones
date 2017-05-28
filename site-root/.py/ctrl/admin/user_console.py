@@ -6,7 +6,7 @@ import krait
 
 
 from db_access import db_ops
-from model import user
+from model import player
 from db_access.exceptions import printException, printf, get_error_message
 
 class UserConsoleController(object):
@@ -42,7 +42,7 @@ class UserConsoleController(object):
         if self.fetch_id is not "":
             fetch_user = self.get_user(db_conn, self.fetch_id)
             self.fetch_username, self.fetch_password, self.fetch_mmr, self.fetch_level =\
-                fetch_user.name, "", fetch_user.mmr, fetch_user.playerLevel
+                fetch_user.name, "", fetch_user.mmr, fetch_user.player_level
         else:
             self.fetch_username, self.fetch_password, self.fetch_mmr, self.fetch_level = "", "", "", ""
 
@@ -64,7 +64,7 @@ class UserConsoleController(object):
                     "filter": str(name_filter)
                 }
             )
-            return [user.User(*row) for row in cursor]
+            return [player.Player(*row) for row in cursor]
         except cx_Oracle.DatabaseError, exception:
             print 'Failed to get users from WEGAS'
             printException(exception)
@@ -74,20 +74,20 @@ class UserConsoleController(object):
     def get_user(self, conn, user_id):
         cursor = conn.cursor()
 
-        cursor.execute("select * from player where id = :id", {"id": user_id})
-        return user.User(*(cursor.fetchone()))
+        cursor.execute("select * from player.py where id = :id", {"id": user_id})
+        return player.Player(*(cursor.fetchone()))
 
     def get_page_count(self, conn, name_filter):
         cursor = conn.cursor()
         if filter:
             # SQL injection secured:
-            cursor.execute("select count(*) from player where playername like '%' || :name_filter || '%'", {"name_filter": name_filter})
+            cursor.execute("select count(*) from player.py where playername like '%' || :name_filter || '%'", {"name_filter": name_filter})
             # SQL injection vulnerable:
-            # stmt = "select count(*) from player where playername like '%{}%'".format(name_filter)
+            # stmt = "select count(*) from player.py where playername like '%{}%'".format(name_filter)
             # print stmt
             # cursor.execute(stmt)
         else:
-            cursor.execute("select count(*) from player")
+            cursor.execute("select count(*) from player.py")
         nr_raw = cursor.fetchone()[0]
         print "Total {} users matching filter".format(nr_raw)
         return int(math.ceil(float(nr_raw) / UserConsoleController.items_per_page))

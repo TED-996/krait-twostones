@@ -21951,7 +21951,7 @@ Phaser.Utils = {
     /**
     * Generate a random bool result based on the chance value.
     *
-    * Returns true or false based on the chance value (default 50%). For example if you wanted a player to have a 30% chance
+    * Returns true or false based on the chance value (default 50%). For example if you wanted a player.py to have a 30% chance
     * of getting a bonus, call chanceRoll(30) - true means the chance passed, false means it failed.
     *
     * @method Phaser.Utils#chanceRoll
@@ -43854,7 +43854,7 @@ Phaser.Component.Angle.prototype = {
     * Values from 0 to 180 represent clockwise rotation; values from 0 to -180 represent counterclockwise rotation.
     * 
     * Values outside this range are added to or subtracted from 360 to obtain a value within the range. 
-    * For example, the statement player.angle = 450 is the same as player.angle = 90.
+    * For example, the statement player.py.angle = 450 is the same as player.py.angle = 90.
     * 
     * If you wish to work in radians instead of degrees you can use the property `rotation` instead. 
     * Working in radians is slightly faster as it doesn't have to perform any calculations.
@@ -46321,7 +46321,7 @@ Phaser.Component.LoadTexture.prototype = {
     * Gets or sets the current frame index of the texture being used to render this Game Object.
     *
     * To change the frame set `frame` to the index of the new frame in the sprite sheet you wish this Game Object to use,
-    * for example: `player.frame = 4`.
+    * for example: `player.py.frame = 4`.
     * 
     * If the frame index given doesn't exist it will revert to the first frame found in the texture.
     * 
@@ -46346,7 +46346,7 @@ Phaser.Component.LoadTexture.prototype = {
     * Gets or sets the current frame name of the texture being used to render this Game Object.
     * 
     * To change the frame set `frameName` to the name of the new frame in the texture atlas you wish this Game Object to use, 
-    * for example: `player.frameName = "idle"`.
+    * for example: `player.py.frameName = "idle"`.
     *
     * If the frame name given doesn't exist it will revert to the first frame found in the texture and throw a console warning.
     * 
@@ -59764,7 +59764,7 @@ Object.defineProperty(Phaser.Rope.prototype, "segments", {
 *
 * You shouldn't ever create a TileSprite any larger than your actual screen size. If you want to create a large repeating background
 * that scrolls across the whole map of your game, then you create a TileSprite that fits the screen size and then use the `tilePosition`
-* property to scroll the texture as the player moves. If you create a TileSprite that is thousands of pixels in size then it will 
+* property to scroll the texture as the player.py moves. If you create a TileSprite that is thousands of pixels in size then it will
 * consume huge amounts of memory and cause performance issues. Remember: use `tilePosition` to scroll your texture and `tileScale` to
 * adjust the scale of the texture - don't resize the sprite itself or make it larger than it needs.
 *
@@ -74625,9 +74625,9 @@ Phaser.Loader.prototype = {
     * The URLs can be relative or absolute. If the URL is relative the `Loader.baseURL` and `Loader.path` values will be prepended to it.
     *
     * If the textureURL isn't specified then the Loader will take the key and create a filename from that.
-    * For example if the key is "player" and textureURL is null then the Loader will set the URL to be "player.png".
+    * For example if the key is "player.py" and textureURL is null then the Loader will set the URL to be "player.py.png".
     * The same is true for the atlasURL. If atlasURL isn't specified and no atlasData has been provided then the Loader will
-    * set the atlasURL to be the key. For example if the key is "player" the atlasURL will be set to "player.json".
+    * set the atlasURL to be the key. For example if the key is "player.py" the atlasURL will be set to "player.py.json".
     *
     * If you do not desire this action then provide URLs and / or a data object.
     *
@@ -74671,9 +74671,9 @@ Phaser.Loader.prototype = {
     * The URLs can be relative or absolute. If the URL is relative the `Loader.baseURL` and `Loader.path` values will be prepended to it.
     *
     * If the textureURL isn't specified then the Loader will take the key and create a filename from that.
-    * For example if the key is "player" and textureURL is null then the Loader will set the URL to be "player.png".
+    * For example if the key is "player.py" and textureURL is null then the Loader will set the URL to be "player.py.png".
     * The same is true for the atlasURL. If atlasURL isn't specified and no atlasData has been provided then the Loader will
-    * set the atlasURL to be the key. For example if the key is "player" the atlasURL will be set to "player.json".
+    * set the atlasURL to be the key. For example if the key is "player.py" the atlasURL will be set to "player.py.json".
     *
     * If you do not desire this action then provide URLs and / or a data object.
     *
@@ -74717,9 +74717,9 @@ Phaser.Loader.prototype = {
     * The URLs can be relative or absolute. If the URL is relative the `Loader.baseURL` and `Loader.path` values will be prepended to it.
     *
     * If the textureURL isn't specified then the Loader will take the key and create a filename from that.
-    * For example if the key is "player" and textureURL is null then the Loader will set the URL to be "player.png".
+    * For example if the key is "player.py" and textureURL is null then the Loader will set the URL to be "player.py.png".
     * The same is true for the atlasURL. If atlasURL isn't specified and no atlasData has been provided then the Loader will
-    * set the atlasURL to be the key. For example if the key is "player" the atlasURL will be set to "player.xml".
+    * set the atlasURL to be the key. For example if the key is "player.py" the atlasURL will be set to "player.py.xml".
     *
     * If you do not desire this action then provide URLs and / or a data object.
     *
@@ -74769,9 +74769,9 @@ Phaser.Loader.prototype = {
     * The URLs can be relative or absolute. If the URL is relative the `Loader.baseURL` and `Loader.path` values will be prepended to it.
     *
     * If the textureURL isn't specified then the Loader will take the key and create a filename from that.
-    * For example if the key is "player" and textureURL is null then the Loader will set the URL to be "player.png".
+    * For example if the key is "player.py" and textureURL is null then the Loader will set the URL to be "player.py.png".
     * The same is true for the atlasURL. If atlasURL isn't specified and no atlasData has been provided then the Loader will
-    * set the atlasURL to be the key. For example if the key is "player" the atlasURL will be set to "player.json".
+    * set the atlasURL to be the key. For example if the key is "player.py" the atlasURL will be set to "player.py.json".
     *
     * If you do not desire this action then provide URLs and / or a data object.
     *
@@ -103096,7 +103096,7 @@ Phaser.Bullet.prototype.update = function () {
 * it's worth noting that every single Video needs to be touch unlocked, not just the first one. You can use the `changeSource`
 * method to try and work around this limitation, but see the method help for details.
 *
-* Small screen devices, especially iPod and iPhone will launch the video in its own native video player,
+* Small screen devices, especially iPod and iPhone will launch the video in its own native video player.py,
 * outside of the Safari browser. There is no way to avoid this, it's a device imposed limitation.
 *
 * Note: On iOS if you need to detect when the user presses the 'Done' button (before the video ends)
