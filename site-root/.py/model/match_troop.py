@@ -7,3 +7,4 @@ class MatchTroop(object):
         self.y_axis = y_axis
         self.hp = hp
         self.respawnTime = respawn_time
+        

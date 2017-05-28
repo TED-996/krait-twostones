@@ -1,4 +1,4 @@
 class Map(object):
-    def __init__(self, map_id, sourceFile):
-        self.id = map_id
+    def __init__(self, mapId, sourceFile):
+        self.id = mapId
         self.sourceFile = sourceFile
