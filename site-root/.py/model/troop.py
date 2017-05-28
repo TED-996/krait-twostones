@@ -6,6 +6,7 @@ class Troop(object):
         self.skin_id = skin_id
         self.skin = None
         self.loadout_id = loadout_id
+        self.loadout = None
 
         self.modifiers = None
 

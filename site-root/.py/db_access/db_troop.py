@@ -19,7 +19,6 @@ def get_by_id(troop_id):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
 
-    print repr(troop_id)
     cursor.execute("select * from troop m "
                    "where m.id = :troop_id",
                    {"troop_id": troop_id})
@@ -70,19 +69,24 @@ def update(troop_obj):
 
 
 def populate(troop_obj):
-    print "populating skin"
-    if troop_obj.class_id is None:
+    print "populating troop: class",
+    if troop_obj.troop_class is None:
         troop_obj.troop_class = db_troop_class.get_by_id(troop_obj.class_id)
 
-    if troop_obj.skin_id is None:
+    print ", skin",
+    if troop_obj.skin is None:
         troop_obj.skin = db_skin.get_by_id(troop_obj.skin_id)
 
-    if troop_obj.loadout_id is None:
+    print ", loadout",
+    if troop_obj.loadout is None:
         troop_obj.loadout = db_loadout.get_by_id(troop_obj.loadout_id)
         troop_obj.loadout.populate()
 
+    print ", modifiers"
     if troop_obj.modifiers is None:
         update_modifiers(troop_obj)
+
+    print ", done"
 
 
 def update_modifiers(troop_obj):

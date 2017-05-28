@@ -35,7 +35,7 @@ class GetLoadoutController(mvc.CtrlBase):
                     "aRange": -1,
                     "mRange": -1,
                     "modifiers": [
-                        mod.id
+                        None if mod is None else mod.id
                         for mod in troop.modifiers
                     ]
                 }
