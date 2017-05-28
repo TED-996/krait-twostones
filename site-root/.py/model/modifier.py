@@ -1,8 +1,8 @@
 class Modifier(object):
-    def __init__(self, mod_id, name, max_hp, dmg, atk_range, move_range):
-        self.id = mod_id
+    def __init__(self, modifierId, name, maxHp, dmg, atkRange, moveRange):
+        self.id = modifierId
         self.name = name
-        self.max_hp = max_hp
+        self.maxHp = maxHp
         self.dmg = dmg
-        self.atk_range = atk_range
-        self.move_range = move_range
+        self.atkRange = atkRange
+        self.moveRange = moveRange
