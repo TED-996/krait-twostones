@@ -5,6 +5,8 @@ import time
 
 import websockets
 from auth_utils import auth_tests
+from db_access import db_match
+from db_access import db_player
 
 
 class GameWsController(websockets.WebsocketsCtrlBase):
@@ -17,7 +19,7 @@ class GameWsController(websockets.WebsocketsCtrlBase):
         self.match = self.get_match(self.username)
 
     def get_match(self, username):
-        return None  # TODO
+        return db_match.get_by_player(db_player.get_by_username(username))
 
     def on_thread_start(self):
         while not self.should_stop():
@@ -67,8 +69,11 @@ class GameWsController(websockets.WebsocketsCtrlBase):
         return None  # TODO
 
     def handle_join(self, data, tag=None):
-        print("Client joined.")
-        self.respond_ok(tag)
+        if self.match is None:
+            self.respond_error("You're not in a match.", tag)
+        else:
+            print("Client joined.")
+            self.respond_ok(tag)
 
     def handle_disconnect(self, reason, tag=None):
         print("Client disconnected. Reason: {}".format(reason))

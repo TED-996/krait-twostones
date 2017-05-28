@@ -12,5 +12,19 @@ def get_by_id(player_id):
                    {"user_id": player_id})
 
     player_id, name, password, loadout_id, in_match, mmr, player_level = cursor.fetchone()
+    cursor.close()
 
     return player.Player(player_id, name, password, loadout_id, in_match, mmr, player_level)
+
+
+def get_by_username(username):
+    conn = db_ops.get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("select id from player.py m "
+                   "where m.playername = :username",
+                   {"user_id": username})
+
+    player_id, = cursor.fetchone()
+
+    return get_by_id(player_id)

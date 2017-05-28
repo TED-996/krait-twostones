@@ -24,3 +24,19 @@ def get_by_id(match_id):
         score2,
         map_id,
         time_started)
+
+
+def get_by_player(player):
+    conn = db_ops.get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("select id from Match m "
+                   "where m.player1 = :player_id or m.player2 = :player_id",
+                   {"player_id": player.id})
+
+    result_tuple = cursor.fetchone()
+    if result_tuple is None:
+        return None
+    else:
+        match_id, = result_tuple
+        return get_by_id(match_id)
