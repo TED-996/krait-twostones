@@ -1,6 +1,3 @@
-import user
-
-
 class TroopClass(object):
     def __init__(self, name, description, max_hp, dmg, atk_range, move_range):
         self.name = name
