@@ -2,7 +2,7 @@ import cx_Oracle
 from db_access import db_ops
 
 
-def get(loadout_id):
+def get_by_id(loadout_id):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
 
@@ -66,7 +66,6 @@ def check_owner(loadout_id, username):
 
 
 def create(username):
-    # TODO: create SQL
     conn = db_ops.get_connection()
     cursor = conn.cursor()
 

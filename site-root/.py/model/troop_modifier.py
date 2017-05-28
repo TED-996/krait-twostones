@@ -1,4 +1,4 @@
 class TroopModifier(object):
-    def __init__(self, troopId, modifierId):
-        self.troopId = troopId
-        self.modifierId = modifierId
+    def __init__(self, troop_id, modifier_id):
+        self.troop_id = troop_id
+        self.modifier_id = modifier_id

@@ -44,7 +44,5 @@ var GameMap = (function () {
     GameMap.prototype.getTiles = function () {
         return this.tileArray;
     };
-    GameMap.prototype.getBounds = function () {
-    };
     return GameMap;
 }());

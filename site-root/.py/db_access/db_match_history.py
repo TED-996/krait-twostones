@@ -1,6 +1,7 @@
-import cx_oracle
+import cx_Oracle
 from db_access import db_ops
 from model import match_history
+
 
 def get_by_id(match_history_id):
     conn = db_ops.get_connection()
@@ -12,9 +13,15 @@ def get_by_id(match_history_id):
     
     matchHistoryId, player1ID, player2ID, score1, score2, mapId, matchStart , duration, = cursor.fetchone()
     
-    match_history = MatchHistory(matchHistoryId, player1ID, player2ID, score1, score2, mapId, matchStart, duration)
+    return match_history.MatchHistory(matchHistoryId,
+                                      player1ID,
+                                      player2ID,
+                                      score1,
+                                      score2,
+                                      mapId,
+                                      matchStart,
+                                      duration)
 
-    return match_history
 
 def get_players(match_history_id):
     conn = db_ops.get_connection()
@@ -36,6 +43,7 @@ def get_players(match_history_id):
 
     return [first_player, second_player]
 
+
 def get_score(match_history_id):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
@@ -56,8 +64,9 @@ def get_score(match_history_id):
 
     return [first_score, second_score]
 
+
 def get_map(match_history_id):
-    conn - db_obs.get_connection()
+    conn = db_ops.get_connection()
     cursor = conn.cursor()
 
     cursor.execute("select m.mapId "
@@ -70,7 +79,7 @@ def get_map(match_history_id):
     return map_id
 
 def get_match_start(match_history_id):
-    conn - db_obs.get_connection()
+    conn = db_ops.get_connection()
     cursor = conn.cursor()
 
     cursor.execute("select m.matchStart "
@@ -80,10 +89,10 @@ def get_match_start(match_history_id):
 
     match_start, = cursor.fetchone()
 
-    return map_start
+    return match_start
 
 def get_match_duration(match_history_id):
-    conn - db_obs.get_connection()
+    conn = db_ops.get_connection()
     cursor = conn.cursor()
 
     cursor.execute("select m.duration "
@@ -93,4 +102,4 @@ def get_match_duration(match_history_id):
 
     match_duration, = cursor.fetchone()
 
-    return map_id
+    return match_duration

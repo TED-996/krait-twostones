@@ -2,6 +2,7 @@ import cx_Oracle
 from db_access import db_ops
 from model import queue
 
+
 def get_by_id(queue_id):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
@@ -10,11 +11,6 @@ def get_by_id(queue_id):
                    "where m.id = :queue_id",
                    {"queue_id": queue_id})
 
-    queue_id, name, max_hp, dmg, atk_range, move_range = cursor.fetchone()
+    player_id, time_started  = cursor.fetchone()
 
-    queue = queue(queue_id, name, max_hp, dmg, atk_range, move_range)
-
-    return queue
-    
-    
-
+    return queue.Queue(player_id, time_started)

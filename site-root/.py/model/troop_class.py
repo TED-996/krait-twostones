@@ -1,9 +1,9 @@
 class TroopClass(object):
-    def __init__(self, troopClassId, name, description, maxHp, dmg, atkRange, moveRange):
-        self.id = troopClassId
+    def __init__(self, troop_class_id, name, description, max_hp, dmg, atk_range, move_range):
+        self.id = troop_class_id
         self.name = name
         self.description = description
-        self.maxHp = maxHp
+        self.max_hp = max_hp
         self.dmg = dmg
-        self.atkRange = atkRange
-        self.moveRange = moveRange
+        self.atk_range = atk_range
+        self.move_range = move_range

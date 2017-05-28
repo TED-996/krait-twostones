@@ -1,6 +1,5 @@
 import os
 import cx_Oracle
-from exceptions import printException, printf
 import krait
 
 

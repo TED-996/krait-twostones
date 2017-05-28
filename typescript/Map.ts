@@ -78,8 +78,4 @@ class GameMap {
     public getTiles() : Tile[] {
         return this.tileArray;
     }
-
-    public getBounds() : Rectangle {
-
-    }
 }

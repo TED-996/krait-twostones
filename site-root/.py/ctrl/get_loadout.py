@@ -12,7 +12,7 @@ class GetLoadoutController(mvc.CtrlBase):
         if not db_loadout.check_owner(self.loadout_id, self.username):
             raise RuntimeError("Not your loadout!")
     
-        self.loadout = db_loadout.get(self.loadout_id)
+        self.loadout = db_loadout.get_by_id(self.loadout_id)
 
     def get_view(self):
         return ".view/get_loadout.json.pyml"
