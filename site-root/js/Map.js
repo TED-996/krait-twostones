@@ -1,6 +1,7 @@
 /// <reference path="node_modules/@types/phaser/phaser.d.ts" />
 /// <reference path="ajax_raw.ts"/>
 var Game = Phaser.Game;
+var Rectangle = Phaser.Rectangle;
 var Tile = (function () {
     function Tile(x, y, tileIndex, zIndex) {
         this.x = x;
@@ -34,6 +35,7 @@ var GameMap = (function () {
         this.tileCount = map_json.layers[0].data.length;
         var tempData = map_json.layers[0].data;
         this.tileArray = [];
+        this.bounds = new Rectangle(0, 0, this.width * this.tileset.tileWidth, this.height * this.tileset.tileHeight);
         for (var idx = 0; idx < this.tileCount; idx++) {
             var tempTile = new Tile(idx % this.width, Math.floor(idx / this.width), tempData[idx], 0);
             this.tileArray.push(tempTile);
@@ -41,6 +43,8 @@ var GameMap = (function () {
     }
     GameMap.prototype.getTiles = function () {
         return this.tileArray;
+    };
+    GameMap.prototype.getBounds = function () {
     };
     return GameMap;
 }());

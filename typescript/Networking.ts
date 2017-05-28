@@ -1,7 +1,57 @@
+class WebsocketResponseWaitItem {
+    private data : string;
+    private onClose : () => void;
+    private refcount : number;
+    private closed : boolean;
+
+    constructor(onClose : () => void) {
+        this.data = null;
+        this.onClose = onClose;
+        this.refcount = 1;
+        this.closed = false;
+    }
+
+    public copy() : WebsocketResponseWaitItem {
+        let self = this;
+        this.refcount++;
+        return new WebsocketResponseWaitItem(() => self.refClose);
+    }
+
+    getData(): string {
+        return this.data;
+    }
+
+    setData(value: string) {
+        this.data = value;
+    }
+
+    public close() : void {
+        if (!this.closed) {
+            this.refClose();
+            this.closed = true;
+        }
+    }
+
+    private refClose() : void {
+        if (this.refcount <= 0){
+            throw new Error("WebsocketResponseWaitItem: too many close()s.");
+        }
+        this.refcount--;
+        if (this.refcount == 0){
+            this.onClose();
+        }
+    }
+}
+
+function isUndefined(value) {
+    return typeof value == "undefined";
+}
+
 class WegasNetworking {
-    socket : WebSocket;
-    in_queue : string[];
-    opened : boolean;
+    private socket : WebSocket;
+    private inQueue : string[];
+    private responseWaitQueue : {[tag: string]: WebsocketResponseWaitItem};
+    private opened : boolean;
 
     private static get_websocket_url(absolute_url) {
         const loc = window.location;
@@ -18,7 +68,8 @@ class WegasNetworking {
 
     public constructor() {
         this.socket = new WebSocket(WegasNetworking.get_websocket_url("/gameplay_ws"), "WegasNetworking");
-        this.in_queue = [];
+        this.inQueue = [];
+        this.responseWaitQueue = Object.create(null);
 
         let self = this;
 
@@ -33,7 +84,14 @@ class WegasNetworking {
     }
 
     private onMessage(ev : MessageEvent) {
-        this.in_queue.push(JSON.parse(ev.data));
+        let inObj = JSON.parse(ev.data);
+
+        if (!isUndefined(inObj.tag) && !isUndefined(this.responseWaitQueue[inObj.tag])){
+            this.responseWaitQueue[inObj.tag].setData(inObj);
+        }
+        else {
+            this.inQueue.push(inObj);
+        }
     }
 
     private onClose(ev : CloseEvent) {
@@ -44,39 +102,97 @@ class WegasNetworking {
     private onError() {
         console.error("Websocket connection: unexpected error.")
     }
-    private send(type : string, data : any = null) {
+
+
+    private send(type : string, data : any = null, tag : string = null) : WebsocketResponseWaitItem {
+        let outObj : {
+            type : string;
+            data?: any,
+            tag?: any
+        } = {
+            type: type
+        };
+        let responseWaitItem : WebsocketResponseWaitItem = null;
+
         if (data != null){
-            let outObj = {
-                type : type,
-                data : data
-            };
-            this.socket.send(JSON.stringify(outObj))
+            outObj.data = data;
+        }
+        if (tag != null){
+            outObj.tag = tag;
+            responseWaitItem = new WebsocketResponseWaitItem(() => delete this.responseWaitQueue[tag]);
+            this.responseWaitQueue[tag] = responseWaitItem;
+        }
+
+        this.socket.send(JSON.stringify(outObj));
+
+        return responseWaitItem;
+    }
+
+    private getMessage() : any {
+        if (this.inQueue.length == 0){
+            return null;
+        }
+        else {
+            return this.inQueue.shift();
+        }
+    }
+
+    private getResponse(tag : string) : {is_error : boolean, message : any} {
+        let msg : any = this.responseWaitQueue[tag];
+
+        if (isUndefined(msg)){
+            throw new Error("[WegasNetworking.getResponse()]: " +
+                "Tag " + tag + " does not exist in response wait queue.");
+        }
+        if (msg.getData() === null){
+            return null;
         }
         else{
-            let outObj = {
-                type : type
-            };
-            this.socket.send(JSON.stringify(outObj));
+            let is_error = (msg.getData().type == "error");
+            if (!isUndefined(msg.getData().data)){
+                return {
+                    is_error: is_error,
+                    message: msg.getData().data
+                };
+            }
+            else{
+                return {
+                    is_error: is_error,
+                    message: null
+                };
+            }
         }
     }
 
-    public sendJoin() {
-        this.send("join", AuthUtils.getUsername());
+    public sendJoin() : WebsocketResponseWaitItem {
+        return this.send("join", AuthUtils.getUsername(), WegasNetworking.generateTag());
     }
 
-    public sendDisconnect(reason : string) {
+    public sendDisconnect(reason : string) : void {
         this.send("disconnect", reason)
     }
 
-    public sendEndTurn() {
-        this.send("end_turn")
+    public sendEndTurn() : WebsocketResponseWaitItem {
+        return this.send("end_turn", null, WegasNetworking.generateTag());
     }
 
-    public sendError(message : string) {
+    public sendError(message : string) : void {
         this.send("error", message)
     }
 
-    public sendMove(from : {x: number, y : number}, to : {x: number, y: number}){
-        this.send("move", {from: from, to: to});
-    }x
+    public sendMove(from : {x: number, y : number}, to : {x: number, y: number})
+            : WebsocketResponseWaitItem {
+        return this.send("move", {from: from, to: to}, WegasNetworking.generateTag());
+    }
+
+    private static generateTag(size : number = 10) : string {
+        let result = "";
+        let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for (let i = 0; i < size; i++ ) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+
+        return result;
+    }
 }
