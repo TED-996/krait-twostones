@@ -13,6 +13,6 @@ start "populateTroops.sql";
 start "createView.sql";
 /*
 begin
-  delete from player.py where id =1;
+  delete from player where id =1;
 end;
 /*

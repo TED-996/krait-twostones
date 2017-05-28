@@ -14,3 +14,11 @@ def get_by_id(skin_id):
     skin_id, class_id, filename = cursor.fetchone()
 
     return skin.Skin(skin_id, class_id, filename)
+
+def get_all():
+    conn = db_ops.get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("select * from skin")
+
+    return [skin.Skin(skin_id, class_id, filename) for skin_id, class_id, filename in  cursor]

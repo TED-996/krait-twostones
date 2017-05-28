@@ -1,7 +1,6 @@
 import cx_Oracle
 from db_access import db_ops
 from db_access import db_player
-from db_access import db_troop
 from model import loadout
 
 
@@ -45,10 +44,13 @@ def update(loadout_obj):
 
 
 def check_owner(loadout_id, username):
+    print "pre check owner"
     loadout_obj = get_by_id(loadout_id)
     loadout_obj.populate()
+    print "post check owner"
+    return True
 
-    return loadout_obj.player.username == username
+    # return loadout_obj.player.name == username
 
 
 def create(username):
@@ -68,9 +70,13 @@ def populate(loadout_obj):
 
 
 def update_troops(loadout_obj):
+    print "pre import"
+    from db_access import db_troop  # Unfortunately I have to do this here.
+    print "post import"
     result = []
     for troop in db_troop.get_by_loadout_id(loadout_obj.id):
         result.append(troop)
         troop.populate()
 
-    return result
+    print "port update troops"
+    loadout_obj.troops = result

@@ -74,20 +74,20 @@ class UserConsoleController(object):
     def get_user(self, conn, user_id):
         cursor = conn.cursor()
 
-        cursor.execute("select * from player.py where id = :id", {"id": user_id})
+        cursor.execute("select * from player where id = :id", {"id": user_id})
         return player.Player(*(cursor.fetchone()))
 
     def get_page_count(self, conn, name_filter):
         cursor = conn.cursor()
         if filter:
             # SQL injection secured:
-            cursor.execute("select count(*) from player.py where playername like '%' || :name_filter || '%'", {"name_filter": name_filter})
+            cursor.execute("select count(*) from player where playername like '%' || :name_filter || '%'", {"name_filter": name_filter})
             # SQL injection vulnerable:
-            # stmt = "select count(*) from player.py where playername like '%{}%'".format(name_filter)
+            # stmt = "select count(*) from player where playername like '%{}%'".format(name_filter)
             # print stmt
             # cursor.execute(stmt)
         else:
-            cursor.execute("select count(*) from player.py")
+            cursor.execute("select count(*) from player")
         nr_raw = cursor.fetchone()[0]
         print "Total {} users matching filter".format(nr_raw)
         return int(math.ceil(float(nr_raw) / UserConsoleController.items_per_page))

@@ -26,7 +26,7 @@ begin
   
   for v_player_ctr in 1..10000 loop
     select trunc(dbms_random.value(v_player_min, v_player_max + 1)) into v_player_id from dual;
-    --create loadout for this player.py
+    --create loadout for this player
     select loadoutIdSeq.nextval into v_loadout_id from dual;
     
     insert into loadout values (

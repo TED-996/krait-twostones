@@ -1,5 +1,3 @@
-from db_access import db_troop
-
 class Troop(object):
     def __init__(self, troop_id, class_id, loadout_id, skin_id):
         self.id = troop_id
@@ -12,4 +10,6 @@ class Troop(object):
         self.modifiers = None
 
     def populate(self):
+        from db_access import db_troop
+
         db_troop.populate(self)

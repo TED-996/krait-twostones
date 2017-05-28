@@ -19,6 +19,7 @@ def get_by_id(troop_id):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
 
+    print repr(troop_id)
     cursor.execute("select * from troop m "
                    "where m.id = :troop_id",
                    {"troop_id": troop_id})
@@ -28,16 +29,18 @@ def get_by_id(troop_id):
     result = troop.Troop(troop_id, class_id, loadout_id, skin_id)
     troop_cache[troop_id] = result
 
+    return result
+
 
 def get_by_loadout_id(loadout_id):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("select id from troop where loadoutId = :loadoutId",
+    cursor.execute("select id from troop where loadoutId = :loadout_id",
                    {"loadout_id": loadout_id})
 
     ids = cursor.fetchall()
-    return [get_by_id(i) for i in ids]
+    return [get_by_id(i) for i, in ids]
 
 
 def update(troop_obj):
@@ -67,6 +70,7 @@ def update(troop_obj):
 
 
 def populate(troop_obj):
+    print "populating skin"
     if troop_obj.class_id is None:
         troop_obj.troop_class = db_troop_class.get_by_id(troop_obj.class_id)
 
@@ -86,4 +90,5 @@ def update_modifiers(troop_obj):
     for troop_mod in db_troop_modifier.get_by_troop_id(troop_obj.id):
         result.append(db_modifier.get_by_id(troop_mod.modifier_id))
 
+    result = result + [None] * (3 - len(result))
     troop_obj.modifiers = result
