@@ -160,11 +160,6 @@ create table Troop (
         FOREIGN KEY (classId)
         REFERENCES TroopClass(id)
         ON DELETE CASCADE,
-
-    CONSTRAINT onDeleteLoadoutTroop
-        FOREIGN KEY (loadoutId)
-        REFERENCES  Loadout(id)
-        ON DELETE CASCADE,
     
     CONSTRAINT onDeleteSkinTroop
         FOREIGN KEY (skinId)
@@ -209,20 +204,6 @@ CREATE TABLE MATCHTROOP(
         ON DELETE CASCADE
 );
 
-
-ALTER TABLE Player
-Add CONSTRAINT onDeleteLoadoutPlayer
-    FOREIGN KEY (currentLoadout)
-    REFERENCES  Loadout(id)
-    ON DELETE CASCADE;
-/*
-create or replace trigger onDeleteLoadoutPlayerTrigger
-before delete on Player
-for each row
-begin
-  delete from loadout where playerId = :old.id;
-end;
-*/
 create sequence playerIdSeq
     start with 1;
 
