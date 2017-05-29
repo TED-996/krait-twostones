@@ -6,40 +6,43 @@ from misc import timing
 password = None
 
 
-conn = None
-conn_pid = None
+_conn = None
+_conn_pid = None
+
+
+_oracle_sid = "xe"
+_oracle_dsn_tnss = [
+    cx_Oracle.makedsn("127.0.0.1", 1521, _oracle_sid),
+    cx_Oracle.makedsn("127.0.0.1", 49161, _oracle_sid)
+]
 
 
 @timing.timing
 def get_connection():
-    global conn
-    global conn_pid
+    global _conn
+    global _conn_pid
 
-    if conn is not None and conn_pid == os.getpid():
-        return conn
+    if _conn is not None and _conn_pid == os.getpid():
+        return _conn
 
-    locations = [("127.0.0.1", 49161), ("127.0.0.1", 1521)]
-    for location in locations:
-        new_conn = get_connection_on_port(*location)
+    for dsn in _oracle_dsn_tnss:
+        new_conn = get_connection_on_port(dsn)
         if new_conn is not None:
-            conn = new_conn
-            conn_pid = os.getpid()
-            
+            _conn = new_conn
+            _conn_pid = os.getpid()
+
             return new_conn
 
     raise RuntimeError("Could not connect to Oracle. Recover from that.")
 
 
-def get_connection_on_port(ip, port):
+def get_connection_on_port(dsn):
     global password
 
     username = "wegasAdmin"
-    # global password
-    sid = "xe"
 
-    dsn_tns = cx_Oracle.makedsn(ip, port, sid)
     try:
-        return cx_Oracle.connect(username, password, dsn_tns)
+        return cx_Oracle.connect(username, password, dsn)
     except cx_Oracle.DatabaseError:
         return None
 
