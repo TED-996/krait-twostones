@@ -95,10 +95,10 @@ end;
 
 create materialized view TroopStatsCalculator as
     select id,classId,loadoutId,skinId, 
-        StatsCalculator.calcMaxHp(id,classId,loadoutId) as "maxHp", 
-        StatsCalculator.calcDmg(id,classId,loadoutId) as "dmg", 
-        StatsCalculator.calcAtkRange(id,classId,loadoutId) as "atkRange", 
-        StatsCalculator.calcMoveRange(id,classId,loadoutId) as "moveRange" 
+        StatsCalculator.calcMaxHp(id,classId,loadoutId) as "MAXHP", 
+        StatsCalculator.calcDmg(id,classId,loadoutId) as "DMG", 
+        StatsCalculator.calcAtkRange(id,classId,loadoutId) as "ATKRANGE", 
+        StatsCalculator.calcMoveRange(id,classId,loadoutId) as "MOVERANGE" 
     from Troop;
 /
 create index statsIndex on TroopStatsCalculator(loadoutId);
