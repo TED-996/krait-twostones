@@ -7,7 +7,7 @@ var Tile = (function () {
         this.y = y;
         this.tileIndex = tileIndex;
         this.zIndex = zIndex;
-    }
+    }   
     return Tile;
 }());
 var Tileset = (function () {
