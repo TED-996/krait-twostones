@@ -1,6 +1,7 @@
 /// <reference path="node_modules/@types/phaser/phaser.d.ts" />
 /// <reference path="ajax_raw.ts"/>
 import Game = Phaser.Game;
+import Rectangle = Phaser.Rectangle;
 class Tile {
     x : number;
     y : number;
@@ -45,6 +46,7 @@ class GameMap {
     width : number;
     tileArray : Array<Tile>;
     tileCount : number;
+    bounds : Rectangle;
 
 
     constructor(map_url){
@@ -58,11 +60,17 @@ class GameMap {
         this.tileCount = map_json.layers[0].data.length;
         let tempData = map_json.layers[0].data;
         this.tileArray = [];
+        this.bounds = new Rectangle(
+            0,
+            0,
+            this.width * this.tileset.tileWidth,
+            this.height * this.tileset.tileHeight);
 
         for(let idx = 0; idx < this.tileCount; idx++){
             let tempTile = new Tile(idx % this.width,
                 Math.floor(idx / this.width), tempData[idx], 0);
             this.tileArray.push(tempTile);
+
         }
 
     }

@@ -1,12 +1,12 @@
 declare
-v_contor INTEGER := 0;
-v_player_id number;
-v_username player.playername%type;
-v_password player.password%type := 'a';
-v_loadoutId loadout.id%type := NULL;
-v_inMatch PLAYER.INMATCH%type := 0;
-v_mmr PLAYER.MMR%type := 1000;
-v_level PLAYER.PLAYERLEVEL%type := 1;
+  v_contor INTEGER := 0;
+  v_player_id number;
+  v_username player.playername%type;
+  v_password player.password%type := 'a';
+  v_loadoutId loadout.id%type := NULL;
+  v_inMatch PLAYER.INMATCH%type := 0;
+  v_mmr PLAYER.MMR%type := 1000;
+  v_level PLAYER.PLAYERLEVEL%type := 1;
 begin
 	for v_contor in 1..10000 loop
     v_player_id := v_contor;

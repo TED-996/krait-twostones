@@ -1,7 +1,9 @@
 import mvc
 from auth_utils import auth_tests
 from db_access import db_ops
-from model import troop
+from db_access import db_troop_class
+from db_access import db_modifier
+from db_access import db_skin
 import krait
 
 
@@ -9,28 +11,20 @@ class GetOptionsController(mvc.CtrlBase):
     def __init__(self):
         self.username = auth_tests.get_auth()
 
-        conn = db_ops.get_connection()
-
-        self.troop_classes = self.get_troop_classes(conn, self.username)
-        self.modifiers = self.get_modifiers(conn, self.username)
-        self.skins = self.get_skins(conn, self.username)
+        self.troop_classes = self.get_troop_classes(self.username)
+        self.modifiers = self.get_modifiers(self.username)
+        self.skins = self.get_skins(self.username)
 
 
-    def get_troop_classes(self, conn, username):
-        cursor = conn.cursor()
-        cursor.execute("select name, description, maxHp, dmg, atkRange, moveRange from TroopClass")
-        # TODO: filter by level
-        return [troop.TroopClass(name, description, max_hp, dmg, atk_range, move_range)
-                for name, description, max_hp, dmg, atk_range, move_range in cursor]
+    def get_troop_classes(self, username):
+        print "before get_all in troop_class"
+        return db_troop_class.get_all()
 
-    def get_modifiers(self, conn, username):
-        cursor = conn.cursor()
-        cursor.execute("select id, name, maxHp, dmg, atkRange, moveRange from Modifier")
-        # TODO: filter by level
-        return [troop.Modifier(mod_id, name, max_hp, dmg, atk_range, move_range)
-                for mod_id, name, max_hp, dmg, atk_range, move_range in cursor]
+    def get_modifiers(self, username):
+        return db_modifier.get_all()
 
-    def get_skins(self, conn, username):
+
+    def get_skins(self, username):
         return []
 
 
