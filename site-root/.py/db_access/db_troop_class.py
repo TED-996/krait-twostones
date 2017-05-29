@@ -4,8 +4,14 @@ from misc import timing
 from model import troop_class
 
 
+troop_class_cache = {}
+
+
 @timing.timing
 def get_by_id(troop_class_id):
+    if troop_class_id in troop_class_cache:
+        return troop_class_cache[troop_class_id]
+
     conn = db_ops.get_connection()
     cursor = conn.cursor()
 
@@ -17,8 +23,10 @@ def get_by_id(troop_class_id):
 
     cursor.close()
 
-    return troop_class.TroopClass(
+    result = troop_class.TroopClass(
         troop_class_id, name, description, max_hp, dmg, atk_range, move_range, min_level)
+    troop_class_cache[troop_class_id] = result
+    return result
 
 
 @timing.timing

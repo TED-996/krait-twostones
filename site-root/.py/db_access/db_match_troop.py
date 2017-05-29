@@ -29,6 +29,17 @@ def get_by_id(match_troop_id, skip_update=False):
     return result
 
 
+def get_by_match(match_id):
+    conn = db_ops.get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("select * from MatchTroop where match_id = :match_id",
+                   {"match_id": match_id})
+
+    mtroop_id, = cursor.fetchone()
+    return get_by_id(mtroop_id)
+
+
 def update(mtroop):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
