@@ -1,19 +1,24 @@
 import cx_Oracle
+import logging
+
 from db_access import db_ops
 from db_access import db_troop_class
 from db_access import db_skin
 from db_access import db_troop_modifier
 from db_access import db_loadout
 from db_access import db_modifier
+from misc import timing
 from model import troop
 
 
 troop_cache = {}
 
 
-def get_by_id(troop_id):
+@timing.timing
+def get_by_id(troop_id, skip_update=False):
     if troop_id in troop_cache:
-        update(troop_cache[troop_id])
+        if not skip_update:
+            update(troop_cache[troop_id])
         return troop_cache[troop_id]
 
     conn = db_ops.get_connection()
@@ -28,9 +33,12 @@ def get_by_id(troop_id):
     result = troop.Troop(troop_id, class_id, loadout_id, skin_id)
     troop_cache[troop_id] = result
 
+    cursor.close()
+
     return result
 
 
+@timing.timing
 def get_by_loadout_id(loadout_id):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
@@ -42,6 +50,7 @@ def get_by_loadout_id(loadout_id):
     return [get_by_id(i) for i, in ids]
 
 
+@timing.timing
 def update(troop_obj):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
@@ -68,27 +77,29 @@ def update(troop_obj):
             troop_obj.loadout = db_loadout.get_by_id(loadout_id)
 
 
+@timing.timing
 def populate(troop_obj):
-    print "populating troop: class",
+    logging.debug("populating troop: class")
     if troop_obj.troop_class is None:
         troop_obj.troop_class = db_troop_class.get_by_id(troop_obj.class_id)
 
-    print ", skin",
+    logging.debug(", skin")
     if troop_obj.skin is None:
         troop_obj.skin = db_skin.get_by_id(troop_obj.skin_id)
 
-    print ", loadout",
+    logging.debug(", loadout")
     if troop_obj.loadout is None:
-        troop_obj.loadout = db_loadout.get_by_id(troop_obj.loadout_id)
+        troop_obj.loadout = db_loadout.get_by_id(troop_obj.loadout_id, skip_update=True)
         troop_obj.loadout.populate()
 
-    print ", modifiers"
+    logging.debug(", modifiers")
     if troop_obj.modifiers is None:
         update_modifiers(troop_obj)
 
-    print ", done"
+    logging.debug(", done")
 
 
+@timing.timing
 def update_modifiers(troop_obj):
     result = []
     for troop_mod in db_troop_modifier.get_by_troop_id(troop_obj.id):

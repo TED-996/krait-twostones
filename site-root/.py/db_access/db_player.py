@@ -1,8 +1,10 @@
 import cx_Oracle
 from db_access import db_ops
+from misc import timing
 from model import player
 
 
+@timing.timing
 def get_by_id(player_id):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
@@ -17,6 +19,7 @@ def get_by_id(player_id):
     return player.Player(player_id, name, password, loadout_id, in_match, mmr, player_level, token)
 
 
+@timing.timing
 def get_by_username(username):
     conn = db_ops.get_connection()
     cursor = conn.cursor()

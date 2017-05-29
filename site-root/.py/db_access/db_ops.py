@@ -1,17 +1,31 @@
 import os
 import cx_Oracle
 import krait
-
+from misc import timing
 
 password = None
 
 
+conn = None
+conn_pid = None
+
+
+@timing.timing
 def get_connection():
+    global conn
+    global conn_pid
+
+    if conn is not None and conn_pid == os.getpid():
+        return conn
+
     locations = [("127.0.0.1", 49161), ("127.0.0.1", 1521)]
     for location in locations:
-        conn = get_connection_on_port(*location)
-        if conn is not None:
-            return conn
+        new_conn = get_connection_on_port(*location)
+        if new_conn is not None:
+            conn = new_conn
+            conn_pid = os.getpid()
+            
+            return new_conn
 
     raise RuntimeError("Could not connect to Oracle. Recover from that.")
 

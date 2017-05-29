@@ -1,8 +1,13 @@
-print "pre imports"
+from misc import autoflush
+print "site_root/edit_loadout.py: pre imports"
+import logging
+logging.basicConfig(level=logging.DEBUG,
+                    format="%(asctime)s %(module)s.%(funcName)s: %(message)s",
+                    datefmt="%H:%M:%S")
 
 from ctrl import edit_loadout
 import mvc
 
-print "pre ctrl ctor"
+logging.debug("site_root/edit_loadout.py: pre ctrl ctor")
 mvc.set_init_ctrl(edit_loadout.EditLoadoutController())
-print "post ctrl ctor"
+logging.debug("site_root/edit_loadout.py: post ctrl ctor")
