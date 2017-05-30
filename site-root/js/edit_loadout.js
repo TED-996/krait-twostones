@@ -138,6 +138,19 @@ var Troop = (function () {
         });
         return new Troop(obj.id, troopClass, obj.skin, modifiers, obj.maxHp, obj.dmg, obj.atkRange, obj.moveRange);
     };
+    Troop.prototype.toTransferObject = function () {
+        return {
+            id: this.id,
+            skin: this.skin.filename,
+            className: this.troopClass.name,
+            description: this.troopClass.description,
+            hp: this.maxHp,
+            dmg: this.dmg,
+            aRange: this.atkRange,
+            mRange: this.moveRange,
+            modifiers: this.modifiers.map(function (m) { return m.id; })
+        };
+    };
     return Troop;
 }());
 var Loadout = (function () {
@@ -148,6 +161,13 @@ var Loadout = (function () {
     }
     Loadout.fromObj = function (obj) {
         return new Loadout(obj.id, obj.owner, obj.troops.map(Troop.fromObj));
+    };
+    Loadout.prototype.toTransferObject = function () {
+        return {
+            owner: this.owner,
+            loadoutId: this.id,
+            troops: this.troops.map(function (t) { return t.toTransferObject(); })
+        };
     };
     return Loadout;
 }());
@@ -303,7 +323,8 @@ var SlotManager = (function () {
 SlotManager.optionsList = $("#options-div");
 SlotManager.activeSlotManager = null;
 var TroopManager = (function () {
-    function TroopManager(troop, troopIdx) {
+    function TroopManager(troop, troopIdx, onUpdate) {
+        if (onUpdate === void 0) { onUpdate = null; }
         this.troop = troop;
         this.troopIdx = troopIdx;
         var closureThis = this;
@@ -313,6 +334,7 @@ var TroopManager = (function () {
         this.dmgStatElem = null;
         this.moveRangeStatElem = null;
         this.atkRangeStatElem = null;
+        this.onUpdate = onUpdate;
         this.init();
         this.updateStats(this.troop);
     }
@@ -337,11 +359,18 @@ var TroopManager = (function () {
             var slot = _a[_i];
             slot.updateDomSlot();
         }
+        if (this.onUpdate != null) {
+            this.onUpdate(this);
+        }
     };
     return TroopManager;
 }());
 function loadoutInit() {
     options = AllOptions.fromObj(JSON.parse(optionsJson));
     loadout = Loadout.fromObj(JSON.parse(loadoutJson));
+    var outJsonLocation = $("#out-loadout-json");
+    function onUpdate(tm) {
+        outJsonLocation.text(JSON.stringify(loadout.toTransferObject()));
+    }
     loadout.troops.map(function (val, idx) { return new TroopManager(val, idx); });
 }
