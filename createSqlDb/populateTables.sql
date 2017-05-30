@@ -11,8 +11,5 @@ start "populateModifiers.sql";
 start "populateSkin.sql";
 start "populateTroops.sql";
 start "createView.sql";
-/*
-begin
-  delete from player where id =1;
-end;
-/*
+start "./part2/indexes.sql";
+start "./part2/triggers.sql";

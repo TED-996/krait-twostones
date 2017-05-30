@@ -207,6 +207,31 @@ class Troop {
         return new Troop(obj.id, troopClass, obj.skin, modifiers, obj.maxHp, obj.dmg, obj.atkRange, obj.moveRange)
     }
 
+    public toTransferObject() : TroopTransferObject {
+        return {
+            id: this.id,
+            skin: this.skin.filename,
+            className: this.troopClass.name,
+            description: this.troopClass.description,
+            hp: this.maxHp,
+            dmg: this.dmg,
+            aRange: this.atkRange,
+            mRange: this.moveRange,
+            modifiers: this.modifiers.map((m) => m.id)
+        };
+    }
+}
+
+interface TroopTransferObject {
+    id : number,
+    skin: string,
+    className: string,
+    description: string,
+    hp?: number,
+    dmg?: number
+    aRange?: number,
+    mRange?: number,
+    modifiers: number[]
 }
 
 class Loadout {
@@ -224,6 +249,20 @@ class Loadout {
     static fromObj(obj):Loadout {
         return new Loadout(obj.id, obj.owner, obj.troops.map(Troop.fromObj));
     }
+
+    public toTransferObject() : LoadoutTransferObject {
+        return {
+            owner: this.owner,
+            loadoutId: this.id,
+            troops: this.troops.map((t) => t.toTransferObject())
+        };
+    }
+}
+
+interface LoadoutTransferObject {
+    owner : string,
+    loadoutId : number,
+    troops : TroopTransferObject[]
 }
 
 class AllOptions {
@@ -449,8 +488,10 @@ class TroopManager {
     dmgStatElem : JQuery;
     atkRangeStatElem : JQuery;
 
+    onUpdate: (tm:TroopManager) => void;
 
-    constructor(troop: Troop, troopIdx : number) {
+
+    constructor(troop: Troop, troopIdx : number, onUpdate : (tm:TroopManager) => void = null) {
         this.troop = troop;
         this.troopIdx = troopIdx;
 
@@ -462,6 +503,7 @@ class TroopManager {
         this.dmgStatElem = null;
         this.moveRangeStatElem = null;
         this.atkRangeStatElem = null;
+        this.onUpdate = onUpdate;
 
         this.init();
         this.updateStats(this.troop);
@@ -490,6 +532,10 @@ class TroopManager {
         for (let slot of this.slots){
             slot.updateDomSlot();
         }
+
+        if(this.onUpdate != null){
+            this.onUpdate(this);
+        }
     }
 }
 
@@ -501,5 +547,11 @@ declare let loadoutJson : string;
 function loadoutInit() : void {
     options = AllOptions.fromObj(JSON.parse(optionsJson));
     loadout = Loadout.fromObj(JSON.parse(loadoutJson));
+    let outJsonLocation : JQuery = $("#out-loadout-json");
+
+    function onUpdate(tm : TroopManager){
+        outJsonLocation.text(JSON.stringify(loadout.toTransferObject()))
+    }
+
     loadout.troops.map((val, idx) => new TroopManager(val, idx));
 }

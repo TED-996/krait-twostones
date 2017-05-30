@@ -92,3 +92,22 @@ def update_troops(loadout_obj):
 
     logging.debug("port update troops")
     loadout_obj.troops = result
+
+
+def save(loadout_obj):
+    from db_access import db_troop
+
+    conn = db_ops.get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("update Loadout set "
+                   "playerId = :playerId "
+                   "where id = :loadoutId",
+                   {
+                       "loadoutId": loadout_obj.id,
+                       "playerId": loadout_obj.player_id
+                   })
+
+    if loadout_obj.troops is not None:
+        for troop in loadout_obj.troops:
+            db_troop.save(troop)

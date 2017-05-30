@@ -1,4 +1,3 @@
-import cx_Oracle
 import logging
 
 from db_access import db_ops
@@ -107,3 +106,25 @@ def update_modifiers(troop_obj):
 
     result = result + [None] * (3 - len(result))
     troop_obj.modifiers = result
+
+
+def save(troop_obj):
+    conn = db_ops.get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("update Troop set "
+                   "classId = :classId, "
+                   "loadoutId = :loadoutId, "
+                   "skinId = :skinId "
+                   "where id = :troopId",
+                   {
+                       "troopId": troop_obj.id,
+                       "classId": troop_obj.class_id,
+                       "loadoutId": troop_obj.loadout_id,
+                       "skinId": troop_obj.skinId
+                   })
+
+    if troop_obj.modifiers is not None:
+        db_troop_modifier.save(troop_obj)
+
+

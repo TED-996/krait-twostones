@@ -7,4 +7,10 @@ class MatchTroop(object):
         self.y_axis = y_axis
         self.hp = hp
         self.respawn_time = respawn_time
-        
+
+        self.match = None
+        self.troop = None
+
+    def populate(self):
+        from db_access import db_match_troop
+        db_match_troop.populate(self)
