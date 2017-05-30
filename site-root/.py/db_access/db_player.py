@@ -39,6 +39,7 @@ def get_by_username(username):
                    {"username": username})
 
     player_id, = cursor.fetchone()
+    cursor.close()
 
     return get_by_id(player_id)
 

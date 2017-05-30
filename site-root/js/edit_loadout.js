@@ -141,7 +141,7 @@ var Troop = (function () {
     Troop.prototype.toTransferObject = function () {
         return {
             id: this.id,
-            skin: this.skin.filename,
+            skin: this.skin.filename || "Tank",
             className: this.troopClass.name,
             description: this.troopClass.description,
             hp: this.maxHp,
@@ -167,7 +167,7 @@ var Loadout = (function () {
         this.troops = troops;
     }
     Loadout.fromObj = function (obj) {
-        return new Loadout(obj.id, obj.owner, obj.troops.map(Troop.fromObj));
+        return new Loadout(obj.loadoutId, obj.owner, obj.troops.map(Troop.fromObj));
     };
     Loadout.prototype.toTransferObject = function () {
         return {

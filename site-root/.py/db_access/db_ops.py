@@ -2,6 +2,7 @@ import os
 import cx_Oracle
 import krait
 from misc import timing
+import logging
 
 password = None
 
@@ -61,7 +62,8 @@ def refresh_troop_stats():
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("dbms_mview.refresh('TROOPSTATSCALCULATOR')")
+    logging.debug("Refreshing stats.")
+    cursor.callproc("refreshStats")
     conn.commit()
 
     cursor.close()

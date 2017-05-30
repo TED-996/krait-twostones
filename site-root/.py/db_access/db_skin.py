@@ -1,6 +1,7 @@
 import cx_Oracle
 from db_access import db_ops
 from model import skin
+from misc import timing
 
 
 def get_by_id(skin_id):
@@ -10,7 +11,7 @@ def get_by_id(skin_id):
     cursor.execute("select * from skin m "
                    "where m.id = :skin_id",
                    {"skin_id": skin_id})
-
+    print skin_id
     skin_id, class_id, filename = cursor.fetchone()
 
     return skin.Skin(skin_id, class_id, filename)
@@ -33,5 +34,6 @@ def get_by_filename(filename):
                    {"filename": filename})
 
     skin_id, = cursor.fetchone()
+    cursor.close()
 
     return get_by_id(skin_id)

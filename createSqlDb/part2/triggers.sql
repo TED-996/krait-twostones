@@ -94,4 +94,8 @@ begin
     commit;
 end;
 /
-
+create or replace procedure refreshStats
+as
+begin
+  dbms_mview.refresh('troopStatsCalculator');
+end;

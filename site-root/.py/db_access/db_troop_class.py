@@ -2,6 +2,7 @@ import cx_Oracle
 from db_access import db_ops
 from misc import timing
 from model import troop_class
+from misc import timing
 
 
 troop_class_cache = {}
@@ -28,7 +29,7 @@ def get_by_id(troop_class_id):
     troop_class_cache[troop_class_id] = result
     return result
 
-@time.timing
+@timing.timing
 def get_by_name(class_name):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
@@ -38,6 +39,7 @@ def get_by_name(class_name):
                    {"class_name": class_name})
 
     class_id, = cursor.fetchone()
+    cursor.close()
 
     return get_by_id(class_id)
 
