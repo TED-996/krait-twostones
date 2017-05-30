@@ -113,6 +113,8 @@ def save(troop_obj, skip_refresh=False):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
 
+    print "loadout id in troop is", troop_obj.loadout_id
+
     logging.debug("pre update troop sql")
     cursor.execute("update Troop set "
                    "classId = :classId, "

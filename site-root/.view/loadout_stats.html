@@ -17,6 +17,7 @@
 
     <div class="container-fluid" id="site-wrapper">
         <ol class="list-unstyled" id="troop-list-stats">
+            @("troops: {}".format(len(ctrl.troops)))@
             @for troop in ctrl.troops:
                 <li class="container troop">
                     <div class="loadout-item col-md-2 col-xs-6 btn btn-default">

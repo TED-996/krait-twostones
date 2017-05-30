@@ -113,6 +113,7 @@ def save(loadout_obj):
     cursor.close()
     if loadout_obj.troops is not None:
         for troop in loadout_obj.troops:
+            print "saving troop", troop.id
             db_troop.save(troop, skip_refresh=True)
 
     conn.commit()

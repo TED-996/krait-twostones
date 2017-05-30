@@ -5,7 +5,7 @@ from model import troop
 from model import troop_modifier
 from db_access import db_loadout
 from db_access import db_player
-from db_access import db_troop_modifier
+from db_access import db_modifier
 from db_access import db_troop_class
 from db_access import db_skin
 import logging
@@ -18,7 +18,8 @@ def get_response():
     player_obj = db_player.get_by_username(data["owner"])
     troop_list = []
     for troop_dto in data["troops"]:
-        modifier_list = db_troop_modifier.get_modifiers_by_troop_id(troop_dto["id"])
+        modifier_list = [db_modifier.get_by_id(i) for i in troop_dto["modifiers"]
+                         if i is not None]
         print "troop id: ", troop_dto["id"]
         
         class_obj = db_troop_class.get_by_name(troop_dto["className"])

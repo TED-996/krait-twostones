@@ -9,6 +9,6 @@ if is_debug:
                         format="%(asctime)s %(module)s.%(funcName)s: %(message)s",
                         datefmt="%H:%M:%S")
 else:
-    logging.basicConfig(level=logging.DEBUG,
+    logging.basicConfig(level=logging.INFO,
                         format="%(asctime)s %(module)s.%(funcName)s: %(message)s",
                         datefmt="%H:%M:%S")

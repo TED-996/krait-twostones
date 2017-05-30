@@ -35,6 +35,9 @@ def get_by_loadout_id(loadout_id):
                    {"loadout_id": loadout_id})
     ids = cursor.fetchall()
     cursor.close()
+    print "nr of troops in loadout:", len(ids)
+    print ids
+    print loadout_id
 
     return [get_by_id(i) for i, in ids]
 
