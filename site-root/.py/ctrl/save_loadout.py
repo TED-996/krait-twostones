@@ -8,19 +8,19 @@ from db_access import db_player
 from db_access import db_troop_modifier
 
 def get_response():
-    data = json.loads(krait.request.body)
+    data = json.loads(krait.request.get_post_form().get("loadout-json"))
 
     player_obj = db_player.get_by_username(data["owner"])
     troop_list = []
     for troop in data["troops"]:
-        modifier_list = db_troop_modifier.get_by_troop_id(troop.id)
-        
-        troop_obj = troop.Troop(troop.id, troop.class_id, troop.loadout_id, troop.skin_id)
-        troop_obj.modifiers = modifiers_list
+        modifier_list = db_troop_modifier.get_by_troop_id(troop["id"])
+
+        troop_obj = troop.Troop(troop["id"], troop["class_id"], troop["loadout_id"],
+                                troop["skin_id"])
+        troop_obj.modifiers = modifier_list
         
         troop_list.append(troop_obj)
 
-    
     loadout_obj = loadout.Loadout(data["loadoutId"], player_obj.id)
     loadout_obj.troops = troop_list
     

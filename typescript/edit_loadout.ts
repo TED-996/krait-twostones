@@ -217,7 +217,14 @@ class Troop {
             dmg: this.dmg,
             aRange: this.atkRange,
             mRange: this.moveRange,
-            modifiers: this.modifiers.map((m) => m.id)
+            modifiers: this.modifiers.map((m) => {
+                if (m == null){
+                    return null;
+                }
+                else{
+                    return m.id;
+                }
+            })
         };
     }
 }
@@ -550,8 +557,8 @@ function loadoutInit() : void {
     let outJsonLocation : JQuery = $("#out-loadout-json");
 
     function onUpdate(tm : TroopManager){
-        outJsonLocation.text(JSON.stringify(loadout.toTransferObject()))
+        outJsonLocation.val(JSON.stringify(loadout.toTransferObject()))
     }
 
-    loadout.troops.map((val, idx) => new TroopManager(val, idx));
+    loadout.troops.map((val, idx) => new TroopManager(val, idx, onUpdate));
 }

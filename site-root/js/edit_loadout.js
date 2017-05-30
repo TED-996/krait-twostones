@@ -148,7 +148,14 @@ var Troop = (function () {
             dmg: this.dmg,
             aRange: this.atkRange,
             mRange: this.moveRange,
-            modifiers: this.modifiers.map(function (m) { return m.id; })
+            modifiers: this.modifiers.map(function (m) {
+                if (m == null) {
+                    return null;
+                }
+                else {
+                    return m.id;
+                }
+            })
         };
     };
     return Troop;
@@ -370,7 +377,7 @@ function loadoutInit() {
     loadout = Loadout.fromObj(JSON.parse(loadoutJson));
     var outJsonLocation = $("#out-loadout-json");
     function onUpdate(tm) {
-        outJsonLocation.text(JSON.stringify(loadout.toTransferObject()));
+        outJsonLocation.val(JSON.stringify(loadout.toTransferObject()));
     }
-    loadout.troops.map(function (val, idx) { return new TroopManager(val, idx); });
+    loadout.troops.map(function (val, idx) { return new TroopManager(val, idx, onUpdate); });
 }
