@@ -107,6 +107,8 @@ def save(loadout_obj):
                        "loadoutId": loadout_obj.id,
                        "playerId": loadout_obj.player_id
                    })
+    conn.commit()
+    db_ops.refresh_troop_stats()
 
     if loadout_obj.troops is not None:
         for troop in loadout_obj.troops:

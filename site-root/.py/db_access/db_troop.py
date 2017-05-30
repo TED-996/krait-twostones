@@ -123,6 +123,8 @@ def save(troop_obj):
                        "loadoutId": troop_obj.loadout_id,
                        "skinId": troop_obj.skinId
                    })
+    conn.commit()
+    db_ops.refresh_troop_stats()
 
     if troop_obj.modifiers is not None:
         db_troop_modifier.save(troop_obj)

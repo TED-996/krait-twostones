@@ -35,3 +35,6 @@ def save(troop_obj):
                            {"troopId": troop_id, "modId": mod.id}
                            for mod in troop_obj.modifiers
                        ])
+
+    conn.commit()
+    db_ops.refresh_troop_stats()
