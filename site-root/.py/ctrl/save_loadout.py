@@ -6,6 +6,8 @@ from model import troop_modifier
 from db_access import db_loadout
 from db_access import db_player
 from db_access import db_troop_modifier
+from db_access import db_troop_class
+from db_access import db_skin
 
 def get_response():
     data = json.loads(krait.request.get_post_form().get("loadout-json"))
@@ -14,9 +16,13 @@ def get_response():
     troop_list = []
     for troop in data["troops"]:
         modifier_list = db_troop_modifier.get_by_troop_id(troop["id"])
+        
+        class_obj = db_troop_class.get_by_name(troop["className"])
+        skin_obj = db_skin.get_by_filename(troop["skin"])
 
-        troop_obj = troop.Troop(troop["id"], troop["class_id"], troop["loadout_id"],
-                                troop["skin_id"])
+        troop_obj = troop.Troop(troop["id"], class_obj.id, data["loadoutId"],
+                                skin_obj.id)
+        
         troop_obj.modifiers = modifier_list
         
         troop_list.append(troop_obj)
