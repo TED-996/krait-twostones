@@ -55,3 +55,13 @@ def read_store_password():
 def get_password():
     with open(os.path.join(krait.site_root, ".private", "oracle_password.nocommit.txt")) as file_obj:
         return file_obj.read()
+
+
+def refresh_troop_stats():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("dbms_mview.refresh('TROOPSTATSCALCULATOR')")
+    conn.commit()
+
+    cursor.close()
