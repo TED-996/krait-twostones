@@ -141,14 +141,21 @@ var Troop = (function () {
     Troop.prototype.toTransferObject = function () {
         return {
             id: this.id,
-            skin: this.skin.filename,
+            skin: this.skin.filename || "Tank",
             className: this.troopClass.name,
             description: this.troopClass.description,
             hp: this.maxHp,
             dmg: this.dmg,
             aRange: this.atkRange,
             mRange: this.moveRange,
-            modifiers: this.modifiers.map(function (m) { return m.id; })
+            modifiers: this.modifiers.map(function (m) {
+                if (m == null) {
+                    return null;
+                }
+                else {
+                    return m.id;
+                }
+            })
         };
     };
     return Troop;
@@ -160,7 +167,7 @@ var Loadout = (function () {
         this.troops = troops;
     }
     Loadout.fromObj = function (obj) {
-        return new Loadout(obj.id, obj.owner, obj.troops.map(Troop.fromObj));
+        return new Loadout(obj.loadoutId, obj.owner, obj.troops.map(Troop.fromObj));
     };
     Loadout.prototype.toTransferObject = function () {
         return {
@@ -370,7 +377,7 @@ function loadoutInit() {
     loadout = Loadout.fromObj(JSON.parse(loadoutJson));
     var outJsonLocation = $("#out-loadout-json");
     function onUpdate(tm) {
-        outJsonLocation.text(JSON.stringify(loadout.toTransferObject()));
+        outJsonLocation.val(JSON.stringify(loadout.toTransferObject()));
     }
-    loadout.troops.map(function (val, idx) { return new TroopManager(val, idx); });
+    loadout.troops.map(function (val, idx) { return new TroopManager(val, idx, onUpdate); });
 }

@@ -27,6 +27,21 @@ def get_by_id(troop_id, skip_update=False):
     return result
 
 
+def get_by_loadout_id(loadout_id):
+    conn = db_ops.get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("select id from TroopStatsCalculator where loadoutId = :loadout_id",
+                   {"loadout_id": loadout_id})
+    ids = cursor.fetchall()
+    cursor.close()
+    print "nr of troops in loadout:", len(ids)
+    print ids
+    print loadout_id
+
+    return [get_by_id(i) for i, in ids]
+
+
 def update(troop_stats_obj):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
@@ -56,6 +71,7 @@ def update(troop_stats_obj):
 def populate(troop_stats_obj):
     if troop_stats_obj.troop is None:
         troop_stats_obj.troop = db_troop.get_by_id(troop_stats_obj.troop_id)
+        troop_stats_obj.troop.populate()
         troop_stats_obj.troop_class = troop_stats_obj.troop.troop_class
         troop_stats_obj.loadout = troop_stats_obj.troop.loadout
         troop_stats_obj.skin = troop_stats_obj.troop.skin

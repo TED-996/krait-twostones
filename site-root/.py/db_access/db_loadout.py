@@ -94,12 +94,14 @@ def update_troops(loadout_obj):
     loadout_obj.troops = result
 
 
+@timing.timing
 def save(loadout_obj):
     from db_access import db_troop
 
     conn = db_ops.get_connection()
     cursor = conn.cursor()
 
+    logging.debug("pre update loadout sql")
     cursor.execute("update Loadout set "
                    "playerId = :playerId "
                    "where id = :loadoutId",
@@ -108,6 +110,11 @@ def save(loadout_obj):
                        "playerId": loadout_obj.player_id
                    })
 
+    cursor.close()
     if loadout_obj.troops is not None:
         for troop in loadout_obj.troops:
-            db_troop.save(troop)
+            print "saving troop", troop.id
+            db_troop.save(troop, skip_refresh=True)
+
+    conn.commit()
+    db_ops.refresh_troop_stats()

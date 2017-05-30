@@ -210,14 +210,21 @@ class Troop {
     public toTransferObject() : TroopTransferObject {
         return {
             id: this.id,
-            skin: this.skin.filename,
+            skin: this.skin.filename || "Tank",
             className: this.troopClass.name,
             description: this.troopClass.description,
             hp: this.maxHp,
             dmg: this.dmg,
             aRange: this.atkRange,
             mRange: this.moveRange,
-            modifiers: this.modifiers.map((m) => m.id)
+            modifiers: this.modifiers.map((m) => {
+                if (m == null){
+                    return null;
+                }
+                else{
+                    return m.id;
+                }
+            })
         };
     }
 }
@@ -247,7 +254,7 @@ class Loadout {
     }
 
     static fromObj(obj):Loadout {
-        return new Loadout(obj.id, obj.owner, obj.troops.map(Troop.fromObj));
+        return new Loadout(obj.loadoutId, obj.owner, obj.troops.map(Troop.fromObj));
     }
 
     public toTransferObject() : LoadoutTransferObject {
@@ -550,8 +557,8 @@ function loadoutInit() : void {
     let outJsonLocation : JQuery = $("#out-loadout-json");
 
     function onUpdate(tm : TroopManager){
-        outJsonLocation.text(JSON.stringify(loadout.toTransferObject()))
+        outJsonLocation.val(JSON.stringify(loadout.toTransferObject()))
     }
 
-    loadout.troops.map((val, idx) => new TroopManager(val, idx));
+    loadout.troops.map((val, idx) => new TroopManager(val, idx, onUpdate));
 }

@@ -108,10 +108,14 @@ def update_modifiers(troop_obj):
     troop_obj.modifiers = result
 
 
-def save(troop_obj):
+@timing.timing
+def save(troop_obj, skip_refresh=False):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
 
+    print "loadout id in troop is", troop_obj.loadout_id
+
+    logging.debug("pre update troop sql")
     cursor.execute("update Troop set "
                    "classId = :classId, "
                    "loadoutId = :loadoutId, "
@@ -121,10 +125,15 @@ def save(troop_obj):
                        "troopId": troop_obj.id,
                        "classId": troop_obj.class_id,
                        "loadoutId": troop_obj.loadout_id,
-                       "skinId": troop_obj.skinId
+                       "skinId": troop_obj.skin_id
                    })
 
-    if troop_obj.modifiers is not None:
-        db_troop_modifier.save(troop_obj)
+    cursor.close()
 
+    if troop_obj.modifiers is not None:
+        db_troop_modifier.save(troop_obj, skip_refresh=True)
+
+    conn.commit()
+    if not skip_refresh:
+        db_ops.refresh_troop_stats()
 

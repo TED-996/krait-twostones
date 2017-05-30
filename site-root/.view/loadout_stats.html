@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content=""> @{krait.set_content_type(ext="html")}
+
+    <title>Edit loadout</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/edit_loadout.css" rel="stylesheet">
+</head>
+
+<body>
+    @import ".view/header.html"
+
+    <div class="container-fluid" id="site-wrapper">
+        <ol class="list-unstyled" id="troop-list-stats">
+            @("troops: {}".format(len(ctrl.troops)))@
+            @for troop in ctrl.troops:
+                <li class="container troop">
+                    <div class="loadout-item col-md-2 col-xs-6 btn btn-default">
+                        <div class="item-slot">
+                            <img class="item-img" src="about:blank">
+                        </div>
+                        <div class="item-stats-div">
+                            <p class="item-name">@troop.troop_class.name@</p>
+                            <p class="item-stats-text">@ctrl.class_stats(troop.troop_class)@</p>
+                        </div>
+                    </div>
+                    @for mod in troop.troop.modifiers:
+                        <div class="loadout-item col-md-2 col-xs-6 btn btn-default">
+                            <div class="item-slot">
+                                <img class="item-img" src="about:blank">
+                            </div>
+                            <div class="item-stats-div">
+                                <p class="item-name">@("empty" if mod is None else mod.name)@</p>
+                                <p class="item-stats-text">@("empty" if mod is None else ctrl.mod_stats(mod))@</p>
+                            </div>
+                        </div>
+                    @/for
+
+                    <div class="container troop-stats-sum col-md-4 col-xs-12">
+                        <div class="row">
+                            <div class="col-xs-4"><p>HP</p></div>
+                            <div class="col-xs-1"><p class="text-right">@troop.max_hp@</p></div>
+                            <div class="col-xs-offset-1 col-xs-4"><p>Move Range</p></div>
+                            <div class="col-xs-1"><p class="text-right">@troop.move_range@</p></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4"><p>Damage</p></div>
+                            <div class="col-xs-1"><p class="text-right">@troop.dmg@</p></div>
+                            <div class="col-xs-offset-1 col-xs-4"><p>Hit Range</p></div>
+                            <div class="col-xs-1"><p class="text-right">@troop.atk_range@</p></div>
+                        </div>
+                    </div>
+                </li>
+            @/for
+        </ol>
+    </div>
+
+
+    <script type="text/javascript" src="/js/jquery-1.12.4.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+</body>
+</html>

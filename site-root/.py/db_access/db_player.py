@@ -36,9 +36,10 @@ def get_by_username(username):
 
     cursor.execute("select id from player m "
                    "where m.playername = :username",
-                   {"user_id": username})
+                   {"username": username})
 
     player_id, = cursor.fetchone()
+    cursor.close()
 
     return get_by_id(player_id)
 
