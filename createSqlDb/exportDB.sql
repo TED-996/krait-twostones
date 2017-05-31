@@ -12,7 +12,7 @@ declare
       (
         object_type = 'TRIGGER'
       );
-  walk_trigger_row walk_trigger%rowtype;
+  walk_trigger_row walk_trigger%rowtype;  
   
   cursor walk is 
     select 
