@@ -1,4 +1,3 @@
-
 ALTER SESSION SET PLSCOPE_SETTINGS = 'IDENTIFIERS:NONE';
 /
 create or replace trigger onDeletePLayer
