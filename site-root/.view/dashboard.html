@@ -6,6 +6,9 @@
     <title>Dashboard</title>
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" @{krait.set_content_type(ext="html" )} href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/cover.css" rel="stylesheet">
 </head>
@@ -13,69 +16,124 @@
 <body>
     @import ".view/header.html"@
     <div id="site-wrapper">
-    <div style="position: relative">
-    <div id="loadoutMenu" class="sidenav">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <button class="accordion">loadout 1</button>
-        <div class="stats">
-            <p>Tanks:1</p>
-            <p>Infantry:2</p>
-            <p>Archers:3</p>
-            <p>Runners:1</p>
-            <a id="1" class="edit btn btn-default" href="edit_loadout?loadout_id=10">EDIT</a>
-        </div>
-        <button class="accordion">loadout 2</button>
-        <div class="stats">
-            <p>Tanks:1</p>
-            <p>Infantry:2</p>
-            <p>Archers:3</p>
-            <p>Runners:1</p>
-            <a id="2" class="edit btn btn-default" href="edit_loadout?loadout_id=10">EDIT</a>
-        </div>
-        <button class="accordion">loadout 3</button>
-        <div class="stats">
-            <p>Tanks:1</p>
-            <p>Infantry:2</p>
-            <p>Archers:3</p>
-            <p>Runners:1</p>
-            <a id="3" class="edit btn btn-default" href="edit_loadout?loadout_id=20">EDIT</a>
-        </div>
-        <button class="accordion">loadout 4</button>
-        <div class="stats">
-            <p>Tanks:1</p>
-            <p>Infantry:2</p>
-            <p>Archers:3</p>
-            <p>Runners:1</p>
-            <a id="4" class="edit btn btn-default" href="edit_loadout?loadout_id=11">EDIT</a>
-        </div>
-    
-    </div>
+        <div class="container-fluid">
+            <div class = panel-group>
+                <div  class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <a data-toggle="collapse" id="loadoutMenu" href="#collapseMain"><h2>Loadouts</h2></a>
+                        </h3>
+                    </div>
+                <div id="collapseMain" class="panel-collapse collapse">
+                    <div class="panel-group" id="accordion">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h2 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Loadout 1</a>
+                                </h2>
+                            </div>
+                            <div id="collapse1" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <p>Tanks:1</p>
+                                    <p>Infantry:2</p>
+                                    <p>Archers:3</p>
+                                    <p>Runners:1</p>
+                                    <a id="1" class="edit btn btn-default" href="edit_loadout?loadout_id=10">EDIT</a>
+                                
+                                </div>
+                            </div>
+                        </div>
 
-    <div id="main">
-        <div id="activeLoadout">
-            <p>Welcome, @ctrl.username@</p> <!--sorry i'll delete-->
-            <p>Active Loadout</p>
-        </div>
-        <span style="font-size:30px;cursor:pointer" onclick="openNav()">
-                <button id="loadoutBtn" class="topButton">
-                    <span>Loadouts</span>
-        </button>
-        </span >
-        <div id="play">
-            <button id="findMatchBtn" class="button">Find Match</button>
-        </div>
-    </div>
-    </div>
-    </div>
-    <div id="searchMatch" class="modal">
-        <div class="modal-content">
-            <div class="loader"></div>
-                <a id="join" class="button col-md-6" href="/gameplay">Join</a>
-                <button id="cancel" class="a-to-button button col-md-6">Cancel</button>
-        </div>
-    </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Loadout 2</a>
+                                </h4>
+                            </div>
+                            <div id="collapse2" class="panel-collapse collapse">
+                                <div class="panel panel-success">
+                                <div class="panel-body">
+                                    <p>Tanks:1</p>
+                                    <p>Infantry:2</p>
+                                    <p>Archers:3</p>
+                                    <p>Runners:1</p>
+                                    <a id="2" class="edit btn btn-default" href="edit_loadout?loadout_id=10">EDIT</a>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
 
-    <script src="../js/canvas.js"></script>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Loadout 3</a>
+                                </h4>
+                            </div>
+                            <div id="collapse3" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <p>Tanks:1</p>
+                                    <p>Infantry:2</p>
+                                    <p>Archers:3</p>
+                                    <p>Runners:1</p>
+                                    <a id="3" class="edit btn btn-default" href="edit_loadout?loadout_id=20">EDIT</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Loadout 4</a>
+                                </h4>
+                            </div>
+                            <div id="collapse4" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <p>Tanks:1</p>
+                                    <p>Infantry:2</p>
+                                    <p>Archers:3</p>
+                                    <p>Runners:1</p>
+                                    <a id="4" class="edit btn btn-default" href="edit_loadout?loadout_id=11">EDIT</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="activeLoadout">
+                <p>Welcome, @ctrl.username@</p> <!--sorry i'll delete-->
+                <p>Active Loadout</p>
+                <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Find Match</button>
+            </div>
+
+            <!--Modal for Loading -->
+            
+            
+            <!--Modal-->
+            <div id="myModal" class="modal fade" role="dialog">
+                <div class="modal-dialog modal-lg">
+                <!--Content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title" style="color:green">Wegas is searchin</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p style="color:black">We are searching for a worthy opponent...</p>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <button type="button" class="btn btn-primary btn-lg"><a id="join" href="/gameplay">Join</a></button>
+                            </div>
+                            <div class="col-sm-6">    
+                                <button type="button" class="btn btn-primary btn-lg"><a id="cancel" data-dismiss="modal">Cancel</a></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
-
-</hmtl>
