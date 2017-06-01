@@ -1,4 +1,5 @@
 import os
+import atexit
 import cx_Oracle
 import krait
 from misc import timing
@@ -46,6 +47,13 @@ def get_connection_on_port(dsn):
         return cx_Oracle.connect(username, password, dsn)
     except cx_Oracle.DatabaseError:
         return None
+
+
+def cleanup():
+    if _conn is not None and _conn_pid == os.getpid():
+        _conn.close()
+
+atexit.register(cleanup)
 
 
 def read_store_password():
