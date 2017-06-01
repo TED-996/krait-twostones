@@ -13,8 +13,9 @@ class WegasGame
     fgGroup : Phaser.Group;
     troopSprite : Phaser.Sprite;
     playerTroops: GameTroop[];
-    currentLoadout: Loadout;
-    oponentTroops: GameTroop[]; // @TODO not sure how to implement it
+    playerLoadout: Loadout;
+    opponentTroops: GameTroop[];
+    opponentLoadout: Loadout;
     loadedTroops: GameTroopManager;
 
     constructor()
@@ -49,19 +50,15 @@ class WegasGame
         this.game.world.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
-        //player chooses loadout or creates a new one
-        //gets new troop array;
+        this.playerLoadout = Loadout.fromObj(JSON.parse(ajax_raw_sync("/get_match_loadout?which=mine")));
+        this.opponentLoadout = Loadout.fromObj(JSON.parse(ajax_raw_sync("/get_match_loadout?which=theirs")));
 
-        var x;
-        var y;
+        this.playerTroops = [];
+        this.opponentTroops = [];
+        this.addLoadout(this.playerLoadout, this.playerTroops);
+        this.addLoadout(this.opponentLoadout, this.opponentTroops);
 
-        for(var i=0; i<6; i++){
-            x = this.game.input.activePointer.worldX;
-            y = this.game.input.activePointer.worldY;
-            this.playerTroops[i] = new GameTroop(Troop[i], x, y, null);
-        }
-
-        this.loadedTroops = new GameTroopManager(this.playerTroops);
+        this.loadedTroops = new GameTroopManager(this.playerTroops.concat(this.opponentTroops));
 
         this.tileGroup = this.game.add.group();
         this.fgGroup = this.game.add.group();
@@ -69,9 +66,17 @@ class WegasGame
         let logo = this.tileGroup.create(this.game.world.centerX, this.game.world.centerY, 'moveSprite');
         logo.anchor.setTo( 0.5, 0.5 );
 
-        this.tileRenderer = new TileRenderer([this.map], [], [], this.map.tileset, this.tileGroup);
+        this.tileRenderer = new TileRenderer([this.map], [], [this.loadedTroops], this.map.tileset, this.tileGroup);
         this.troopSprite = this.game.add.sprite(300, 20, 'moveSprite');
-        this.game.physics.arcade.enable(this.troopSprite);
+        this.game.physics.arcade.enable(logo);
+    }
+
+    private addLoadout(loadout: Loadout, dst : GameTroop[]) {
+        for(let i = 0; i < 6; i++){
+            let x = Math.floor(Math.random() * this.map.width - 2) + 1;
+            let y = Math.floor(Math.random() * this.map.height - 2) + 1;
+            dst.push(new GameTroop(loadout.troops[i], x, y, null));
+        }
     }
 
     update() {

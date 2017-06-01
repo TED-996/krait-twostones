@@ -3,12 +3,14 @@ class WebsocketResponseWaitItem {
     private onClose : () => void;
     private refcount : number;
     private closed : boolean;
+    private onComplete : (data : String) => void;
 
     constructor(onClose : () => void) {
         this.data = null;
         this.onClose = onClose;
         this.refcount = 1;
         this.closed = false;
+        this.onComplete = null;
     }
 
     public copy() : WebsocketResponseWaitItem {
@@ -17,12 +19,22 @@ class WebsocketResponseWaitItem {
         return new WebsocketResponseWaitItem(() => self.refClose);
     }
 
-    getData(): string {
+    public getData(): string {
         return this.data;
     }
 
-    setData(value: string) {
+    public setData(value: string) {
         this.data = value;
+        if (value !== null && this.onComplete !== null){
+            this.onComplete(value);
+        }
+    }
+
+    public setOnComplete(onComplete : (data : String) => void){
+        this.onComplete = onComplete;
+        if (this.data !== null){
+            this.onComplete(this.data);
+        }
     }
 
     public close() : void {

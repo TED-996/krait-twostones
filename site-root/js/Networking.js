@@ -4,6 +4,7 @@ var WebsocketResponseWaitItem = (function () {
         this.onClose = onClose;
         this.refcount = 1;
         this.closed = false;
+        this.onComplete = null;
     }
     WebsocketResponseWaitItem.prototype.copy = function () {
         var self = this;
@@ -15,6 +16,15 @@ var WebsocketResponseWaitItem = (function () {
     };
     WebsocketResponseWaitItem.prototype.setData = function (value) {
         this.data = value;
+        if (value !== null && this.onComplete !== null) {
+            this.onComplete(value);
+        }
+    };
+    WebsocketResponseWaitItem.prototype.setOnComplete = function (onComplete) {
+        this.onComplete = onComplete;
+        if (this.data !== null) {
+            this.onComplete(this.data);
+        }
     };
     WebsocketResponseWaitItem.prototype.close = function () {
         if (!this.closed) {
