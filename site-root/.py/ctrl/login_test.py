@@ -2,8 +2,13 @@ import urllib
 import krait
 import mvc
 from db_access import db_ops
+from db_access import db_player
 import cx_Oracle
 import json
+import random
+import string
+import cookie
+import datetime
 
 
 def get_response():
@@ -29,8 +34,39 @@ def get_response():
 
     if not fail:
         if result == 1:
+            login_user(username)
             redirect_url = "/dashboard?user={}".format(urllib.quote_plus(username))
         else:
             redirect_url = "/login_fail"
 
     return krait.Response("HTTP/1.1", 302, [("Location", redirect_url)], "")
+
+
+def login_user(username):
+    options = string.digits + string.ascii_letters
+    token = "".join(random.choice(options) for _ in xrange(32))
+
+    user = db_player.get_by_username(username)
+    user.token = token
+    db_player.save(user)
+
+    cookie.set_cookie(
+        cookie.Cookie(
+            "username",
+            username,
+            [
+                cookie.CookieExpiresAttribute(
+                    datetime.datetime.utcnow() + datetime.timedelta(days=30))
+            ]
+        )
+    )
+    cookie.set_cookie(
+        cookie.Cookie(
+            "token",
+            token,
+            [
+                cookie.CookieExpiresAttribute(
+                    datetime.datetime.utcnow() + datetime.timedelta(days=30))
+            ]
+        )
+    )
