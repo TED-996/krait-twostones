@@ -52,9 +52,13 @@ class GameMap {
     constructor(map_url){
         let map_data = ajax_raw_sync(map_url);
         let map_json = JSON.parse(map_data);
-        this.tileset = new Tileset(map_json.tilesets[0].image, map_json.tilesets[0].firstgid,
-            map_json.tilesets[0].columns, map_json.tilesets[0].spacing,
-            map_json.tilesets[0] .tileheight, map_json.tilesets[0].tilewidth);
+        this.tileset = new Tileset(
+            map_json.tilesets[0].image,
+            map_json.tilesets[0].firstgid,
+            map_json.tilesets[0].columns,
+            map_json.tilesets[0].spacing,
+            map_json.tilesets[0].tileheight,
+            map_json.tilesets[0].tilewidth);
         this.height = map_json.height;
         this.width = map_json.width;
         this.tileCount = map_json.layers[0].data.length;
@@ -62,13 +66,13 @@ class GameMap {
         this.tileArray = [];
         this.bounds = new Rectangle(
             0,
-            0,
-            this.width * this.tileset.tileWidth,
-            this.height * this.tileset.tileHeight);
+            -this.tileset.tileHeight / 4,
+            this.width * this.tileset.tileWidth - this.tileset.tileWidth / 2,
+            (this.height + 1) * this.tileset.tileHeight * 2 / 3 + this.tileset.tileHeight / 2);
 
         for(let idx = 0; idx < this.tileCount; idx++){
             let tempTile = new Tile(idx % this.width,
-                Math.floor(idx / this.width), tempData[idx], 0);
+                Math.floor(idx / this.width), tempData[idx] - this.tileset.firstIndex, 0);
             this.tileArray.push(tempTile);
 
         }
