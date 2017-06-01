@@ -1,7 +1,7 @@
 import logging
 
 
-is_debug = False
+is_debug = True
 
 
 if is_debug:
