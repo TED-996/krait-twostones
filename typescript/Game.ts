@@ -18,6 +18,8 @@ class WegasGame
     opponentLoadout: Loadout;
     loadedTroops: GameTroopManager;
 
+    gameController : GameController;
+
     constructor()
     {
         // create our phaser game
@@ -32,6 +34,7 @@ class WegasGame
             update:this.update,
             render:this.render
         });
+        this.gameController = new GameController(this);
     }
 
     preload()
@@ -50,8 +53,8 @@ class WegasGame
         this.game.world.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
-        this.playerLoadout = Loadout.fromObj(JSON.parse(ajax_raw_sync("/get_match_loadout?which=mine")));
-        this.opponentLoadout = Loadout.fromObj(JSON.parse(ajax_raw_sync("/get_match_loadout?which=theirs")));
+        this.playerLoadout = WegasGame.get_loadout("mine");
+        this.opponentLoadout = WegasGame.get_loadout("theirs");
 
         this.playerTroops = [];
         this.opponentTroops = [];
@@ -69,6 +72,10 @@ class WegasGame
         this.tileRenderer = new TileRenderer([this.map], [], [this.loadedTroops], this.map.tileset, this.tileGroup);
         this.troopSprite = this.game.add.sprite(300, 20, 'moveSprite');
         this.game.physics.arcade.enable(logo);
+    }
+
+    private static get_loadout(which: string) : Loadout {
+        return Loadout.fromObj(JSON.parse(ajax_raw_sync("/get_match_loadout?which=" + which)));
     }
 
     private addLoadout(loadout: Loadout, dst : GameTroop[]) {
@@ -97,10 +104,14 @@ class WegasGame
         {
             this.game.camera.x += 4;
         }
+        this.gameController.update();
     }
 
     render(){
         this.game.debug.cameraInfo(this.game.camera, 32, 32);
+
+        this.gameController.render();
+        this.tileRenderer.update();
     }
 }
 
