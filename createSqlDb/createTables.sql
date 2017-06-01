@@ -90,6 +90,9 @@ CREATE TABLE MATCHHISTORY (
 CREATE TABLE QUEUE(
     playerId NUMBER(10) not null,
     timeStarted TIMESTAMP,
+    priority NUMBER (2),
+    joinResponse NUMBER(1),
+    matchReady NUMBER(1),
 
     constraint onDeletePlayerQueue
         FOREIGN key(playerId)

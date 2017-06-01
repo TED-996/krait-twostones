@@ -5,6 +5,7 @@ drop index troopModifierByModifier;
 drop index skinByClass;
 drop index troopByClassId;
 drop index loadoutByPlayerId;
+drop index playerByName;
 
 create index matchByPlayer1 on match(player1);
 create index matchByPlayer2 on match(player2);
@@ -13,3 +14,4 @@ create index troopModifierByModifier on troopModifier(modifierId,troopId);
 create index skinByClass on skin(classId);
 create index troopByClassId on troop(classId);
 create index loadoutByPlayerId on Loadout(playerId);
+create index playerByName on Player(playername);
