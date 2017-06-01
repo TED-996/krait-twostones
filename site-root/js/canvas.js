@@ -1,29 +1,29 @@
-// Get the modal
-var searchMatch = document.getElementById('searchMatch');
-
 //Get the button that serches for a match
 var findMatch = document.getElementById("findMatchBtn");
-
-//Get the cancel button to interupt the search
-var cancelBtn = document.getElementById("cancel");
-
+console.log(findMatch)
+//Get the cancel button to interrupt the search
+var cancelBtn = document.getElementById("cancelBtn");
+console.log(cancelBtn)
 //Socket for webSockets
 var socket;
 
 
 findMatch.onclick = function() {
     socket = new WebSocket(getWebSocketUrl("/queue_wait"),"queueProtocol");
-    searchMatch.style.display = "block"
+    //searchMatch.style.display = "block"
     socket.onmessage = function (msg) {
-        if (msg === "already_in_queue"){
+        if (msg.data === "already_in_queue"){
+            console.log("already in match")
             socket.close() //trebuie facut aici o chestie care sa zica ca esti deja in queue
+            //searchMatch.style.display = "none";
+            console.log("already in match")
         }
     }
 }
 
 cancelBtn.onclick = function() {
-    searchMatch.style.display = "none";
-    socket.send("exit queue");
+    //searchMatch.style.display = "none";
+    socket.send("exit_queue");
     time.sleep(1);
     socket.close()
 };
@@ -40,29 +40,4 @@ function getWebSocketUrl (absolute_url) {
     new_uri += "//" + loc.host;
     new_uri += absolute_url;
     return new_uri;
-}
-
-function openNav() {
-    document.getElementById("loadoutMenu").style.width = "250px";
-    document.getElementById("main").style.marginLeft = "250px";
-}
-
-function closeNav() {
-    document.getElementById("loadoutMenu").style.width = "0";
-    document.getElementById("main").style.marginLeft = "0";
-}
-
-var acc = document.getElementsByClassName("accordion");
-var i;
-
-for( i = 0; i<acc.length; i++) {
-    acc[i].onclick = function() {
-        this.classList.toggle("active");
-        var panel = this.nextElementSibling;
-        if (panel.style.maxHeight){
-            panel.style.maxHeight = null;
-        } else {
-            panel.style.maxHeight = panel.scrollHeight + "px";
-        } 
-    }
 }

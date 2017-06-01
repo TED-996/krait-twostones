@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="../js/canvas.js"></script>
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/cover.css" rel="stylesheet">
 </head>
@@ -103,7 +104,7 @@
             <div id="activeLoadout">
                 <p>Welcome, @ctrl.username@</p> <!--sorry i'll delete-->
                 <p>Active Loadout</p>
-                <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Find Match</button>
+                <button type="button" id="findMatchBtn" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Find Match</button>
             </div>
 
             <!--Modal for Loading -->
@@ -127,7 +128,7 @@
                                 <button type="button" class="btn btn-primary btn-lg"><a id="join" href="/gameplay">Join</a></button>
                             </div>
                             <div class="col-sm-6">    
-                                <button type="button" class="btn btn-primary btn-lg"><a id="cancel" data-dismiss="modal">Cancel</a></button>
+                                <button type="button" id="cancelBtn" class="btn btn-primary btn-lg"><a id="cancel" data-dismiss="modal">Cancel</a></button>
                             </div>
                         </div>
                     </div>
