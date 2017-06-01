@@ -7,15 +7,19 @@ var findMatch = document.getElementById("findMatchBtn");
 //Get the cancel button to interupt the search
 var cancelBtn = document.getElementById("cancel");
 
-//
+//Socket for webSockets
 var socket;
+
+
 findMatch.onclick = function() {
-    socket = new WebSocket(getWebSocketUrl("/queue_wait"),"queueProtocol")
+    socket = new WebSocket(getWebSocketUrl("/queue_wait"),"queueProtocol");
     searchMatch.style.display = "block";
 }
 
 cancelBtn.onclick = function() {
     searchMatch.style.display = "none";
+    socket.send("exit queue")
+    time.sleep(1);
     socket.close()
 }
 
