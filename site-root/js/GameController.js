@@ -2,6 +2,7 @@ var GameController = (function () {
     function GameController(game) {
         this.game = game;
         this.networking = new WegasNetworking();
+        this.joined = false;
     }
     GameController.prototype.join = function () {
         var self = this;
@@ -10,6 +11,7 @@ var GameController = (function () {
         return result;
     };
     GameController.prototype.onJoin = function () {
+        this.joined = true;
     };
     return GameController;
 }());
