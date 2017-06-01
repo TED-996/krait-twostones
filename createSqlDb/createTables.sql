@@ -88,7 +88,7 @@ CREATE TABLE MATCHHISTORY (
 );
 
 CREATE TABLE QUEUE(
-    playerId NUMBER(10) not null,
+    playerId NUMBER(10) not null unique,
     timeStarted TIMESTAMP,
     priority NUMBER (2),
     joinResponse NUMBER(1),

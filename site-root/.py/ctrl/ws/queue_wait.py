@@ -23,9 +23,13 @@ class QueueWaitController(websockets.WebsocketsCtrlBase):
         logging.debug("Started.")
         conn = db_ops.get_connection()
         cursor = conn.cursor()
-        logging.debug("-------------------------Player id " + str(self.player.id))
+        logging.debug("Player id " + str(self.player.id))
         try:
-            self.insert_in_queue()
+            cursor.execute("select playerid from queue where playerid = :player_id", {"player_id": self.player.id})
+            if cursor.fetchone() is not None:
+                self.push_out_message("already_in_queue")
+            else:
+                self.insert_in_queue()
         except ValueError:
             print ValueError.message
 
@@ -35,7 +39,7 @@ class QueueWaitController(websockets.WebsocketsCtrlBase):
             in_msg = self.pop_in_message()
 
             if in_msg is not None:
-                if in_msg == "exit queue":
+                if in_msg == "exit_queue":
                     logging.debug(in_msg)
                     break
                 if in_msg == "join":
@@ -54,8 +58,7 @@ class QueueWaitController(websockets.WebsocketsCtrlBase):
         cursor.execute("delete from queue where playerid = :player_id", {"player_id": self.player.id})
         conn.commit()
         cursor.close()
-
-        logging.debug("shutting down")
+        logging.debug("Closing thread...")
 
     def insert_in_queue(self):
         self.queue_obj = db_queue.insert(self.player.id, self.priority)

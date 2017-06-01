@@ -13,8 +13,13 @@ var socket;
 
 findMatch.onclick = function() {
     socket = new WebSocket(getWebSocketUrl("/queue_wait"),"queueProtocol");
-    searchMatch.style.display = "block";
-};
+    searchMatch.style.display = "block"
+    socket.onmessage = function (msg) {
+        if (msg === "already_in_queue"){
+            socket.close() //trebuie facut aici o chestie care sa zica ca esti deja in queue
+        }
+    }
+}
 
 cancelBtn.onclick = function() {
     searchMatch.style.display = "none";
