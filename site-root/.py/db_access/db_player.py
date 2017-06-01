@@ -62,3 +62,31 @@ def update(player_obj):
     player.mmr = mmr
     player.token = token
     player.player_level = player_level
+
+
+def save(player_obj):
+    conn = db_ops.get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("update player set "
+                   "playername = :playername, "
+                   "password = :password, "
+                   "currentLoadout = :currentLoadout, "
+                   "inMatch = :inMatch, "
+                   "mmr = :mmr, "
+                   "token = :token, "
+                   "playerLevel = :playerLevel "
+                   "where id = :playerId",
+                   {
+                       "playerId": player_obj.id,
+                       "playername": player_obj.name,
+                       "password": player_obj.password,
+                       "currentLoadout": player_obj.loadout_id,
+                       "inMatch": player_obj.in_match,
+                       "mmr": player_obj.mmr,
+                       "playerLevel": player_obj.player_level,
+                       "token": player_obj.token
+                   })
+
+    cursor.close()
+    conn.commit()

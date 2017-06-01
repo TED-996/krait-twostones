@@ -8,7 +8,7 @@ var Tile = (function () {
         this.y = y;
         this.tileIndex = tileIndex;
         this.zIndex = zIndex;
-    }   
+    }
     return Tile;
 }());
 var Tileset = (function () {
@@ -35,9 +35,9 @@ var GameMap = (function () {
         this.tileCount = map_json.layers[0].data.length;
         var tempData = map_json.layers[0].data;
         this.tileArray = [];
-        this.bounds = new Rectangle(0, 0, this.width * this.tileset.tileWidth, this.height * this.tileset.tileHeight);
+        this.bounds = new Rectangle(0, -this.tileset.tileHeight / 4, this.width * this.tileset.tileWidth - this.tileset.tileWidth / 2, (this.height + 1) * this.tileset.tileHeight * 2 / 3 + this.tileset.tileHeight / 2);
         for (var idx = 0; idx < this.tileCount; idx++) {
-            var tempTile = new Tile(idx % this.width, Math.floor(idx / this.width), tempData[idx], 0);
+            var tempTile = new Tile(idx % this.width, Math.floor(idx / this.width), tempData[idx] - this.tileset.firstIndex, 0);
             this.tileArray.push(tempTile);
         }
     }

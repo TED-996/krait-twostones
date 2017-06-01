@@ -11,6 +11,7 @@ class WegasGame
 
     tileGroup : Phaser.Group;
     fgGroup : Phaser.Group;
+    troopSprite : Phaser.Sprite;
 
     constructor()
     {
@@ -40,7 +41,8 @@ class WegasGame
 
     create()
     {
-        this.game.world.setBounds(-2000, -2000, 4000, 4000);
+        let bounds = this.map.bounds;
+        this.game.world.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
 
@@ -51,6 +53,8 @@ class WegasGame
         logo.anchor.setTo( 0.5, 0.5 );
 
         this.tileRenderer = new TileRenderer([this.map], [], [], this.map.tileset, this.tileGroup);
+        this.troopSprite = this.game.add.sprite(300, 20, 'moveSprite');
+        this.game.physics.arcade.enable(this.troopSprite);
     }
 
     update() {
