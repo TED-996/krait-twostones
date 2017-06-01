@@ -3,14 +3,16 @@ class GameTroop {
     x : number;
     y : number;
     hp : number;
+    isEnemy : number;
 
 
-    constructor(troop: Troop, x: number, y: number, hp: number = null) {
+    constructor(troop: Troop, x: number, y: number, isEnemy : number, hp: number = null) {
         this.troop = troop;
         this.troop.recompute();
 
         this.x = x;
         this.y = y;
+        this.isEnemy = isEnemy;
         if (hp == null){
             this.hp = troop.maxHp;
         }
@@ -20,7 +22,14 @@ class GameTroop {
     }
 
     public getTile() : Tile {
-        return new Tile(this.x, this.y, 1, 1); //TODO: tile index? from troop.skin.filename i guess
+        let tileIndex : number;
+        if (this.isEnemy){
+            tileIndex = 13;
+        }
+        else{
+            tileIndex = 14;
+        }
+        return new Tile(this.x, this.y, tileIndex, 1); //TODO: tile index? from troop.skin.filename i guess
     }
 }
 
