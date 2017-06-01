@@ -23,13 +23,26 @@ var WegasGame = (function () {
         this.map.tileset.load(this.game);
     };
     WegasGame.prototype.create = function () {
-        this.game.world.setBounds(-2000, -2000, 4000, 4000);
+        var bounds = this.map.bounds;
+        this.game.world.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
         this.cursors = this.game.input.keyboard.createCursorKeys();
+        //player chooses loadout or creates a new one
+        //gets new troop array;
+        var x;
+        var y;
+        for (var i = 0; i < 6; i++) {
+            x = this.game.input.activePointer.worldX;
+            y = this.game.input.activePointer.worldY;
+            this.playerTroops[i] = new GameTroop(Troop[i], x, y, null);
+        }
+        this.loadedTroops = new GameTroopManager(this.playerTroops);
         this.tileGroup = this.game.add.group();
         this.fgGroup = this.game.add.group();
         var logo = this.tileGroup.create(this.game.world.centerX, this.game.world.centerY, 'moveSprite');
         logo.anchor.setTo(0.5, 0.5);
         this.tileRenderer = new TileRenderer([this.map], [], [], this.map.tileset, this.tileGroup);
+        this.troopSprite = this.game.add.sprite(300, 20, 'moveSprite');
+        this.game.physics.arcade.enable(this.troopSprite);
     };
     WegasGame.prototype.update = function () {
         if (this.cursors.up.isDown) {
