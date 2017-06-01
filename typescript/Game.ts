@@ -12,6 +12,10 @@ class WegasGame
     tileGroup : Phaser.Group;
     fgGroup : Phaser.Group;
     troopSprite : Phaser.Sprite;
+    playerTroops: GameTroop[];
+    currentLoadout: Loadout;
+    oponentTroops: GameTroop[]; // @TODO not sure how to implement it
+    loadedTroops: GameTroopManager;
 
     constructor()
     {
@@ -45,6 +49,19 @@ class WegasGame
         this.game.world.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
+        //player chooses loadout or creates a new one
+        //gets new troop array;
+
+        var x;
+        var y;
+
+        for(var i=0; i<6; i++){
+            x = this.game.input.activePointer.worldX;
+            y = this.game.input.activePointer.worldY;
+            this.playerTroops[i] = new GameTroop(Troop[i], x, y, null);
+        }
+
+        this.loadedTroops = new GameTroopManager(this.playerTroops);
 
         this.tileGroup = this.game.add.group();
         this.fgGroup = this.game.add.group();

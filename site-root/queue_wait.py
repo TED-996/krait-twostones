@@ -13,4 +13,3 @@ else:
     else:
         krait.response = krait.ResponseBadRequest()
 
-sys.stdout.flush()
