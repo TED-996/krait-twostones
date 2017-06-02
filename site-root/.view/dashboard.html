@@ -10,12 +10,14 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/cover.css" rel="stylesheet">
+    <lint href="../css/dashboard.css" rel="stylesheet">
+    <script src="../js/dashboard.js"></script>
 </head>
 
 <body>
-    @import ".view/header.html"@
     <div id="site-wrapper">
         <div class="container-fluid">
+            @import ".view/header.html"@
             <div class = panel-group>
                 <div  class="panel panel-default">
                     <div class="panel-heading">
@@ -37,7 +39,8 @@
                                     <p>Infantry:2</p>
                                     <p>Archers:3</p>
                                     <p>Runners:1</p>
-                                    <a id="1" class="edit btn btn-default" href="edit_loadout?loadout_id=10">EDIT</a>
+                                    <a onClick="makeActiveLoadout(this.id);" id="active1" class="active btn btn-default" >Make active</a>
+                                    <a id="edit1" class="edit btn btn-default" href="edit_loadout?loadout_id=10">EDIT</a>
                                 
                                 </div>
                             </div>
@@ -56,7 +59,8 @@
                                     <p>Infantry:2</p>
                                     <p>Archers:3</p>
                                     <p>Runners:1</p>
-                                    <a id="2" class="edit btn btn-default" href="edit_loadout?loadout_id=10">EDIT</a>
+                                    <a onClick="makeActiveLoadout(this.id);" id="active2" class="active btn btn-default">Make active</a>
+                                    <a id="edit2" class="edit btn btn-default" href="edit_loadout?loadout_id=10">EDIT</a>
                                 </div>
                                 </div>
                             </div>
@@ -74,7 +78,8 @@
                                     <p>Infantry:2</p>
                                     <p>Archers:3</p>
                                     <p>Runners:1</p>
-                                    <a id="3" class="edit btn btn-default" href="edit_loadout?loadout_id=20">EDIT</a>
+                                    <a onClick="makeActiveLoadout(this.id);" id="active3" class="active btn btn-default">Make active</a>
+                                    <a id="edit3" class="edit btn btn-default" href="edit_loadout?loadout_id=20">EDIT</a>
                                 </div>
                             </div>
                         </div>
@@ -91,7 +96,8 @@
                                     <p>Infantry:2</p>
                                     <p>Archers:3</p>
                                     <p>Runners:1</p>
-                                    <a id="4" class="edit btn btn-default" href="edit_loadout?loadout_id=11">EDIT</a>
+                                    <a id="active4" class="active btn btn-default" onClick="makeActiveLoadout(this.id);">Make active</a>
+                                    <a id="edit4" class="edit btn btn-default" href="edit_loadout?loadout_id=11">EDIT</a>
                                 </div>
                             </div>
                         </div>
@@ -100,8 +106,8 @@
             </div>
 
             <div id="activeLoadout">
-                <p>Welcome, @ctrl.username@</p> <!--sorry i'll delete-->
-                <p>Active Loadout</p>
+                <h1>Welcome, @ctrl.username@</h1> <!--sorry i'll delete-->
+                <h3 id="displayActiveLoadout">Active Loadout</h3>
                 <button type="button" id="findMatchBtn" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Find Match</button>
             </div>
 
