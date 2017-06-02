@@ -19,7 +19,7 @@
         <div class="container-fluid">
             @import ".view/header.html"@
             <div class = panel-group>
-                <div  class="panel panel-default">
+                <div  class="panel panel-warning">
                     <div class="panel-heading">
                         <h3 class="panel-title">
                             <a data-toggle="collapse" id="loadoutMenu" href="#collapseMain"><h2>Loadouts</h2></a>
@@ -27,7 +27,7 @@
                     </div>
                 <div id="collapseMain" class="panel-collapse collapse">
                     <div class="panel-group" id="accordion">
-                        <div class="panel panel-default">
+                        <div class="panel panel-info">
                             <div class="panel-heading">
                                 <h2 class="panel-title">
                                     <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Loadout 1</a>
@@ -46,7 +46,7 @@
                             </div>
                         </div>
 
-                        <div class="panel panel-default">
+                        <div class="panel panel-info">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
                                     <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Loadout 2</a>
@@ -66,7 +66,7 @@
                             </div>
                         </div>
 
-                        <div class="panel panel-default">
+                        <div class="panel panel-info">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
                                     <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Loadout 3</a>
@@ -84,7 +84,7 @@
                             </div>
                         </div>
 
-                        <div class="panel panel-default">
+                        <div class="panel panel-info">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
                                     <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Loadout 4</a>
@@ -108,7 +108,9 @@
             <div id="activeLoadout">
                 <h1>Welcome, @ctrl.username@</h1> <!--sorry i'll delete-->
                 <h3 id="displayActiveLoadout">Active Loadout</h3>
-                <button type="button" id="findMatchBtn" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Find Match</button>
+                <button type="button" id="findMatchBtn" onClick="testLoadout()" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Find Match</button>
+                <div id="alertDiv">
+                </div>
             </div>
 
             <!--Modal for Loading -->

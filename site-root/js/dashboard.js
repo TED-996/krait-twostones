@@ -25,3 +25,17 @@ function makeActiveLoadout(button_id){
         alert("There must be an active loadout");
     }
 }
+
+function testLoadout(){
+    var allLoadouts = document.getElementsByClassName("active btn btn-default");
+    var check = 0;
+    var alertDiv = document.getElementById("alertDiv");
+    for (var i=0; i<allLoadouts.length; i++){
+        if(allLoadouts[i].firstChild.data=="Is active"){
+            check = 1;
+        }
+    }
+    /*if(check != 1){
+        alertDiv.innerHTML = <div class="alert alert-danger"><strong>Warning!</strong>You must select at least one loadout!</div>;
+    }*/
+}
