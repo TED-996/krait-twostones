@@ -122,15 +122,37 @@
                     </div>
                     <div class="modal-footer">
                         <div class="row">
-                            <div class="col-sm-6">
-                                <button type="button" class="btn btn-primary btn-lg center-block"><a id="join" href="/gameplay">Join</a></button>
-                            </div>
-                            <div class="col-sm-6">    
-                                <button type="button" id="cancelBtn" class="btn btn-primary btn-lg center-block"><a id="cancel" data-dismiss="modal">Cancel</a></button>
+                            <div class="col-sm-12">
+                                <button type="button" id="cancelBtn" class="btn btn-danger btn-lg center-block"><a id="cancel" data-dismiss="modal">Cancel</a></button>
                             </div>
                         </div>
                     </div>
                 </div>
+                </div>
+            </div>
+
+             <div id="matchFoundModal" class="modal fade" role="dialog">
+                <div class="modal-dialog modal-lg">
+                <!--Content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" style="color:green">Wegas is searchin</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p style="color:black">Match found!</p>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <button type="button" id="joinBtn"class="btn btn-success btn-lg center-block"><a id="join">Join Match</a></button>
+                                </div>
+                                <div class="col-sm-6">
+                                    <button type="button" id="leaveBtn" class="btn btn-danger btn-lg center-block"><a id="leave" data-dismiss="modal">Leave</a></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

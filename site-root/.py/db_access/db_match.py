@@ -70,3 +70,16 @@ def update(match_obj):
     match_obj.score2 = score2
     match_obj.map_id = map_id
     match_obj.time_started = time_started
+
+
+def save(player1, player2):
+    conn = db_ops.get_connection()
+    cursor = conn.cursor()
+    map_id = 0
+    try:
+        cursor.execute("insert into match values(matchidseq.nextval,:id1,:id2,1,NULL,0,0,NULL,(select systimestamp from dual))",
+                       {"id1": player1.player_id, "id2": player2.player_id})
+    except ValueError:
+        print ValueError.message
+    conn.commit()
+    cursor.close()
