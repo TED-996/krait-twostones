@@ -24,12 +24,18 @@ def update(queue_obj):
     cursor.execute("select * from queue "
                    "where playerId = :player_id",
                    {"player_id": queue_obj.player_id})
-
-    player_id, time_started, priority, join_response, match_ready = cursor.fetchone()
-    queue_obj.time_started = time_started
-    queue_obj.priority = priority
-    queue_obj.join_response = join_response
-    queue_obj.match_ready = match_ready
+    try:
+        cursor_object = cursor.fetchone()
+        if cursor_object is None:
+            raise ValueError("Object not in table")
+        else:
+            player_id, time_started, priority, join_response, match_ready = cursor_object
+            queue_obj.time_started = time_started
+            queue_obj.priority = priority
+            queue_obj.join_response = join_response
+            queue_obj.match_ready = match_ready
+    except ValueError:
+        raise ValueError("Object not in table")
 
 
 def save(queue_obj):
@@ -75,3 +81,15 @@ def is_deleted(queue_obj):
 
     cursor.close()
     return not exists
+
+def get_players(number_of_players):
+    conn = db_ops.get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("select playerid from (select playerid from queue where matchready = 0 order by priority) where rownum < :number_of_players + 1 ",{"number_of_players": number_of_players});
+    player_ids = cursor.fetchall()
+    player_queue = []
+    for i, in player_ids:
+        player_queue.append(get_by_id(i))
+    cursor.close()
+    return player_queue

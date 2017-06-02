@@ -28,6 +28,10 @@
     "url": "/queue_wait"
   },
   {
+    "verb": "WEBSOCKET",
+    "url": "/matchmaker"
+  },
+  {
     "verb": "GET"
   }
 ]
