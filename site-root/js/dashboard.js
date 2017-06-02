@@ -22,7 +22,6 @@ function makeActiveLoadout(button_id){
             display.firstChild.data = text.concat(stringToCompare);
         }
     } else { 
-        activeLoadout.firstChild.data = "Make active";
-        activeLoadout.style.backgroundColor = "#4CAF50";
+        alert("There must be an active loadout");
     }
 }
