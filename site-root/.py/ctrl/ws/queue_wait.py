@@ -25,12 +25,17 @@ class QueueWaitController(websockets.WebsocketsCtrlBase):
         cursor = conn.cursor()
         logging.debug("Player id " + str(self.player.id))
         try:
-            cursor.execute("select playerid from queue where playerid = :player_id", {"player_id": self.player.id})
-            if cursor.fetchone() is not None:
+            cursor.execute("select count(playerid) from queue where playerid = :player_id", {"player_id": self.player.id})
+            count_player, = cursor.fetchone()
+            logging.debug(count_player)
+            if count_player > 0:
+                logging.debug("-----------------------------------already in queue")
                 self.push_out_message("already_in_queue")
             else:
+                logging.debug("-----------------------------------else branch")
                 self.insert_in_queue()
         except ValueError:
+            logging.debug("Got an error...")
             print ValueError.message
 
         logging.debug("pre while")
@@ -50,7 +55,7 @@ class QueueWaitController(websockets.WebsocketsCtrlBase):
                 self.join_sent = True
 
             if self.is_removed():
-                self.priority = 1
+                self.priority += 1
                 self.insert_in_queue()
 
             time.sleep(0.5)

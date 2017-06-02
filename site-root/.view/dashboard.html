@@ -4,11 +4,10 @@
 <head>
     <meta charset="utf-8">
     <title>Dashboard</title>
+    @{krait.set_content_type(ext="html" )}
     <link rel="stylesheet" href="../css/dashboard.css">
-    <link rel="stylesheet" @{krait.set_content_type(ext="html" )} href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/cover.css" rel="stylesheet">
     <lint href="../css/dashboard.css" rel="stylesheet">
@@ -107,10 +106,9 @@
             </div>
 
             <div id="activeLoadout">
-                    <h1>Welcome, @ctrl.username@</h1> <!--sorry i'll delete-->
-                    <h3 id="displayActiveLoadout">Active Loadout: </h3>
-
-                    <button id="findMatch" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Find Match</button>
+                <p>Welcome, @ctrl.username@</p> <!--sorry i'll delete-->
+                <p>Active Loadout</p>
+                <button type="button" id="findMatchBtn" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Find Match</button>
             </div>
 
             <!--Modal for Loading -->
@@ -131,16 +129,38 @@
                     <div class="modal-footer">
                         <div class="row">
                             <div class="col-sm-6">
-                                <button type="button" class="btn btn-primary btn-lg"><a id="join" href="/gameplay">Join</a></button>
+                                <button type="button" class="btn btn-primary btn-lg center-block"><a id="join" href="/gameplay">Join</a></button>
                             </div>
                             <div class="col-sm-6">    
-                                <button type="button" class="btn btn-primary btn-lg"><a id="cancel" data-dismiss="modal">Cancel</a></button>
+                                <button type="button" id="cancelBtn" class="btn btn-primary btn-lg center-block"><a id="cancel" data-dismiss="modal">Cancel</a></button>
                             </div>
                         </div>
                     </div>
                 </div>
                 </div>
             </div>
+
+            <div id="inQueue" class="modal fade" role="dialog">
+                <div class="modal-dialog modal-lg">
+                <!--Content-->
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <p style="color:black">Already in queue</p>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button type="button" id="inQueueOkBtn" class="btn btn-primary btn-lg center-block"><a data-dismiss="modal">Ok</a></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="../js/canvas.js"></script>
 </body>
