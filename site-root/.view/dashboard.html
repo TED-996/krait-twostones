@@ -20,10 +20,10 @@
             @import ".view/header.html"@
             <div class="col-sm-2">
             <div class = panel-group>
-                <div  class="panel panel-default">
+                <div  class="panel panel-success">
                     <div class="panel-heading">
                         <h3 class="panel-title">
-                            <a data-toggle="collapse" id="loadoutMenu" href="#collapseMain"><h3>Loadouts</h3></a>
+                            <a data-toggle="collapse" id="loadoutMenu" href="#collapseMain"><h4>Loadouts</h4></a>
                         </h3>
                     </div>
                 <div id="collapseMain" class="panel-collapse collapse">
@@ -111,11 +111,9 @@
         </div>
 
             <div id="activeLoadout">
-                <h1>Welcome, @ctrl.username@</h1> <!--sorry i'll delete-->
-                <h3 id="displayActiveLoadout">Active Loadout</h3>
-                <button type="button" id="findMatchBtn" onClick="testLoadout()" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Find Match</button>
-                <div id="alertDiv">
-                </div>
+                    <h1>Welcome, @ctrl.username@</h1> <!--sorry i'll delete-->
+                    <h3 id="displayActiveLoadout">Active Loadout</h3>
+                    <button type="button" id="findMatchBtn" onClick="testLoadout()" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Find Match</button>
             </div>
 
             <!--Modal for Loading -->

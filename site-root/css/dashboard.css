@@ -11,7 +11,7 @@
     height: 0px;
     
     position:absolute;
-    top:250px;
+    top:100px;
     bottom:0;
     left:0;
     right:0;
@@ -27,4 +27,17 @@
 
 .panel {
     margin-top: 40px;
+}
+
+html { 
+-webkit-background-size: cover;
+-moz-background-size: cover;
+-o-background-size: cover;
+background-size: cover;
+}
+
+@media only screen and (max-width: 320px) {
+
+   body { font-size: 2em; }
+
 }
