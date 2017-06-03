@@ -35,7 +35,8 @@ def get_all_by_id(user_id):
     cursor = conn.cursor()
 
     cursor.execute("select * from Loadout where playerId = :userId",
-                   {"playerId": user_id})
+                   {"userId": user_id})
+
 
 @timing.timing
 def update(loadout_obj):
