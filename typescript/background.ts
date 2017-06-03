@@ -13,7 +13,6 @@ class Background
     tileRenderer : TileRenderer;
 
     tileGroup : Phaser.Group;
-    fgGroup : Phaser.Group;
 
     constructor()
     {
@@ -27,8 +26,8 @@ class Background
     preload()
     {
         this.game.load.image('moveSprite', "img/moveSprite.jpg");
-        this.game.stage.backgroundColor = 0xffffff;
-        this.backgroundMap = new GameMap("/map/backGroundMap.json");
+        this.game.stage.backgroundColor = 0x000000;
+        this.backgroundMap = new GameMap("/map/backgroundMap.json");
         this.backgroundMap.tileset.load(this.game);
     }
 
@@ -48,3 +47,7 @@ class Background
         this.tileRenderer.update();
     }
 }
+
+window.onload = () => {
+    new Background();
+};

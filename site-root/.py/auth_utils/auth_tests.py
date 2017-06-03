@@ -14,3 +14,7 @@ def get_auth():
 def _check_token(username, token):
     player = db_player.get_by_username(username)
     return player.token == token
+
+def get_player_info(username):
+    player = db_player.get_by_username(username)
+    return player;
