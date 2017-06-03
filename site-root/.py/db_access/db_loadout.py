@@ -34,8 +34,14 @@ def get_all_by_id(user_id):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("select * from Loadout where playerId = :userId",
+    cursor.execute("select id from Loadout where playerId = :userId",
                    {"userId": user_id})
+    
+    loadout_ids = cursor.fetchall()
+
+    result = []
+    for loadout_id in loadout_ids:
+        restul.append(get_by_id(loadout_id))
 
 
 @timing.timing
