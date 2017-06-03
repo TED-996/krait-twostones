@@ -12,7 +12,12 @@ def get_by_id(skin_id):
                    "where m.id = :skin_id",
                    {"skin_id": skin_id})
     print skin_id
-    skin_id, class_id, filename = cursor.fetchone()
+    temp_data = cursor.fetchone()
+    cursor.close()
+    if temp_data is not None:
+        skin_id, class_id, filename = temp_data
+    else:
+        return None
 
     return skin.Skin(skin_id, class_id, filename)
 
@@ -33,7 +38,11 @@ def get_by_filename(filename):
                    "where s.filename = :filename",
                    {"filename": filename})
 
-    skin_id, = cursor.fetchone()
+    temp_data = cursor.fetchone()
     cursor.close()
+    if temp_data is not None:
+        skin_id, class_id, filename = temp_data
+    else:
+        return None
 
     return get_by_id(skin_id)
