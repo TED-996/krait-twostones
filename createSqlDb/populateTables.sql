@@ -6,3 +6,5 @@ start "./part2/triggers.sql";
 start "populateTroopclass.sql";
 start "populateModifiers.sql";
 start "populateSkin.sql";
+
+commit;
