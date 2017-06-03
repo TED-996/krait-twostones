@@ -10,8 +10,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/cover.css" rel="stylesheet">
-    <lint href="../css/dashboard.css" rel="stylesheet">
-    <script src="../js/dashboard.js"></script>
+    <link href="../css/dashboard.css" rel="stylesheet">
 </head>
 
 <body>
@@ -29,24 +28,27 @@
                     </div>
                 <div id="collapseMain" class="panel-collapse collapse">
                     <div class="panel-group" id="accordion">
-                        @for i in range(ctrl.number_of_loadouts):
+                        @for loadout in ctrl.user_loadouts:
                         <div class="panel panel-info">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse@ctrl.user_loadouts[i].id@">@ctrl.user_loadouts[i].name@</a>
+                                    <a data-toggle="collapse" data-parent="#accordion"
+                                       href="#collapse@loadout.id@">@loadout.name@</a>
                                 </h4>
                             </div>
-                            <div id="collapse@ctrl.user_loadouts[i].id@" class="panel-collapse collapse">
+                            <div id="collapse@loadout.id@" class="panel-collapse collapse">
                                 <div class="panel-body">
-                                    <a id="active@ctrl.user_loadouts[i].id@" class="active btn btn-default" onClick=@ctrl.make_active_loadout(ctrl.user_loadouts[i])@>Make active</a>
-                                    <a id="edit@ctrl.user_loadouts[i].id@" class="edit btn btn-default" href="edit_loadout?loadout_id=@ctrl.user_loadouts[i].id@">EDIT</a>
+                                    <a id="active@loadout.id@" class="active btn btn-default"
+                                       onClick="@ctrl.make_active_loadout(loadout)@">Make active</a>
+                                    <a id="edit@loadout.id@" class="edit btn btn-default"
+                                       href="/edit_loadout?loadout_id=@loadout.id@">EDIT</a>
                                 </div>
                             </div>
                         </div>
                         @/for
+                        </div>
                     </div>
                 </div>
-            </div>
             </div>
         </div>
         <div class="col-sm-10">
@@ -92,7 +94,7 @@
                         <div class="modal-footer">
                             <div class="row">
                                 <div class="col-sm-6">
-                                    <button type="button" id="joinBtn"class="btn btn-success btn-lg center-block"><a id="join">Join Match</a></button>
+                                    <button type="button" id="joinBtn" class="btn btn-success btn-lg center-block"><a id="join">Join Match</a></button>
                                 </div>
                                 <div class="col-sm-6">
                                     <button type="button" id="leaveBtn" class="btn btn-danger btn-lg center-block"><a id="leave" data-dismiss="modal">Leave</a></button>
@@ -120,9 +122,12 @@
                     </div>
                 </div>
             </div>
+        </div>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="../js/canvas.js"></script>
+    <script src="/js/canvas.js"></script>
+    <script src="/js/dashboard.js"></script>
+
 </body>
