@@ -9,6 +9,10 @@ class DashboardController(object):
         player = auth_tests.get_player_info(self.username);
         self.level = player.player_level
         self.mmr = player.mmr
+
+        self.user_loads //cacat cu mac
+        
+
     
     def get_view(self):
         return ".view/dashboard.html"
