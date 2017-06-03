@@ -33,7 +33,11 @@ def get_response():
         troop_list.append(troop_obj)
 
     logging.debug("pre loadout ctor")
-    loadout_obj = loadout.Loadout(loadout_id, player_obj.id)
+    loadout_curr = db_loadout.get_by_id(loadout_id)
+    if loadout_curr is None:
+        return krait.ResponseBadRequest()
+
+    loadout_obj = loadout.Loadout(loadout_id, player_obj.id, loadout_curr.name)
     loadout_obj.troops = troop_list
 
     logging.debug("pre save")

@@ -23,17 +23,6 @@ function htmlEscape(literals) {
     result += literals[literals.length - 1];
     return result;
 }
-var AllOptions = (function () {
-    function AllOptions(troopClassOptions, modifierOptions, skinOptions) {
-        this.troopClassOptions = troopClassOptions;
-        this.modifierOptions = modifierOptions;
-        this.skinOptions = skinOptions;
-    }
-    AllOptions.fromObj = function (obj) {
-        return new AllOptions(obj.troopClasses.map(TroopClass.fromObj), obj.modifiers.map(Modifier.fromObj), obj.skins.map(Skin.fromObj));
-    };
-    return AllOptions;
-}());
 var options = null;
 var loadout = null;
 var ClassSlot = (function () {

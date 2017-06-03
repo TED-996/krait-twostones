@@ -1,15 +1,10 @@
 declare
-v_id skin.id%type;
 begin
-	select skinIdseq.NextVal into v_id from dual;
-	insert into skin values(v_id,1,'Tank');
+	insert into skin values(1,1,'Tank');
 
-	select skinIdseq.NextVal into v_id from dual;
-	insert into skin values(v_id,2,'Infantry');
+	insert into skin values(2,2,'Infantry');
 
-	select skinIdseq.NextVal into v_id from dual;
-	insert into skin values(v_id,3,'Runner');
+	insert into skin values(3,3,'Runner');
 
-	select skinIdseq.NextVal into v_id from dual;
-	insert into skin values(v_id,4,'Archer');
+	insert into skin values(4,4,'Archer');
 end;

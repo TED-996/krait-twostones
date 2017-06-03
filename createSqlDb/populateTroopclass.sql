@@ -1,6 +1,6 @@
 begin
   insert into troopclass values (
-    troopclassIdSeq.nextval,
+    1,
     'Tank',
     'Can take a lot of damage.',
     30,
@@ -11,7 +11,7 @@ begin
   );
   
   insert into troopclass values (
-    troopclassIdSeq.nextval,
+    2,
     'Infantry',
     'All-rounded soldier.',
     18,
@@ -22,7 +22,7 @@ begin
   );
   
   insert into troopclass values (
-    troopclassIdSeq.nextval,
+    3,
     'Runner',
     'Fast, but brittle.',
     10,
@@ -33,7 +33,7 @@ begin
   );
   
   insert into troopclass values (
-    troopclassIdSeq.nextval,
+    4,
     'Archer',
     'Can hit far away.',
     12,

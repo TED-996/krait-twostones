@@ -20,8 +20,7 @@ def get_by_id(loadout_id, skip_update=False):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("select * from Loadout where id = :loadout_id",
-                   {"loadout_id": loadout_id})
+    cursor.execute("select id, playerid, name from loadout where id = :loadout_id", {"loadout_id": loadout_id})
 
     temp_data = cursor.fetchone()
     cursor.close()
@@ -45,8 +44,11 @@ def get_all_by_id(user_id):
     loadout_ids = cursor.fetchall()
 
     result = []
-    for loadout_id in loadout_ids:
-        restul.append(get_by_id(loadout_id))
+    for loadout_id, in loadout_ids:
+        logging.debug(loadout_id)
+        result.append(get_by_id(loadout_id))
+
+    return result
 
 
 @timing.timing
@@ -54,7 +56,7 @@ def update(loadout_obj):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("select * from Loadout where id = :loadout_id",
+    cursor.execute("select id,playerid,name from Loadout where id = :loadout_id",
                    {"loadout_id": loadout_obj.id})
 
     temp_data = cursor.fetchone()

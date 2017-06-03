@@ -2,6 +2,7 @@ import krait
 import mvc
 from auth_utils import auth_tests
 from db_access import db_loadout
+import logging
 
 
 class GetLoadoutController(mvc.CtrlBase):
@@ -11,7 +12,8 @@ class GetLoadoutController(mvc.CtrlBase):
         self.loadout_id = int(krait.request.query.get("id"))
         if not db_loadout.check_owner(self.loadout_id, self.username):
             krait.response = krait.ResponseBadRequest()
-    
+
+        logging.debug("---------------" + str(self.loadout_id))
         self.loadout = self.get_in_out_format(db_loadout.get_by_id(self.loadout_id))
 
 

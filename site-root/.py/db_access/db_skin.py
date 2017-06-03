@@ -15,6 +15,7 @@ def get_by_id(skin_id):
     temp_data = cursor.fetchone()
     cursor.close()
     if temp_data is not None:
+        print temp_data
         skin_id, class_id, filename = temp_data
     else:
         return None
@@ -41,8 +42,7 @@ def get_by_filename(filename):
     temp_data = cursor.fetchone()
     cursor.close()
     if temp_data is not None:
-        skin_id, class_id, filename = temp_data
+        skin_id,= temp_data
+        return get_by_id(skin_id)
     else:
         return None
-
-    return get_by_id(skin_id)

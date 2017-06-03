@@ -238,3 +238,27 @@ interface LoadoutTransferObject {
     loadoutId : number,
     troops : TroopTransferObject[]
 }
+
+class AllOptions {
+    troopClassOptions:TroopClass[];
+    modifierOptions:Modifier[];
+    skinOptions:Skin[];
+
+    constructor(troopClassOptions:TroopClass[], modifierOptions:Modifier[], skinOptions:Skin[]) {
+        this.troopClassOptions = troopClassOptions;
+        this.modifierOptions = modifierOptions;
+        this.skinOptions = skinOptions;
+    }
+
+    static fromObj(obj):AllOptions {
+        return new AllOptions(
+            obj.troopClasses.map(TroopClass.fromObj),
+            obj.modifiers.map(Modifier.fromObj),
+            obj.skins.map(Skin.fromObj)
+        );
+    }
+
+    public static loadAjax() : AllOptions {
+        return AllOptions.fromObj(JSON.parse(ajax_raw_sync("/get_options")));
+    }
+}

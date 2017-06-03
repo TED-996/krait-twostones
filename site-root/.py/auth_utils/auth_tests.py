@@ -17,4 +17,4 @@ def _check_token(username, token):
 
 def get_player_info(username):
     player = db_player.get_by_username(username)
-    return player;
+    return player

@@ -124,7 +124,7 @@ var Troop = (function () {
             aRange: this.atkRange,
             mRange: this.moveRange,
             modifiers: this.modifiers.map(function (m) {
-                if (m === null) {
+                if (m == null) {
                     return null;
                 }
                 else {
@@ -152,4 +152,18 @@ var Loadout = (function () {
         };
     };
     return Loadout;
+}());
+var AllOptions = (function () {
+    function AllOptions(troopClassOptions, modifierOptions, skinOptions) {
+        this.troopClassOptions = troopClassOptions;
+        this.modifierOptions = modifierOptions;
+        this.skinOptions = skinOptions;
+    }
+    AllOptions.fromObj = function (obj) {
+        return new AllOptions(obj.troopClasses.map(TroopClass.fromObj), obj.modifiers.map(Modifier.fromObj), obj.skins.map(Skin.fromObj));
+    };
+    AllOptions.loadAjax = function () {
+        return AllOptions.fromObj(JSON.parse(ajax_raw_sync("/get_options")));
+    };
+    return AllOptions;
 }());
