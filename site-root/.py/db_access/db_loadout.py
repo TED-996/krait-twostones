@@ -117,7 +117,24 @@ def update_troops(loadout_obj):
     logging.debug("port update troops")
     loadout_obj.troops = result
 
+@timing.timing
+def update_name(loadout_obj, new_loadout_name):
+    conn = db_ops.get_connection()
+    cursor = conn.cursor()
 
+    logging.debug("pre update loadout name sql")
+
+    cursor.execute("update Loadout set"
+                   "name = :name"
+                   "where id = :loadoutId",
+                   {
+                       "loadoutId": loadout_obj.id,
+                       "name": new_loadout_name
+                   })
+    cursor.close()
+    conn.commit()
+    
+                
 @timing.timing
 def save(loadout_obj):
     from db_access import db_troop
@@ -142,3 +159,4 @@ def save(loadout_obj):
 
     conn.commit()
     db_ops.refresh_troop_stats()
+

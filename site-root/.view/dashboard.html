@@ -38,7 +38,7 @@
                             </div>
                             <div id="collapse@ctrl.user_loadouts[i].id@" class="panel-collapse collapse">
                                 <div class="panel-body">
-                                    <a id="active@ctrl.user_loadouts[i].id@" class="active btn btn-default" onClick="makeActiveLoadout(this.id);">Make active</a>
+                                    <a id="active@ctrl.user_loadouts[i].id@" class="active btn btn-default" onClick=@ctrl.make_active_loadout(ctrl.user_loadouts[i])@>Make active</a>
                                     <a id="edit@ctrl.user_loadouts[i].id@" class="edit btn btn-default" href="edit_loadout?loadout_id=@ctrl.user_loadouts[i].id@">EDIT</a>
                                 </div>
                             </div>
