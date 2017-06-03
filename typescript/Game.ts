@@ -1,6 +1,7 @@
 /// <reference path="node_modules/@types/phaser/phaser.d.ts" />
 /// <reference path="Map.ts" />
 /// <reference path="TileRenderer.ts" />
+/// <reference path="GameTroopManager.ts"/>
 
 class WegasGame
 {

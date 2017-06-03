@@ -3,6 +3,7 @@
 		<verb>POST</verb>
 		<regex>/admin/user_delete</regex>
 	</route>
+	</route>
 	<route>
 		<verb>POST</verb>
 		<regex>/admin/user_update</regex>
