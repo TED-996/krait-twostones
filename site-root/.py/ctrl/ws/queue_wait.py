@@ -29,7 +29,11 @@ class QueueWaitController(websockets.WebsocketsCtrlBase):
         logging.debug("Player id " + str(self.player.id))
         try:
             cursor.execute("select count(playerid) from queue where playerid = :player_id", {"player_id": self.player.id})
-            count_player, = cursor.fetchone()
+            temp_data = cursor.fetchone()
+            if temp_data is not None:
+                count_player, = temp_data
+            else:
+                count_player = 0
             logging.debug(count_player)
             if count_player > 0:
                 logging.debug("-----------------------------------already in queue")

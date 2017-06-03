@@ -20,9 +20,12 @@ def get_by_id(troop_class_id):
                    "where m.id = :troop_class_id",
                    {"troop_class_id": troop_class_id})
 
-    troop_class_id, name, description, max_hp, dmg, atk_range, move_range, min_level = cursor.fetchone()
-
+    temp_data = cursor.fetchone()
     cursor.close()
+    if temp_data is not None:
+        troop_class_id, name, description, max_hp, dmg, atk_range, move_range, min_level = temp_data
+    else:
+        return None
 
     result = troop_class.TroopClass(
         troop_class_id, name, description, max_hp, dmg, atk_range, move_range, min_level)

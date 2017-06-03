@@ -18,8 +18,12 @@ def get_by_id(troop_id, skip_update=False):
 
     cursor.execute("select * from TroopStatsCalculator where id = :troop_id",
                    {"troop_id": troop_id})
-    troop_id, class_id, loadout_id, skin_id, max_hp, dmg, atk_range, move_range = cursor.fetchone()
+    temp_data = cursor.fetchone()
     cursor.close()
+    if temp_data is not None:
+        troop_id, class_id, loadout_id, skin_id, max_hp, dmg, atk_range, move_range = temp_data
+    else:
+        return None
 
     result = troop_stats.TroopStats(troop_id, class_id, loadout_id, skin_id,
                                     max_hp, dmg, atk_range, move_range)
@@ -48,8 +52,12 @@ def update(troop_stats_obj):
 
     cursor.execute("select * from TroopStatsCalculator where id = :troop_id",
                    {"troop_id": troop_stats_obj.troop_id})
-    troop_id, class_id, loadout_id, skin_id, max_hp, dmg, atk_range, move_range = cursor.fetchone()
+    temp_data = cursor.fetchone()
     cursor.close()
+    if temp_data is not None:
+        troop_id, class_id, loadout_id, skin_id, max_hp, dmg, atk_range, move_range = temp_data
+    else:
+        return
 
     if troop_stats_obj.troop is not None and \
             (troop_stats_obj.class_id, troop_stats_obj.loadout_id, troop_stats_obj.skin_id) !=\
