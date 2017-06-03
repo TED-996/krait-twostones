@@ -29,80 +29,21 @@
                     </div>
                 <div id="collapseMain" class="panel-collapse collapse">
                     <div class="panel-group" id="accordion">
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
-                                <h2 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Loadout 1</a>
-                                </h2>
-                            </div>
-                            <div id="collapse1" class="panel-collapse collapse">
-                                <div class="panel-body">
-                                    <p>Tanks:1</p>
-                                    <p>Infantry:2</p>
-                                    <p>Archers:3</p>
-                                    <p>Runners:1</p>
-                                    <a onClick="makeActiveLoadout(this.id);" id="active1" class="active btn btn-default" >Make active</a>
-                                    <a id="edit1" class="edit btn btn-default" href="edit_loadout?loadout_id=10">EDIT</a>
-                                
-                                </div>
-                            </div>
-                        </div>
-
+                        @for i in range(ctrl.number_of_loadouts):
                         <div class="panel panel-info">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Loadout 2</a>
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse@ctrl.user_loadouts[i].id@">@ctrl.user_loadouts[i].name@</a>
                                 </h4>
                             </div>
-                            <div id="collapse2" class="panel-collapse collapse">
-                                <div class="panel panel-success">
+                            <div id="collapse@ctrl.user_loadouts[i].id@" class="panel-collapse collapse">
                                 <div class="panel-body">
-                                    <p>Tanks:1</p>
-                                    <p>Infantry:2</p>
-                                    <p>Archers:3</p>
-                                    <p>Runners:1</p>
-                                    <a onClick="makeActiveLoadout(this.id);" id="active2" class="active btn btn-default">Make active</a>
-                                    <a id="edit2" class="edit btn btn-default" href="edit_loadout?loadout_id=10">EDIT</a>
-                                </div>
+                                    <a id="active@ctrl.user_loadouts[i].id@" class="active btn btn-default" onClick=@ctrl.make_active_loadout(ctrl.user_loadouts[i])@>Make active</a>
+                                    <a id="edit@ctrl.user_loadouts[i].id@" class="edit btn btn-default" href="edit_loadout?loadout_id=@ctrl.user_loadouts[i].id@">EDIT</a>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Loadout 3</a>
-                                </h4>
-                            </div>
-                            <div id="collapse3" class="panel-collapse collapse">
-                                <div class="panel-body">
-                                    <p>Tanks:1</p>
-                                    <p>Infantry:2</p>
-                                    <p>Archers:3</p>
-                                    <p>Runners:1</p>
-                                    <a onClick="makeActiveLoadout(this.id);" id="active3" class="active btn btn-default">Make active</a>
-                                    <a id="edit3" class="edit btn btn-default" href="edit_loadout?loadout_id=20">EDIT</a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Loadout 4</a>
-                                </h4>
-                            </div>
-                            <div id="collapse4" class="panel-collapse collapse">
-                                <div class="panel-body">
-                                    <p>Tanks:1</p>
-                                    <p>Infantry:2</p>
-                                    <p>Archers:3</p>
-                                    <p>Runners:1</p>
-                                    <a id="active4" class="active btn btn-default" onClick="makeActiveLoadout(this.id);">Make active</a>
-                                    <a id="edit4" class="edit btn btn-default" href="edit_loadout?loadout_id=11">EDIT</a>
-                                </div>
-                            </div>
-                        </div>
+                        @/for
                     </div>
                 </div>
             </div>
