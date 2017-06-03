@@ -27,9 +27,10 @@ a:hover {
 html,
 body {
     height: 100%;
-    background-image: url("../img/hexMaps3.jpg");
-    background-size: cover;
+    background: url("../img/background.jpg") no-repeat center center fixed;
+    background-size: 100% auto;
     background-repeat: no-repeat;
+    display: block;
 }
 body {
     color: #fff;

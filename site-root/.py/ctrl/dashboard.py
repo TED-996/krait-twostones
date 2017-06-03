@@ -8,7 +8,7 @@ class DashboardController(object):
         self.username = auth_tests.get_auth()
         player = auth_tests.get_player_info(self.username);
         self.level = player.player_level
-        self.mmr = player.mmr;
+        self.mmr = player.mmr
     
     def get_view(self):
         return ".view/dashboard.html"
