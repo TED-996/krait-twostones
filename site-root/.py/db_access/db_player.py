@@ -21,8 +21,12 @@ def get_by_id(player_id, skip_update=False):
                    "where m.id = :user_id",
                    {"user_id": player_id})
 
-    player_id, name, password, loadout_id, in_match, mmr, token, player_level = cursor.fetchone()
+    temp_data = cursor.fetchone()
     cursor.close()
+    if temp_data is not None:
+        player_id, name, password, loadout_id, in_match, mmr, token, player_level = temp_data
+    else:
+        return None
 
     result = player.Player(player_id, name, password, loadout_id, in_match, mmr, player_level, token)
     player_cache[player_id] = result
@@ -38,8 +42,12 @@ def get_by_username(username):
                    "where m.playername = :username",
                    {"username": username})
 
-    player_id, = cursor.fetchone()
+    temp_data = cursor.fetchone()
     cursor.close()
+    if temp_data is not None:
+        player_id, = temp_data
+    else:
+        return None
 
     return get_by_id(player_id)
 
@@ -52,8 +60,12 @@ def update(player_obj):
                    "where m.id = :user_id",
                    {"user_id": player_obj.id})
 
-    player_id, name, password, loadout_id, in_match, mmr, token, player_level = cursor.fetchone()
+    temp_data = cursor.fetchone()
     cursor.close()
+    if temp_data is not None:
+        player_id, name, password, loadout_id, in_match, mmr, token, player_level = temp_data
+    else:
+        return
 
     player.name = name
     player.password = password

@@ -23,7 +23,12 @@ def get_by_id(loadout_id, skip_update=False):
     cursor.execute("select * from Loadout where id = :loadout_id",
                    {"loadout_id": loadout_id})
 
-    loadout_id, player_id, name = cursor.fetchone()
+    temp_data = cursor.fetchone()
+    cursor.close()
+    if temp_data is not None:
+        loadout_id, player_id, name = temp_data
+    else:
+        return None
     result = loadout.Loadout(loadout_id, player_id, name)
 
     loadout_cache[loadout_id] = result
@@ -46,7 +51,12 @@ def update(loadout_obj):
     cursor.execute("select * from Loadout where id = :loadout_id",
                    {"loadout_id": loadout_obj.id})
 
-    loadout_id, player_id, name = cursor.fetchone()
+    temp_data = cursor.fetchone()
+    cursor.close()
+    if temp_data is not None:
+        loadout_id, player_id, name = temp_data
+    else:
+        return
 
     if loadout_obj.player_id != player_id:
         loadout_obj.player_id = player_id

@@ -10,8 +10,13 @@ def get_by_id(match_history_id):
     cursor.execute("select * from MatchHistory m "
                    "where m.matchHistoryId = match_history_id",
                    {"match_history_id": match_history_id})
-    
-    matchHistoryId, player1ID, player2ID, score1, score2, mapId, matchStart , duration, = cursor.fetchone()
+
+    temp_data = cursor.fetchone()
+    cursor.close()
+    if temp_data is not None:
+        matchHistoryId, player1ID, player2ID, score1, score2, mapId, matchStart , duration, = temp_data
+    else:
+        return None
     
     return match_history.MatchHistory(matchHistoryId,
                                       player1ID,
@@ -31,15 +36,24 @@ def get_players(match_history_id):
                    "from MatchHistory m "
                    "where m.matchHistoryId = match_history_id",
                    {"match_history_id": match_history_id})
-    
-    first_player, = cursor.fetchone()
+
+    temp_data = cursor.fetchone()
+    if temp_data is not None:
+        first_player, = temp_data
+    else:
+        first_player = None
 
     cursor.execute("select m.player2ID "
                    "from MatchHistory m "
                    "where m.matchHistoryId = match_history_id",
                    {"match_history_id": match_history_id})
-    
-    second_player, = cursor.fetchone()
+
+    temp_data = cursor.fetchone()
+    if temp_data is not None:
+        second_player, = temp_data
+    else:
+        second_player = None
+    cursor.close()
 
     return [first_player, second_player]
 
@@ -52,15 +66,24 @@ def get_score(match_history_id):
                    "from MatchHistory m "
                    "where m.matchHistoryId = match_history_id",
                    {"match_history_id": match_history_id})
-    
-    first_score, = cursor.fetchone()
+    temp_data = cursor.fetchone()
+    if temp_data is not None:
+        first_score, = temp_data
+    else:
+        first_score = None
 
     cursor.execute("select m.score2 "
                    "from MatchHistory m "
                    "where m.matchHistoryId = match_history_id",
                    {"match_history_id": match_history_id})
-    
-    second_score, = cursor.fetchone()
+
+    temp_data = cursor.fetchone()
+    if temp_data is not None:
+        second_score, = temp_data
+    else:
+        second_score = None
+
+    cursor.close()
 
     return [first_score, second_score]
 
@@ -74,7 +97,12 @@ def get_map(match_history_id):
                    "where m.matchHistoryId = match_history_id",
                    {"match_history_id": match_history_id})
 
-    map_id, = cursor.fetchone()
+    temp_data = cursor.fetchone()
+    cursor.close()
+    if temp_data is not None:
+        map_id, = temp_data
+    else:
+        return None
 
     return map_id
 
@@ -86,8 +114,12 @@ def get_match_start(match_history_id):
                    "from MatchHistory m "
                    "where m.matchHistoryId = match_history_id",
                    {"match_history_id": match_history_id})
-
-    match_start, = cursor.fetchone()
+    temp_data = cursor.fetchone()
+    cursor.close()
+    if temp_data is not None:
+        match_start, = temp_data
+    else:
+        return None
 
     return match_start
 
@@ -100,6 +132,9 @@ def get_match_duration(match_history_id):
                    "where m.matchHistoryId = match_history_id",
                    {"match_history_id": match_history_id})
 
-    match_duration, = cursor.fetchone()
+    temp_data = cursor.fetchone()
+    cursor.close()
+    if temp_data is not None:
+        match_duration, = temp_data
 
     return match_duration

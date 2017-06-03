@@ -21,7 +21,12 @@ def get_by_id(match_troop_id, skip_update=False):
     cursor.execute("select * from MatchTroop where id = :mtroop_id",
                    {"mtroop_id": match_troop_id})
 
-    match_troop_id, match_id, troop_id, x_axis, y_axis, hp, respawn_time = cursor.fetchone()
+    temp_data = cursor.fetchone()
+    cursor.close()
+    if temp_data is not None:
+        match_troop_id, match_id, troop_id, x_axis, y_axis, hp, respawn_time = temp_data
+    else:
+        return None
     result = match_troop.MatchTroop(match_troop_id, match_id, troop_id, x_axis, y_axis, hp,
                                     respawn_time)
 
@@ -36,7 +41,12 @@ def get_by_match(match_id):
     cursor.execute("select * from MatchTroop where match_id = :match_id",
                    {"match_id": match_id})
 
-    mtroop_id, = cursor.fetchone()
+    temp_data = cursor.fetchone()
+    cursor.close()
+    if temp_data is not None:
+        mtroop_id, = temp_data
+    else:
+        return None
     return get_by_id(mtroop_id)
 
 
@@ -47,7 +57,12 @@ def update(mtroop):
     cursor.execute("select * from MatchTroop where id = :mtroop_id",
                    {"mtroop_id": mtroop.id})
 
-    match_troop_id, match_id, troop_id, x_axis, y_axis, hp, respawn_time = cursor.fetchone()
+    temp_data = cursor.fetchone()
+    cursor.close()
+    if temp_data is not None:
+        match_troop_id, match_id, troop_id, x_axis, y_axis, hp, respawn_time = temp_data
+    else:
+        return
     mtroop.match_id = match_id
     mtroop.x_axis = x_axis
     mtroop.y_axis = y_axis

@@ -9,9 +9,13 @@ def get_by_id(player_id):
     cursor.execute("select * from queue "
                    "where playerId = :player_id",
                    {"player_id": player_id})
-
-    player_id, time_started, priority, join_response, match_ready = cursor.fetchone()
+    temp_data = cursor.fetchone()
     cursor.close()
+    if temp_data is not None:
+        player_id, time_started, priority, join_response, match_ready = temp_data
+    else:
+        return None
+
 
     return queue.Queue(player_id, time_started, priority, join_response, match_ready)
 

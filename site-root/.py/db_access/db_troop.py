@@ -27,12 +27,15 @@ def get_by_id(troop_id, skip_update=False):
                    "where m.id = :troop_id",
                    {"troop_id": troop_id})
 
-    troop_id, class_id, loadout_id, skin_id = cursor.fetchone()
+    temp_data = cursor.fetchone()
+    cursor.close()
+    if temp_data is not None:
+        troop_id, class_id, loadout_id, skin_id = temp_data
+    else:
+        return None
 
     result = troop.Troop(troop_id, class_id, loadout_id, skin_id)
     troop_cache[troop_id] = result
-
-    cursor.close()
 
     return result
 
@@ -58,7 +61,12 @@ def update(troop_obj):
                    "where m.id = :troop_id",
                    {"troop_id": troop_obj.id})
 
-    troop_id, class_id, loadout_id, skin_id = cursor.fetchone()
+    temp_data = cursor.fetchone()
+    cursor.close()
+    if temp_data is not None:
+        troop_id, class_id, loadout_id, skin_id = temp_data
+    else:
+        return
 
     if troop_obj.class_id != class_id:
         troop_obj.class_id = class_id
