@@ -21,12 +21,12 @@
                 <li class="active">
                     <p>Level: @ctrl.level@; MMR: @ctrl.mmr@</p>
                 </li>
-                <li>
-                    <form class="navbar-form" role="search">
-                        <input type="text" class="form-control sm-form-control" placeholder="Search">
-                    </form>
-                </li>
             </ul>
+        </div>
+
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Welcome, @ctrl.username@</a>
+            <a class="navbar-text" id"displayActiveLoadout" href="#">Active Loadout</a>
         </div>
 
         <div class="navbar-right visible-lg visible-md">
@@ -53,14 +53,17 @@
         </div>
         @/if
 
-        <!--<div class="navbar-left search-bar-nav-vertical-center visible-lg visible-md">
-            <form class="navbar-form" role="search">
+        <div class="navbar-left search-bar-nav-vertical-center visible-lg visible-md">
+            <!--<form class="navbar-form" role="search">
                 <div class="form-group">
                     <input type="text" class="form-control col-sm-0" placeholder="Search">
                 </div>
                 <button type="submit" class="btn btn-default col-sm-0">Search</button>
             </form>
-        </div>-->
+                <p id="displayActiveLoadout">Active Loadout</p>-->
+        </div>
+
+        
 
         <div class="col-md-offset-5 visible-lg visible-md">
             <h1 class="navbar-text search-bar-nav-vertical-center">GravedDammit</h1>

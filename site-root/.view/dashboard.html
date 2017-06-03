@@ -19,6 +19,7 @@
         <div class="container-fluid">
             @import ".view/header.html"@
             <div class="col-sm-2">
+            <button type="button" id="findMatchBtn" onClick="testLoadout()" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Find Match</button>
             <div class = panel-group>
                 <div  class="panel panel-success">
                     <div class="panel-heading">
@@ -109,12 +110,6 @@
         </div>
         <div class="col-sm-10">
         </div>
-
-            <div id="activeLoadout">
-                    <h1>Welcome, @ctrl.username@</h1> <!--sorry i'll delete-->
-                    <h3 id="displayActiveLoadout">Active Loadout</h3>
-                    <button type="button" id="findMatchBtn" onClick="testLoadout()" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Find Match</button>
-            </div>
 
             <!--Modal for Loading -->
             
