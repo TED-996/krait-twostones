@@ -19,8 +19,13 @@ def get_by_id(match_id, skip_update=False):
                    "where m.id = :match_id",
                    {"match_id": match_id})
 
-    match_id, player1, player2, turn, turn_start_time, score1, score2, map_id, time_started =\
-        cursor.fetchone()
+    temp_data = cursor.fetchone()
+    cursor.close()
+    if temp_data is not None:
+        match_id, player1, player2, turn, turn_start_time, score1, score2, map_id, time_started =\
+             temp_data
+    else:
+        return None
 
     result = match.Match(
         match_id,
@@ -61,8 +66,14 @@ def update(match_obj):
                    "where m.id = :match_id",
                    {"match_id": match_obj.id})
 
-    match_id, player1, player2, turn, turn_start_time, score1, score2, map_id, time_started = \
-        cursor.fetchone()
+    temp_data = cursor.fetchone()
+    cursor.close()
+    if temp_data is not None:
+        match_id, player1, player2, turn, turn_start_time, score1, score2, map_id, time_started = \
+            temp_data
+    else:
+        return
+
 
     match_obj.turn = turn
     match_obj.turn_start_time = turn_start_time

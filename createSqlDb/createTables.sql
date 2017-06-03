@@ -101,6 +101,7 @@ CREATE TABLE QUEUE(
 
 CREATE TABLE Loadout(
     id NUMBER(10) PRIMARY KEY,
+    name VARCHAR2(30) DEFAULT 'Temp Loadout',
     playerId NUMBER(10) not null,
 
     constraint onDeletePlayerLoadout

@@ -40,9 +40,12 @@ def get_by_name(class_name):
     cursor.execute("select id from troopclass t "
                    "where t.name = :class_name",
                    {"class_name": class_name})
-
-    class_id, = cursor.fetchone()
+    temp_data = cursor.fetchone()
     cursor.close()
+    if temp_data is not None:
+        class_id, = temp_data
+    else:
+        return None
 
     return get_by_id(class_id)
 
