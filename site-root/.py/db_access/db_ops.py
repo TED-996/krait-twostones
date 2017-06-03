@@ -19,7 +19,7 @@ _oracle_dsn_tnss = [
 ]
 
 
-@timing.timing
+#@timing.timing
 def get_connection():
     global _conn
     global _conn_pid
