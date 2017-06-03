@@ -2,6 +2,7 @@ import mvc
 from auth_utils import auth_tests
 import cookie
 from db_access import db_player
+from db_access import db_loadout
 
 
 class GameplayController(object):

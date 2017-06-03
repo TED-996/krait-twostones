@@ -2,6 +2,7 @@ import logging
 
 
 is_debug = True
+show_timing_info = False
 
 
 if is_debug:

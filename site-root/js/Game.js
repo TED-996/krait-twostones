@@ -11,27 +11,30 @@ var WegasGame = (function () {
         // 'content' - the name of the container to add our game to
         // { preload:this.preload, create:this.create} - functions to call for our states
         this.game = new Phaser.Game(800, 600, Phaser.AUTO, 'game-div', {
-            preload: this.preload,
-            create: this.create,
-            update: this.update,
-            render: this.render
+            preload: this.preload.bind(this),
+            create: this.create.bind(this),
+            update: this.update.bind(this),
+            render: this.render.bind(this)
         });
-        this.gameController = new GameController(this);
     }
     WegasGame.prototype.preload = function () {
         this.game.load.image('moveSprite', "img/moveSprite.jpg");
         this.game.stage.backgroundColor = 0x222222;
         this.map = new GameMap("/map/map.json");
         this.map.tileset.load(this.game);
+        this.gameController = new GameController(this);
     };
     WegasGame.prototype.create = function () {
         var bounds = this.map.bounds;
         this.game.world.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
         this.cursors = this.game.input.keyboard.createCursorKeys();
+        AllOptions.loadAjax();
         this.playerLoadout = WegasGame.get_loadout("mine");
         this.opponentLoadout = WegasGame.get_loadout("theirs");
         this.playerTroops = [];
         this.opponentTroops = [];
+        console.log(typeof (this));
+        console.log(this.addLoadout);
         this.addLoadout(this.playerLoadout, this.playerTroops);
         this.addLoadout(this.opponentLoadout, this.opponentTroops);
         this.loadedTroops = new GameTroopManager(this.playerTroops.concat(this.opponentTroops));

@@ -32,6 +32,10 @@
     "url": "/matchmaker"
   },
   {
+    "verb": "WEBSOCKET",
+    "url": "/gameplay_ws"
+  },
+  {
     "verb": "GET"
   }
 ]

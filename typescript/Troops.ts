@@ -1,3 +1,26 @@
+function statsToStrings(maxHp:number, dmg:number, atkRange:number, moveRange:number):string[] {
+    return [`${maxHp}/${dmg}/${atkRange}/${moveRange}`]
+}
+
+function htmlEscape(literals, ...placeholders) {
+    let result = "";
+
+    // interleave the literals with the placeholders
+    for (let i = 0; i < placeholders.length; i++) {
+        result += literals[i];
+        result += placeholders[i]
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+
+    // add the last literal
+    result += literals[literals.length - 1];
+    return result;
+}
+
 class TroopClass implements Option {
     name:string;
     description:string;

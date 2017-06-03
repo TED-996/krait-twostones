@@ -1,3 +1,26 @@
+function statsToStrings(maxHp, dmg, atkRange, moveRange) {
+    return [maxHp + "/" + dmg + "/" + atkRange + "/" + moveRange];
+}
+function htmlEscape(literals) {
+    var placeholders = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        placeholders[_i - 1] = arguments[_i];
+    }
+    var result = "";
+    // interleave the literals with the placeholders
+    for (var i = 0; i < placeholders.length; i++) {
+        result += literals[i];
+        result += placeholders[i]
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+    // add the last literal
+    result += literals[literals.length - 1];
+    return result;
+}
 var TroopClass = (function () {
     function TroopClass(name, description, baseHp, baseDmg, baseAtkRange, baseMoveRange) {
         this.name = name;
@@ -124,7 +147,7 @@ var Troop = (function () {
             aRange: this.atkRange,
             mRange: this.moveRange,
             modifiers: this.modifiers.map(function (m) {
-                if (m == null) {
+                if (m === null) {
                     return null;
                 }
                 else {

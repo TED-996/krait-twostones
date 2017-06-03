@@ -40,10 +40,10 @@ class MatchmakerController(websockets.WebsocketsCtrlBase):
         try:
             db_queue.update(match1)
             db_queue.update(match2)
-            logging.debug("----------------------------checking join response: {}".format(match1.match_ready))
-            logging.debug("----------------------------checking join response: {}".format(match2.match_ready))
+            logging.debug("----------------------------checking join response 1: {}".format(match1.match_ready))
+            logging.debug("----------------------------checking join response 2: {}".format(match2.match_ready))
             return match1.join_response + match2.join_response
-        except ValueError:
-            logging.debug(ValueError.message)
+        except ValueError as ex:
+            logging.debug(ex)
             self.matches.remove([match1, match2])
             return 0

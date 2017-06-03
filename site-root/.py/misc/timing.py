@@ -5,7 +5,7 @@ from misc import debug_config
 
 
 def timing(func):
-    if debug_config.is_debug:
+    if debug_config.is_debug and debug_config.show_timing_info:
         @wraps(func)
         def wrap(*args, **kw):
             ts = time()
