@@ -13,6 +13,9 @@ var GameTroop = (function () {
             this.hp = hp;
         }
     }
+    GameTroop.prototype.onTroopClick = function () {
+        this.game.onTroopClick(this);
+    };
     GameTroop.prototype.getTile = function () {
         var tileIndex;
         if (this.isEnemy) {
@@ -21,7 +24,14 @@ var GameTroop = (function () {
         else {
             tileIndex = 14;
         }
-        return new Tile(this.x, this.y, tileIndex, 1); //TODO: tile index? from troop.skin.filename i guess
+        var result = new Tile(this.x, this.y, tileIndex, 1);
+        result.onClick = this.onTroopClick.bind(this);
+        return result;
+    };
+    GameTroop.prototype.deactivate = function () {
+    };
+    GameTroop.prototype.activate = function () {
+        this.x += 1;
     };
     return GameTroop;
 }());

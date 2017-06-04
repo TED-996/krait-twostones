@@ -7,12 +7,14 @@ class Tile {
     y : number;
     tileIndex : number;
     zIndex : number;
+    onClick : () => void;
 
     constructor(x: number, y: number, tileIndex: number, zIndex: number) {
         this.x = x;
         this.y = y;
         this.tileIndex = tileIndex;
         this.zIndex = zIndex;
+        this.onClick = null;
     }
 }
 

@@ -109,6 +109,15 @@ var WegasGame = (function () {
             this.renderDirty = false;
         }
     };
+    WegasGame.prototype.onTroopClick = function (troop) {
+        if (!troop.isEnemy) {
+            if (troop != this.activeTroop) {
+                this.activeTroop.deactivate();
+                this.activeTroop = troop;
+                this.activeTroop.activate();
+            }
+        }
+    };
     return WegasGame;
 }());
 window.onload = function () {

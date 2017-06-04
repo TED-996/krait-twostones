@@ -25,7 +25,7 @@ class WegasGame
     cameraSpeed : number;
     cameraMoveDirection : Phaser.Point;
 
-    self : WegasGame;
+    activeTroop : GameTroop;
 
     constructor()
     {
@@ -128,7 +128,7 @@ class WegasGame
                 this.cameraMoveDirection = new Phaser.Point(0, 0);
             }
         }
-        
+
         this.cameraMoveDirection = Phaser.Point.add(this.cameraMoveDirection, frameMoveDirection);
         if (!this.cameraMoveDirection.isZero()) {
             this.cameraMoveDirection.normalize();
@@ -155,10 +155,19 @@ class WegasGame
         this.game.debug.cameraInfo(this.game.camera, 32, 32);
         this.gameController.render();
 
-
         if (this.renderDirty) {
             this.tileRenderer.update();
             this.renderDirty = false;
+        }
+    }
+
+    onTroopClick(troop: GameTroop) {
+        if (!troop.isEnemy){
+            if (troop != this.activeTroop){
+                this.activeTroop.deactivate();
+                this.activeTroop = troop;
+                this.activeTroop.activate();
+            }
         }
     }
 }
