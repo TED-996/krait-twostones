@@ -7,8 +7,10 @@ var GameController = (function () {
     GameController.prototype.join = function () {
         var self = this;
         var result = this.networking.sendJoin();
+        if (result == null) {
+            return null;
+        }
         result.setOnComplete(function () { return self.onJoin(); });
-        this.joinSent = true;
         return result;
     };
     GameController.prototype.onJoin = function () {
@@ -19,13 +21,17 @@ var GameController = (function () {
     };
     GameController.prototype.update = function () {
         if (!this.joinSent) {
-            this.join();
+            var joinResponse = this.join();
+            if (joinResponse != null) {
+                this.joinSent = true;
+            }
         }
         if (this.joined) {
             this.updateInGame();
         }
     };
     GameController.prototype.updateInGame = function () {
+        console.log("in game!");
     };
     GameController.prototype.render = function () {
     };

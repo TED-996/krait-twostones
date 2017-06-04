@@ -142,6 +142,9 @@ var WegasNetworking = (function () {
         }
     };
     WegasNetworking.prototype.sendJoin = function () {
+        if (this.socket.readyState != 1) {
+            return null;
+        }
         return this.send("join", AuthUtils.getUsername(), WegasNetworking.generateTag());
     };
     WegasNetworking.prototype.sendDisconnect = function (reason) {

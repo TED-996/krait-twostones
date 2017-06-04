@@ -25,10 +25,10 @@ def update(queue_obj):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("select * from queue "
-                   "where playerId = :player_id",
-                   {"player_id": queue_obj.player_id})
     try:
+        cursor.execute("select * from queue "
+                       "where playerId = :player_id",
+                       {"player_id": queue_obj.player_id})
         cursor_object = cursor.fetchone()
         if cursor_object is None:
             raise ValueError("Object not in table")
