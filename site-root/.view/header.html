@@ -16,7 +16,9 @@
                     <a href="#">@ctrl.username@</a>
                 </li>
                 <li class="active">
-                    <a href="#">Logout</a>
+                    <form action="/logout" method="post">
+                        <input type = "submit" value = "logout">
+                    </form>
                 </li>
                 <li class="active">
                     <a>Level: @ctrl.level@; MMR: @ctrl.mmr@</a>
@@ -38,7 +40,9 @@
         <div class="navbar-right visible-lg visible-md">
             <div class="row">
                 <p class="navbar-text">@ctrl.username@</p>
-                <a class="navbar-text" href="#">Logout</a>
+                <form action="/logout" method="post">
+                        <input type = "submit" value = "logout">
+                    </form>
             </div>
             <div class="row">
                 <p class="navbar-text">Level: @ctrl.level@</p>
