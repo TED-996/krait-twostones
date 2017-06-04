@@ -6,8 +6,20 @@ class GameTroop {
     isEnemy : boolean;
     game : WegasGame;
 
+    static playerTiles : {[className : string] : number} = {
+        "Runner": 15,
+        "Infantry": 29,
+        "Tank": 30,
+        "Archer": 31
+    };
+    static enemyTiles : {[className : string] : number} = {
+        "Runner": 61,
+        "Infantry": 45,
+        "Tank": 46,
+        "Archer": 47
+    };
 
-    constructor(troop: Troop, game : WegasGame, networking : WegasNetworking,
+    constructor(troop: Troop, game : WegasGame,
                 x: number, y: number, isEnemy : boolean, hp: number = null) {
         this.troop = troop;
         this.troop.recompute();
@@ -32,24 +44,25 @@ class GameTroop {
     public getTile() : Tile {
         let tileIndex : number;
         if (this.isEnemy){
-            tileIndex = 13;
+            tileIndex = GameTroop.enemyTiles[this.troop.troopClass.name];
         }
         else{
-            tileIndex = 14;
+            tileIndex = GameTroop.playerTiles[this.troop.troopClass.name];
         }
-        let result = new Tile(this.x, this.y, tileIndex, 10);
+        let result = new Tile(this.x, this.y, tileIndex, 10, this.isEnemy);
         result.onClick = this.onTroopClick.bind(this);
 
         return result;
     }
 
     public deactivate() {
-        //this.move(this.x - 1, this.y);
+        this.game.troopMoveLayer.clear();
+        this.game.setRenderDirty();
     }
 
     public activate() {
-        //this.move(this.x + 1, this.y);
-        this.spawn_range(this.game.map, this.troop.moveRange)
+        this.game.troopMoveLayer.buildTiles(this.game.map, this);
+        this.game.setRenderDirty();
     }
 
     public move(x: number, y: number) {
@@ -67,7 +80,8 @@ class GameTroop {
         }
     }
 
-    public onMoveResponse(data : any, from : {x: number, y: number}, to : {x: number, y: number}){
+    //noinspection JSUnusedLocalSymbols
+    public onMoveResponse(data : any, from : Coord, to : Coord){
         if (data.type != "ok"){
             this.x = from.x;
             this.y = from.y;

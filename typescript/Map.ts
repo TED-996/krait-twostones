@@ -14,13 +14,15 @@ class Tile {
     y : number;
     tileIndex : number;
     zIndex : number;
+    mirrored : boolean;
     onClick : () => void;
 
-    constructor(x: number, y: number, tileIndex: number, zIndex: number) {
+    constructor(x: number, y: number, tileIndex: number, zIndex: number, mirrored : boolean = false) {
         this.x = x;
         this.y = y;
         this.tileIndex = tileIndex;
         this.zIndex = zIndex;
+        this.mirrored = mirrored;
         this.onClick = null;
     }
 
@@ -95,7 +97,7 @@ class GameMap {
             0,
             -this.tileset.tileHeight / 4,
             this.width * this.tileset.tileWidth - this.tileset.tileWidth / 2,
-            (this.height + 1) * this.tileset.tileHeight * 2 / 3 + this.tileset.tileHeight / 2);
+            ((this.height - 1) * this.tileset.tileHeight * 3 / 4) + this.tileset.tileHeight / 2);
 
         for(let idx = 0; idx < this.tileCount; idx++){
             let tempTile = new Tile(idx % this.width,
@@ -124,7 +126,7 @@ class GameMap {
     }
 
     public isAccessible(coord : Coord) : boolean {
-        if (!(coord.x <= 0 || coord.y <= 0 || coord.x >= this.width - 1 || coord.y >= this.height - 1)){
+        if (coord.x <= 0 || coord.y <= 0 || coord.x >= this.width - 1 || coord.y >= this.height - 1){
             return false;
         }
         let tile = this.getTile(coord);
@@ -133,6 +135,6 @@ class GameMap {
         }
         let tileIdx = tile.tileIndex;
 
-        return tileIdx != 60;
+        return tileIdx != 76;
     }
 }

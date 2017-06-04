@@ -1,5 +1,5 @@
 var GameTroop = (function () {
-    function GameTroop(troop, game, networking, x, y, isEnemy, hp) {
+    function GameTroop(troop, game, x, y, isEnemy, hp) {
         if (hp === void 0) { hp = null; }
         this.troop = troop;
         this.troop.recompute();
@@ -20,21 +20,22 @@ var GameTroop = (function () {
     GameTroop.prototype.getTile = function () {
         var tileIndex;
         if (this.isEnemy) {
-            tileIndex = 13;
+            tileIndex = GameTroop.enemyTiles[this.troop.troopClass.name];
         }
         else {
-            tileIndex = 14;
+            tileIndex = GameTroop.playerTiles[this.troop.troopClass.name];
         }
-        var result = new Tile(this.x, this.y, tileIndex, 10);
+        var result = new Tile(this.x, this.y, tileIndex, 10, this.isEnemy);
         result.onClick = this.onTroopClick.bind(this);
         return result;
     };
     GameTroop.prototype.deactivate = function () {
-        //this.move(this.x - 1, this.y);
+        this.game.troopMoveLayer.clear();
+        this.game.setRenderDirty();
     };
     GameTroop.prototype.activate = function () {
-        //this.move(this.x + 1, this.y);
-        this.spawn_range(this.game.map, this.troop.moveRange);
+        this.game.troopMoveLayer.buildTiles(this.game.map, this);
+        this.game.setRenderDirty();
     };
     GameTroop.prototype.move = function (x, y) {
         var from = { x: this.x, y: this.y };
@@ -48,6 +49,7 @@ var GameTroop = (function () {
             responseWait.setOnComplete(function (data) { return self_1.onMoveResponse(data, from, to); });
         }
     };
+    //noinspection JSUnusedLocalSymbols
     GameTroop.prototype.onMoveResponse = function (data, from, to) {
         if (data.type != "ok") {
             this.x = from.x;
@@ -57,6 +59,18 @@ var GameTroop = (function () {
     };
     return GameTroop;
 }());
+GameTroop.playerTiles = {
+    "Runner": 15,
+    "Infantry": 29,
+    "Tank": 30,
+    "Archer": 31
+};
+GameTroop.enemyTiles = {
+    "Runner": 61,
+    "Infantry": 45,
+    "Tank": 46,
+    "Archer": 47
+};
 var GameTroopManager = (function () {
     function GameTroopManager(troops) {
         this.troops = troops;

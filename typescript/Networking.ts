@@ -202,7 +202,7 @@ class WegasNetworking {
         this.send("error", message)
     }
 
-    public sendMove(from : {x: number, y : number}, to : {x: number, y: number})
+    public sendMove(from : Coord, to : Coord)
             : WebsocketResponseWaitItem {
         return this.send("move", {from: from, to: to}, WegasNetworking.generateTag());
     }

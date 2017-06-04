@@ -150,6 +150,10 @@ class TileRenderer {
             );
             newSprite.anchor = new Phaser.Point(0.5, 0.5);
 
+            if (t.mirrored){
+                newSprite.scale.x *= -1;
+            }
+
             if (t.onClick != null){
                 newSprite.inputEnabled = true;
                 newSprite.input.pixelPerfectClick = true;

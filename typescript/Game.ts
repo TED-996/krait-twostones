@@ -30,11 +30,15 @@ class WegasGame
 
     constructor()
     {
-        this.game = new Phaser.Game( 800, 600, Phaser.AUTO, 'game-div', {
-            preload:this.preload.bind(this),
-            create:this.create.bind(this),
-            update:this.update.bind(this),
-            render:this.render.bind(this)
+        this.game = new Phaser.Game(
+            document.documentElement.clientWidth,
+            document.documentElement.clientHeight,
+            //1920, 1080,
+            Phaser.AUTO, 'game-div', {
+                preload:this.preload.bind(this),
+                create:this.create.bind(this),
+                update:this.update.bind(this),
+                render:this.render.bind(this)
         });
     }
 
@@ -42,8 +46,10 @@ class WegasGame
     {
         this.game.stage.backgroundColor = 0x222222;
 
-        this.map = new GameMap("/map/map.json");
+        this.map = new GameMap("/map/medievil.json");
         this.map.tileset.load(this.game);
+
+        this.setScale(0.2);
 
         this.networking = new WegasNetworking();
         this.gameController = new GameController(this);
@@ -56,8 +62,6 @@ class WegasGame
     }
 
     create() {
-        this.setScale(1);
-
         this.cursors = this.game.input.keyboard.createCursorKeys();
 
         AllOptions.loadAjax();
@@ -67,8 +71,6 @@ class WegasGame
 
         this.playerTroops = [];
         this.opponentTroops = [];
-        console.log(typeof(this));
-        console.log(this.addLoadout);
         this.addLoadout(this.playerLoadout, this.playerTroops, false);
         this.addLoadout(this.opponentLoadout, this.opponentTroops, true);
 
@@ -82,9 +84,17 @@ class WegasGame
     }
 
     public setScale(scale: number) {
-        this.game.world.scale = new Phaser.Point(scale, scale);
-        let bounds = this.map.bounds.scale(scale);
+        //this.game.scale.setupScale(1920, 1080);
+
+        this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        this.game.scale.pageAlignHorizontally = true;
+        this.game.scale.pageAlignVertically = true;
+
+        this.game.scale.scaleFactor = new Phaser.Point(scale, scale);
+        let bounds = this.map.bounds;
         this.game.world.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
+
+        this.game.scale.refresh();
     }
 
     private static get_loadout(which: string) : Loadout {
@@ -95,7 +105,7 @@ class WegasGame
             for(let i = 0; i < 6; i++){
             let x = Math.floor(Math.random() * this.map.width - 2) + 1;
             let y = Math.floor(Math.random() * this.map.height - 2) + 1;
-            dst.push(new GameTroop(loadout.troops[i], this, this.networking, x, y, isEnemy));
+            dst.push(new GameTroop(loadout.troops[i], this, x, y, isEnemy));
         }
     }
 
@@ -145,7 +155,6 @@ class WegasGame
             let maxSpeed = 15;
             let accelerationFactor = 0.05;
             this.cameraSpeed = (maxSpeed * accelerationFactor + this.cameraSpeed * (1 - accelerationFactor));
-            console.log(this.cameraSpeed);
         }
 
         if (this.cameraSpeed != 0) {

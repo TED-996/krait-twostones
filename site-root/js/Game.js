@@ -4,7 +4,9 @@
 /// <reference path="GameTroop.ts"/>
 var WegasGame = (function () {
     function WegasGame() {
-        this.game = new Phaser.Game(800, 600, Phaser.AUTO, 'game-div', {
+        this.game = new Phaser.Game(document.documentElement.clientWidth, document.documentElement.clientHeight, 
+        //1920, 1080,
+        Phaser.AUTO, 'game-div', {
             preload: this.preload.bind(this),
             create: this.create.bind(this),
             update: this.update.bind(this),
@@ -13,8 +15,9 @@ var WegasGame = (function () {
     }
     WegasGame.prototype.preload = function () {
         this.game.stage.backgroundColor = 0x222222;
-        this.map = new GameMap("/map/map.json");
+        this.map = new GameMap("/map/medievil.json");
         this.map.tileset.load(this.game);
+        this.setScale(0.2);
         this.networking = new WegasNetworking();
         this.gameController = new GameController(this);
         this.troopMoveLayer = new TroopMoveLayer();
@@ -23,15 +26,12 @@ var WegasGame = (function () {
         this.cameraSpeed = 0;
     };
     WegasGame.prototype.create = function () {
-        this.setScale(1);
         this.cursors = this.game.input.keyboard.createCursorKeys();
         AllOptions.loadAjax();
         this.playerLoadout = WegasGame.get_loadout("mine");
         this.opponentLoadout = WegasGame.get_loadout("theirs");
         this.playerTroops = [];
         this.opponentTroops = [];
-        console.log(typeof (this));
-        console.log(this.addLoadout);
         this.addLoadout(this.playerLoadout, this.playerTroops, false);
         this.addLoadout(this.opponentLoadout, this.opponentTroops, true);
         this.loadedTroops = new GameTroopManager(this.playerTroops.concat(this.opponentTroops));
@@ -40,9 +40,14 @@ var WegasGame = (function () {
         this.tileRenderer = new TileRenderer([this.map], [], [this.loadedTroops, this.troopMoveLayer], this.map.tileset, this.tileGroup);
     };
     WegasGame.prototype.setScale = function (scale) {
-        this.game.world.scale = new Phaser.Point(scale, scale);
-        var bounds = this.map.bounds.scale(scale);
+        //this.game.scale.setupScale(1920, 1080);
+        this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        this.game.scale.pageAlignHorizontally = true;
+        this.game.scale.pageAlignVertically = true;
+        this.game.scale.scaleFactor = new Phaser.Point(scale, scale);
+        var bounds = this.map.bounds;
         this.game.world.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
+        this.game.scale.refresh();
     };
     WegasGame.get_loadout = function (which) {
         return Loadout.fromObj(JSON.parse(ajax_raw_sync("/get_match_loadout?which=" + which)));
@@ -51,7 +56,7 @@ var WegasGame = (function () {
         for (var i = 0; i < 6; i++) {
             var x = Math.floor(Math.random() * this.map.width - 2) + 1;
             var y = Math.floor(Math.random() * this.map.height - 2) + 1;
-            dst.push(new GameTroop(loadout.troops[i], this, this.networking, x, y, isEnemy));
+            dst.push(new GameTroop(loadout.troops[i], this, x, y, isEnemy));
         }
     };
     WegasGame.prototype.setRenderDirty = function () {
@@ -94,7 +99,6 @@ var WegasGame = (function () {
             var maxSpeed = 15;
             var accelerationFactor = 0.05;
             this.cameraSpeed = (maxSpeed * accelerationFactor + this.cameraSpeed * (1 - accelerationFactor));
-            console.log(this.cameraSpeed);
         }
         if (this.cameraSpeed != 0) {
             var resultVector = this.cameraMoveDirection.multiply(this.cameraSpeed, this.cameraSpeed);

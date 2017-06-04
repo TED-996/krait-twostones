@@ -1,6 +1,5 @@
 class TroopMoveLayer implements TileSource {
     tiles : Tile[];
-    private visited : boolean[];
 
     constructor() {
         this.tiles = [];
@@ -12,9 +11,6 @@ class TroopMoveLayer implements TileSource {
         let x = troop.x;
         let y = troop.y;
 
-        this.visited = [];
-        this.visited[y * map.width + x] = true;
-
         this.addTiles({x: x, y: y}, map, troop.troop.moveRange);
     }
 
@@ -22,20 +18,40 @@ class TroopMoveLayer implements TileSource {
         if (range <= 0){
             return;
         }
-        for (coord of Tile.getNeighbours(coord).filter(c => map.isAccessible(c))){
-            let idx = coord.y * map.width + coord.x;
-            if (!this.visited[idx]){
-                this.visited[idx] = true;
+        let queue = [{c: coord, d: 0}];
+        let qS = 0;
+        let qE = 1;
 
-                this.addTile(coord);
+        let visited = [];
+        visited[coord.y * map.width + coord.x] = true;
 
-                this.addTiles(coord, map, range - 1);
+        while(qS < qE) {
+            let current = queue[qS].c;
+            let currentDist = queue[qS].d;
+            qS++;
+
+            if (currentDist != 0){
+                this.addTile(current);
+            }
+
+            if (currentDist < range) {
+                for (let next of Tile.getNeighbours(current).filter(c => map.isAccessible(c))) {
+                    let idx = next.y * map.width + next.x;
+                    if (!visited[idx]) {
+                        visited[idx] = true;
+                        queue[qE++] = {c: next, d: currentDist + 1};
+                    }
+                }
             }
         }
     }
 
     private addTile(coord: Coord) {
         this.tiles.push(new Tile(coord.x, coord.y, 12, 5));
+    }
+
+    clear() {
+        this.tiles = [];
     }
 
     getTiles(): Tile[] {
