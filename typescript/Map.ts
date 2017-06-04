@@ -2,6 +2,13 @@
 /// <reference path="ajax_raw.ts"/>
 import Game = Phaser.Game;
 import Rectangle = Phaser.Rectangle;
+
+
+interface Coord {
+    x : number;
+    y : number;
+}
+
 class Tile {
     x : number;
     y : number;
@@ -16,7 +23,22 @@ class Tile {
         this.zIndex = zIndex;
         this.onClick = null;
     }
+
+    public static getNeighbours(tile : Tile) : Coord[] {
+        let result : Coord[] = [];
+
+        
+
+        if (tile.y % 2 == 0){
+            return [
+
+            ]
+        }
+
+        return result;
+    }
 }
+
 
 class Tileset {
     sourceImage : string; // tilesets[i].image

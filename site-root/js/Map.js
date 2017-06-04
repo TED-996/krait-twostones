@@ -10,6 +10,13 @@ var Tile = (function () {
         this.zIndex = zIndex;
         this.onClick = null;
     }
+    Tile.getNeighbours = function (tile) {
+        var result = [];
+        if (tile.y % 2 == 0) {
+            return [];
+        }
+        return result;
+    };
     return Tile;
 }());
 var Tileset = (function () {
