@@ -1,9 +1,9 @@
 class WebsocketResponseWaitItem {
-    private data : string;
+    private data : any;
     private onClose : () => void;
     private refcount : number;
     private closed : boolean;
-    private onComplete : (data : String) => void;
+    private onComplete : (data : any) => void;
 
     constructor(onClose : () => void) {
         this.data = null;
@@ -19,18 +19,18 @@ class WebsocketResponseWaitItem {
         return new WebsocketResponseWaitItem(() => self.refClose);
     }
 
-    public getData(): string {
+    public getData(): any {
         return this.data;
     }
 
-    public setData(value: string) {
+    public setData(value: any) {
         this.data = value;
         if (value !== null && this.onComplete !== null){
             this.onComplete(value);
         }
     }
 
-    public setOnComplete(onComplete : (data : String) => void){
+    public setOnComplete(onComplete : (data : any) => void){
         this.onComplete = onComplete;
         if (this.data !== null){
             this.onComplete(this.data);
@@ -202,7 +202,7 @@ class WegasNetworking {
         this.send("error", message)
     }
 
-    public sendMove(from : {x: number, y : number}, to : {x: number, y: number})
+    public sendMove(from : Coord, to : Coord)
             : WebsocketResponseWaitItem {
         return this.send("move", {from: from, to: to}, WegasNetworking.generateTag());
     }

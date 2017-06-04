@@ -11,7 +11,7 @@ class GameController {
 
     constructor(game: WegasGame) {
         this.game = game;
-        this.networking = new WegasNetworking();
+        this.networking = game.networking;
         this.joined = false;
     }
 
