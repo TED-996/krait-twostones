@@ -64,6 +64,7 @@ class GameController {
         for (let troop of this.game.opponentTroops){
             GameController.updateTroop(troop, troopsById[troop.troop.id]);
         }
+        this.game.setRenderDirty();
     }
 
     private static updateTroop(dst: GameTroop, src: GameTroopTransferObject) {

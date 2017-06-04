@@ -46,6 +46,7 @@ var GameController = (function () {
             var troop = _d[_c];
             GameController.updateTroop(troop, troopsById[troop.troop.id]);
         }
+        this.game.setRenderDirty();
     };
     GameController.updateTroop = function (dst, src) {
         dst.x = src.x;

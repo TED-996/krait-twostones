@@ -21,16 +21,14 @@ class WegasGame
 
     gameController : GameController;
 
+    renderDirty : boolean;
+    cameraSpeed : number;
+    cameraMoveDirection : Phaser.Point;
+
     self : WegasGame;
 
     constructor()
     {
-        // create our phaser game
-        // 800 - width
-        // 600 - height
-        // Phaser.AUTO - determine the renderer automatically (canvas, webgl)
-        // 'content' - the name of the container to add our game to
-        // { preload:this.preload, create:this.create} - functions to call for our states
         this.game = new Phaser.Game( 800, 600, Phaser.AUTO, 'game-div', {
             preload:this.preload.bind(this),
             create:this.create.bind(this),
@@ -47,7 +45,11 @@ class WegasGame
         this.map = new GameMap("/map/map.json");
         this.map.tileset.load(this.game);
 
-        this.gameController = new GameController(this)
+        this.gameController = new GameController(this);
+        this.renderDirty = false;
+
+        this.cameraMoveDirection = new Phaser.Point(0, 0);
+        this.cameraSpeed = 0;
     }
 
     create()
@@ -93,36 +95,74 @@ class WegasGame
         }
     }
 
+    public setRenderDirty(){
+        this.renderDirty = true;
+    }
+
     update() {
-        if (this.cursors.up.isDown)
-        {
-            this.game.camera.y -= 4;
+        this.updateCamera();
+
+        this.gameController.update();
+    }
+
+    private updateCamera() {
+        let frameMoveDirection: Phaser.Point = new Phaser.Point(0, 0);
+        if (this.cursors.up.isDown) {
+            frameMoveDirection.y -= 1;
         }
-        else if (this.cursors.down.isDown)
-        {
-            this.game.camera.y += 4;
+        else if (this.cursors.down.isDown) {
+            frameMoveDirection.y += 1;
+        }
+        if (this.cursors.left.isDown) {
+            frameMoveDirection.x -= 1;
+        }
+        else if (this.cursors.right.isDown) {
+            frameMoveDirection.x += 1;
         }
 
-        if (this.cursors.left.isDown)
-        {
-            this.game.camera.x -= 4;
+        if (!frameMoveDirection.isZero()) {
+            frameMoveDirection.normalize();
         }
-        else if (this.cursors.right.isDown)
-        {
-            this.game.camera.x += 4;
+        else {
+            if (this.cameraSpeed == 0){
+                this.cameraMoveDirection = new Phaser.Point(0, 0);
+            }
         }
-        this.gameController.update();
+        
+        this.cameraMoveDirection = Phaser.Point.add(this.cameraMoveDirection, frameMoveDirection);
+        if (!this.cameraMoveDirection.isZero()) {
+            this.cameraMoveDirection.normalize();
+        }
+
+        if (frameMoveDirection.isZero()) {
+            this.cameraSpeed = Math.max(this.cameraSpeed - 2, 0);
+        }
+        else {
+            let maxSpeed = 15;
+            let accelerationFactor = 0.05;
+            this.cameraSpeed = (maxSpeed * accelerationFactor + this.cameraSpeed * (1 - accelerationFactor));
+            console.log(this.cameraSpeed);
+        }
+
+        if (this.cameraSpeed != 0) {
+            let resultVector = this.cameraMoveDirection.multiply(this.cameraSpeed, this.cameraSpeed);
+            this.game.camera.x += resultVector.x;
+            this.game.camera.y += resultVector.y;
+        }
     }
 
     render(){
         this.game.debug.cameraInfo(this.game.camera, 32, 32);
-
         this.gameController.render();
-        this.tileRenderer.update();
+
+
+        if (this.renderDirty) {
+            this.tileRenderer.update();
+            this.renderDirty = false;
+        }
     }
 }
 
-// when the page has finished loading, create our game
 window.onload = () => {
     new WegasGame();
 };
