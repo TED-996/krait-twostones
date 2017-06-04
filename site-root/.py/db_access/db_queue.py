@@ -25,10 +25,10 @@ def update(queue_obj):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("select * from queue "
-                   "where playerId = :player_id",
-                   {"player_id": queue_obj.player_id})
     try:
+        cursor.execute("select * from queue "
+                       "where playerId = :player_id",
+                       {"player_id": queue_obj.player_id})
         cursor_object = cursor.fetchone()
         if cursor_object is None:
             raise ValueError("Object not in table")
@@ -106,8 +106,6 @@ def delete_long_waits():
     cursor.execute("delete from queue "
                    "where current_timestamp - timeStarted > interval '60' second "
                    "and matchReady = 0")
-    cursor.execute("delete from queue "
-                   "where current_timestamp - timeStarted > interval '120' second ")
 
     cursor.close()
     conn.commit()

@@ -14,9 +14,12 @@ class GameController {
     public join() : WebsocketResponseWaitItem {
         let self = this;
         let result = this.networking.sendJoin();
+        if (result == null){
+            return null;
+        }
+
         result.setOnComplete(() => self.onJoin());
 
-        this.joinSent = true;
         return result
     }
 
@@ -30,7 +33,10 @@ class GameController {
 
     public update() {
         if (!this.joinSent){
-            this.join();
+            let joinResponse = this.join();
+            if (joinResponse != null){
+                this.joinSent = true;
+            }
         }
         if (this.joined){
             this.updateInGame();
@@ -38,7 +44,7 @@ class GameController {
     }
 
     private updateInGame() {
-        
+        console.log("in game!");
     }
 
     public render() {

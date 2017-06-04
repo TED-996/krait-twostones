@@ -27,7 +27,6 @@ class MatchmakerController(websockets.WebsocketsCtrlBase):
                 self.matches.append(temp_match)
 
             self.clear_matches()
-            
             if len(self.matches) > 0:
                 for match in self.matches:
                     if self.if_match_accepted(match[0], match[1]) == 2:

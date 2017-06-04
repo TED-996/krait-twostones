@@ -177,6 +177,9 @@ class WegasNetworking {
     }
 
     public sendJoin() : WebsocketResponseWaitItem {
+        if (this.socket.readyState != 1){
+            return null;
+        }
         return this.send("join", AuthUtils.getUsername(), WegasNetworking.generateTag());
     }
 

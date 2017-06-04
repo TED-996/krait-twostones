@@ -41,13 +41,9 @@ def get_by_match(match_id):
     cursor.execute("select * from MatchTroop where match_id = :match_id",
                    {"match_id": match_id})
 
-    temp_data = cursor.fetchone()
+    temp_data = cursor.fetchall()
     cursor.close()
-    if temp_data is not None:
-        mtroop_id, = temp_data
-    else:
-        return None
-    return get_by_id(mtroop_id)
+    return [get_by_id(m_id) for m_id in temp_data]
 
 
 def update(mtroop):

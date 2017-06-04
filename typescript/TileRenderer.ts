@@ -67,10 +67,10 @@ class TileSourceUtils {
         }
 
         let result = [];
-        let tileSources = sources.map(t => t.getSortedTiles()).filter(t => t.length != 0);
+        let tileSources = sources.map(t => t.getSortedTiles().concat([])).filter(t => t.length != 0);
         let source = tileSources[0];
-        let next = tileSources[0][0];
         while(tileSources.length != 0){
+            let next = tileSources[0][0];
             source = tileSources[0];
 
             let idx = 1;
@@ -79,11 +79,12 @@ class TileSourceUtils {
                     next = tileSources[idx][0];
                     source = tileSources[idx];
                 }
+                idx++;
             }
 
             result.push(source.shift());
             if (source.length == 0){
-                delete tileSources[tileSources.indexOf(source)];
+                tileSources.splice(tileSources.indexOf(source), 1);
             }
         }
 

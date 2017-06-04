@@ -38,16 +38,18 @@ class QueueWaitController(websockets.WebsocketsCtrlBase):
             if count_player > 0:
                 logging.debug("-----------------------------------already in queue")
                 self.push_out_message("already_in_queue")
+                return
             else:
                 logging.debug("-----------------------------------else branch")
                 self.insert_in_queue()
         except ValueError:
             logging.debug("Got an error...")
-            print ValueError.message
+            logging.error(ValueError.message)
+            return
 
         logging.debug("pre while")
         while not self.should_stop():
-            logging.debug("in loop ")
+            # logging.debug("in loop ")
             in_msg = self.pop_in_message()
 
             if in_msg is not None:
@@ -99,16 +101,25 @@ class QueueWaitController(websockets.WebsocketsCtrlBase):
         logging.debug("Closing thread...")
 
     def insert_in_queue(self):
-        self.queue_obj = db_queue.insert(self.player.id, self.priority)
+        self.queue_obj = None
+        while self.queue_obj is None:
+            self.queue_obj = db_queue.insert(self.player.id, self.priority)
+
         logging.debug("Inserted.")
 
     def is_match_found(self):
-        db_queue.update(self.queue_obj)
-        logging.debug("checking match ready: {}".format(self.queue_obj.match_ready))
+        try:
+            db_queue.update(self.queue_obj)
+        except ValueError:
+            logging.debug("Removed from queue.")
+            self.insert_in_queue()
+            return False
+
+        # logging.debug("checking match ready: {}".format(self.queue_obj.match_ready))
         return self.queue_obj.match_ready
 
     def is_removed(self):
-        logging.debug("checking is deleted")
+        # logging.debug("checking is deleted")
         return db_queue.is_deleted(self.queue_obj)
 
     def send_join(self):
@@ -123,7 +134,7 @@ class QueueWaitController(websockets.WebsocketsCtrlBase):
     def leave_join(self):
         self.queue_obj.join_response = 0
         self.queue_obj.match_ready = 0
-        logging.debug("saving join")
+        logging.debug("leaving join")
         db_queue.save(self.queue_obj)
 
     def if_in_match(self):

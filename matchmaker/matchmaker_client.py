@@ -5,6 +5,7 @@ from ws4py.client.threadedclient import WebSocketClient
 
 logging.basicConfig(level=logging.INFO)
 
+
 class MatchmakerClient(WebSocketClient):
     def __init__(self):
         super(MatchmakerClient, self).__init__("ws://localhost:80/matchmaker", protocols=["matchmakerProtocol"])
