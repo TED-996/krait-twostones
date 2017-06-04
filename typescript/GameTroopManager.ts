@@ -41,11 +41,13 @@ class GameTroop {
     }
 
     public deactivate() {
-
+        this.x -= 1;
+        this.game.setRenderDirty();
     }
 
     public activate() {
         this.x += 1;
+        this.game.setRenderDirty();
     }
 }
 

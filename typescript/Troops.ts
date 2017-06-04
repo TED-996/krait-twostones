@@ -84,7 +84,7 @@ class Modifier implements Option {
     }
 
     static fromObj(obj):Modifier {
-        if (obj === null){
+        if (obj == null){
             return null;
         }
 
@@ -208,7 +208,7 @@ class Troop {
             aRange: this.atkRange,
             mRange: this.moveRange,
             modifiers: this.modifiers.map((m) => {
-                if (m === null){
+                if (m == null){
                     return null;
                 }
                 else{
