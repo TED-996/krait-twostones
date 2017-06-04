@@ -97,3 +97,17 @@ def get_players(number_of_players):
         player_queue.append(get_by_id(i))
     cursor.close()
     return player_queue
+
+
+def delete_long_waits():
+    conn = db_ops.get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("delete from queue "
+                   "where current_timestamp - timeStarted > interval '60' second "
+                   "and matchReady = 0")
+    cursor.execute("delete from queue "
+                   "where current_timestamp - timeStarted > interval '120' second ")
+
+    cursor.close()
+    conn.commit()

@@ -26,6 +26,8 @@ class MatchmakerController(websockets.WebsocketsCtrlBase):
                     temp_match.append(i)
                 self.matches.append(temp_match)
 
+            self.clear_matches()
+            
             if len(self.matches) > 0:
                 for match in self.matches:
                     if self.if_match_accepted(match[0], match[1]) == 2:
@@ -47,3 +49,6 @@ class MatchmakerController(websockets.WebsocketsCtrlBase):
             logging.debug(ex)
             self.matches.remove([match1, match2])
             return 0
+
+    def clear_matches(self):
+        db_queue.delete_long_waits()

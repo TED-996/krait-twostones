@@ -69,7 +69,7 @@ class QueueWaitController(websockets.WebsocketsCtrlBase):
                 self.join_sent = True
                 self.time_since_request_sent = time.time()
 
-            if self.join_sent and time.time() - self.time_since_request_sent > 10:
+            if self.join_sent and time.time() - self.time_since_request_sent > 30:
                 if self.match_accepted is False:
                     cursor.execute("delete from queue where playerid = :player_id", {"player_id": self.player.id})
                     conn.commit()
