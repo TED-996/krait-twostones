@@ -1,25 +1,25 @@
 <nav class="navbar navbar-inverse navbar-fixed-top" id="site-navbar">
     <link href="/css/header.css" rel="stylesheet">
     <div class="container-fluid">
-        <div class="navbar-header hidden-md hidden-lg">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-dropdown" aria-expanded="false" aria-controls="navbar">
+        <div class="navbar-header hidden-lg">
+            <button type="button" class="navbar-toggle navbar-toggler-right" data-toggle="collapse" data-target="#navbar-dropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="sr-only">Menu</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 </button>
-            <a class="navbar-brand" id="header-sm-brand">GravedDammit</a>
+            <a class="navbar-brand hidden-md" id="header-sm-brand">GravedDammit</a>
         </div>
         <div id="navbar-dropdown" class="collapse navbar-collapse" aria-expanded="false">
-            <ul class="nav navbar-nav hidden-md hidden-lg hidden-sm">
-                <li class="active">
-                    <a>Level: @ctrl.level@; MMR: @ctrl.mmr@</a>
+            <ul class="nav navbar-nav hidden-lg hidden-md">
+                 <li class="active">
+                    <form class="navbar-text"><a href="/dashboard">Welcome, @ctrl.username@</a></form>
                 </li>
                 <li class="active">
-                    <a href="/dashboard">Welcome, @ctrl.username@</a>
+                    <form class="navbar-text"><a href="edit_loadout?loadout_id=@ctrl.active_loadout.id@">Active Loadout: @ctrl.active_loadout.name@</a></form>
                 </li>
                 <li class="active">
-                    <a href="edit_loadout?loadout_id=@ctrl.active_loadout.id@">Active Loadout: @ctrl.active_loadout.name@</a>
+                    <form class="navbar-text"><a href="#">Level: @ctrl.level@; MMR: @ctrl.mmr@</a></form>
                 </li>
                 <li class="active">
                     <form action="/logout" method="post" class="navbar-text">
@@ -29,7 +29,7 @@
             </ul>
         </div>
 
-        <div class="navbar-header visible-lg visible-md">
+        <div class="navbar-left visible-lg visible-md">
             <div class="row">
                 <a class="navbar-text" href="dashboard">Welcome, @ctrl.username@</a>
             </div>

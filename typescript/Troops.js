@@ -1,3 +1,26 @@
+function statsToStrings(maxHp, dmg, atkRange, moveRange) {
+    return [maxHp + "/" + dmg + "/" + atkRange + "/" + moveRange];
+}
+function htmlEscape(literals) {
+    var placeholders = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        placeholders[_i - 1] = arguments[_i];
+    }
+    var result = "";
+    // interleave the literals with the placeholders
+    for (var i = 0; i < placeholders.length; i++) {
+        result += literals[i];
+        result += placeholders[i]
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+    // add the last literal
+    result += literals[literals.length - 1];
+    return result;
+}
 var TroopClass = (function () {
     function TroopClass(name, description, baseHp, baseDmg, baseAtkRange, baseMoveRange) {
         this.name = name;
@@ -152,4 +175,18 @@ var Loadout = (function () {
         };
     };
     return Loadout;
+}());
+var AllOptions = (function () {
+    function AllOptions(troopClassOptions, modifierOptions, skinOptions) {
+        this.troopClassOptions = troopClassOptions;
+        this.modifierOptions = modifierOptions;
+        this.skinOptions = skinOptions;
+    }
+    AllOptions.fromObj = function (obj) {
+        return new AllOptions(obj.troopClasses.map(TroopClass.fromObj), obj.modifiers.map(Modifier.fromObj), obj.skins.map(Skin.fromObj));
+    };
+    AllOptions.loadAjax = function () {
+        return AllOptions.fromObj(JSON.parse(ajax_raw_sync("/get_options")));
+    };
+    return AllOptions;
 }());
