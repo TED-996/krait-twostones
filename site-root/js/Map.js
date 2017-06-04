@@ -69,7 +69,7 @@ var GameMap = (function () {
             return null;
         }
         else {
-            return this.tileArray[coord.y * this.height + coord.x];
+            return this.tileArray[coord.y * this.width + coord.x];
         }
     };
     GameMap.prototype.isAccessible = function (coord) {

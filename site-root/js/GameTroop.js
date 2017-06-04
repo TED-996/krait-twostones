@@ -34,8 +34,11 @@ var GameTroop = (function () {
         this.game.setRenderDirty();
     };
     GameTroop.prototype.activate = function () {
-        this.game.troopMoveLayer.buildTiles(this.game.map, this);
+        this.game.troopMoveLayer.buildTiles(this.game.map, this, this.onMoveClick.bind(this));
         this.game.setRenderDirty();
+    };
+    GameTroop.prototype.onMoveClick = function (to) {
+        this.move(to.x, to.y);
     };
     GameTroop.prototype.move = function (x, y) {
         var from = { x: this.x, y: this.y };

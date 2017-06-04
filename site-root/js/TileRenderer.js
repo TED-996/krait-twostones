@@ -112,6 +112,7 @@ var TileRenderer = (function () {
             if (t.onClick != null) {
                 newSprite.inputEnabled = true;
                 newSprite.input.pixelPerfectClick = true;
+                newSprite.input.pixelPerfectAlpha = 25;
                 newSprite.events.onInputDown.add(t.onClick.bind(this), t);
             }
         }
