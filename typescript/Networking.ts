@@ -65,7 +65,7 @@ class WegasNetworking {
     private responseWaitQueue : {[tag: string]: WebsocketResponseWaitItem};
     private opened : boolean;
 
-    private static get_websocket_url(absolute_url) {
+    private static getWebsocketUrl(absolute_url) {
         const loc = window.location;
         let new_uri;
         if (loc.protocol === "https:") {
@@ -79,7 +79,7 @@ class WegasNetworking {
     }
 
     public constructor() {
-        this.socket = new WebSocket(WegasNetworking.get_websocket_url("/gameplay_ws"), "WegasNetworking");
+        this.socket = new WebSocket(WegasNetworking.getWebsocketUrl("/gameplay_ws"), "WegasNetworking");
         this.inQueue = [];
         this.responseWaitQueue = Object.create(null);
 
@@ -177,7 +177,17 @@ class WegasNetworking {
     }
 
     public sendJoin() : WebsocketResponseWaitItem {
+        if (!this.opened){
+            return null;
+        }
         return this.send("join", AuthUtils.getUsername(), WegasNetworking.generateTag());
+    }
+
+    public sendGetTroops() : WebsocketResponseWaitItem {
+        if (!this.opened){
+            return null;
+        }
+        return this.send("get_matchtroops", null, WegasNetworking.generateTag());
     }
 
     public sendDisconnect(reason : string) : void {

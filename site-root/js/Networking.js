@@ -48,7 +48,7 @@ function isUndefined(value) {
 }
 var WegasNetworking = (function () {
     function WegasNetworking() {
-        this.socket = new WebSocket(WegasNetworking.get_websocket_url("/gameplay_ws"), "WegasNetworking");
+        this.socket = new WebSocket(WegasNetworking.getWebsocketUrl("/gameplay_ws"), "WegasNetworking");
         this.inQueue = [];
         this.responseWaitQueue = Object.create(null);
         var self = this;
@@ -57,7 +57,7 @@ var WegasNetworking = (function () {
         this.socket.onmessage = function (ev) { return self.onMessage(ev); };
         this.socket.onerror = function () { return self.onError(); };
     }
-    WegasNetworking.get_websocket_url = function (absolute_url) {
+    WegasNetworking.getWebsocketUrl = function (absolute_url) {
         var loc = window.location;
         var new_uri;
         if (loc.protocol === "https:") {
@@ -142,7 +142,16 @@ var WegasNetworking = (function () {
         }
     };
     WegasNetworking.prototype.sendJoin = function () {
+        if (!this.opened) {
+            return null;
+        }
         return this.send("join", AuthUtils.getUsername(), WegasNetworking.generateTag());
+    };
+    WegasNetworking.prototype.sendGetTroops = function () {
+        if (!this.opened) {
+            return null;
+        }
+        return this.send("get_matchtroops", null, WegasNetworking.generateTag());
     };
     WegasNetworking.prototype.sendDisconnect = function (reason) {
         this.send("disconnect", reason);

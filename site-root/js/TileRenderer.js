@@ -46,10 +46,10 @@ var TileSourceUtils = (function () {
             return sources[0].getSortedTiles();
         }
         var result = [];
-        var tileSources = sources.map(function (t) { return t.getSortedTiles(); }).filter(function (t) { return t.length != 0; });
+        var tileSources = sources.map(function (t) { return t.getSortedTiles().concat([]); }).filter(function (t) { return t.length != 0; });
         var source = tileSources[0];
-        var next = tileSources[0][0];
         while (tileSources.length != 0) {
+            var next = tileSources[0][0];
             source = tileSources[0];
             var idx = 1;
             while (idx < tileSources.length) {
@@ -57,10 +57,11 @@ var TileSourceUtils = (function () {
                     next = tileSources[idx][0];
                     source = tileSources[idx];
                 }
+                idx++;
             }
             result.push(source.shift());
             if (source.length == 0) {
-                delete tileSources[tileSources.indexOf(source)];
+                tileSources.splice(tileSources.indexOf(source), 1);
             }
         }
         return result;

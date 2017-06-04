@@ -5,21 +5,36 @@ var GameController = (function () {
         this.joined = false;
     }
     GameController.prototype.join = function () {
-        var self = this;
         var result = this.networking.sendJoin();
-        result.setOnComplete(function () { return self.onJoin(); });
-        this.joinSent = true;
+        if (result == null) {
+            return null;
+        }
+        result.setOnComplete(this.onJoin.bind(this));
         return result;
     };
     GameController.prototype.onJoin = function () {
         this.joined = true;
+    };
+    GameController.prototype.getTroops = function () {
+        var result = this.networking.sendGetTroops();
+        if (result == null) {
+            return null;
+        }
+        result.setOnComplete(this.onGetTroops.bind(this));
+        return result;
+    };
+    GameController.prototype.onGetTroops = function (troops) {
+        this.troopsGot = true;
     };
     GameController.prototype.disconnect = function (reason) {
         this.networking.sendDisconnect(reason);
     };
     GameController.prototype.update = function () {
         if (!this.joinSent) {
-            this.join();
+            var joinResponse = this.join();
+            if (joinResponse != null) {
+                this.joinSent = true;
+            }
         }
         if (this.joined) {
             this.updateInGame();

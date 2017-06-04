@@ -7,6 +7,7 @@ import websockets
 from auth_utils import auth_tests
 from db_access import db_match
 from db_access import db_player
+from db_access import db_match_troop
 
 
 class GameWsController(websockets.WebsocketsCtrlBase):
@@ -41,7 +42,8 @@ class GameWsController(websockets.WebsocketsCtrlBase):
             "disconnect": self.handle_disconnect,
             "move": self.handle_move,
             "end_turn": self.handle_end_turn,
-            "error": self.handle_error
+            "error": self.handle_error,
+            "get_matchtroops": self.get_matchtroops
         }
         handler = handlers_by_type.get(msg_data["type"], None)
         if handler is None:
@@ -90,6 +92,11 @@ class GameWsController(websockets.WebsocketsCtrlBase):
 
     def handle_error(self, data, tag=None):
         print("Client error:", data, file=sys.stderr)
+
+    def get_matchtroops(self, tag=None):
+        mtroops = db_match_troop.get_by_match(self.match.id)
+
+        self.respond("get_matchtroops", [mt.to_out_obj() for mt in mtroops], tag)
 
     def respond_error(self, data, tag=None):
         self.respond("error", data, tag=tag)

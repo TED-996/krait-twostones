@@ -14,3 +14,14 @@ class MatchTroop(object):
     def populate(self):
         from db_access import db_match_troop
         db_match_troop.populate(self)
+
+    def to_out_obj(self):
+        return {
+            "id": self.id,
+            "match": self.match_id,
+            "troop": self.troop_id,
+            "x": self.x_axis,
+            "y": self.y_axis,
+            "hp": self.hp,
+            "respawn": self.respawn_time
+        }
