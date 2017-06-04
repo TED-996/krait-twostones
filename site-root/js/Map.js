@@ -10,12 +10,19 @@ var Tile = (function () {
         this.zIndex = zIndex;
         this.onClick = null;
     }
-    Tile.getNeighbours = function (tile) {
-        var result = [];
-        if (tile.y % 2 == 0) {
-            return [];
-        }
-        return result;
+    Tile.getTileNeighbours = function (tile) {
+        return this.getNeighbours({ x: tile.x, y: tile.y });
+    };
+    Tile.getNeighbours = function (c) {
+        var offset = (c.y % 2 == 1 ? 1 : 0);
+        return [
+            { x: c.x - 1 + offset, y: c.y - 1 },
+            { x: c.x + offset, y: c.y - 1 },
+            { x: c.x - 1, y: c.y },
+            { x: c.x + 1, y: c.y },
+            { x: c.x - 1 + offset, y: c.y + 1 },
+            { x: c.x + offset, y: c.y + 1 },
+        ];
     };
     return Tile;
 }());
@@ -51,6 +58,28 @@ var GameMap = (function () {
     }
     GameMap.prototype.getTiles = function () {
         return this.tileArray;
+    };
+    GameMap.prototype.isValidCoord = function (coord) {
+        return coord.x >= 0 && coord.y >= 0 && coord.x < this.width && coord.y < this.height;
+    };
+    GameMap.prototype.getTile = function (coord) {
+        if (!this.isValidCoord(coord)) {
+            return null;
+        }
+        else {
+            return this.tileArray[coord.y * this.height + coord.x];
+        }
+    };
+    GameMap.prototype.isAccessible = function (coord) {
+        if (!(coord.x <= 0 || coord.y <= 0 || coord.x >= this.width - 1 || coord.y >= this.height - 1)) {
+            return false;
+        }
+        var tile = this.getTile(coord);
+        if (tile == null) {
+            return false;
+        }
+        var tileIdx = tile.tileIndex;
+        return tileIdx != 60;
     };
     return GameMap;
 }());

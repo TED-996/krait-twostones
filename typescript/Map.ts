@@ -24,18 +24,21 @@ class Tile {
         this.onClick = null;
     }
 
-    public static getNeighbours(tile : Tile) : Coord[] {
-        let result : Coord[] = [];
+    public static getTileNeighbours(tile : Tile) : Coord[] {
+        return this.getNeighbours({x: tile.x, y: tile.y});
+    }
 
+    public static getNeighbours(c : Coord) : Coord[] {
+        let offset = (c.y % 2 == 1 ? 1 : 0);
 
-
-        if (tile.y % 2 == 0){
-            return [
-
-            ]
-        }
-
-        return result;
+        return [
+            {x: c.x - 1 + offset, y: c.y - 1},
+            {x: c.x + offset,     y: c.y - 1},
+            {x: c.x - 1,          y: c.y},
+            {x: c.x + 1,          y: c.y},
+            {x: c.x - 1 + offset, y: c.y + 1},
+            {x: c.x + offset,     y: c.y + 1},
+        ];
     }
 }
 
@@ -105,5 +108,31 @@ class GameMap {
 
     public getTiles() : Tile[] {
         return this.tileArray;
+    }
+
+    public isValidCoord(coord : Coord) : boolean {
+        return coord.x >= 0 && coord.y >= 0 && coord.x < this.width && coord.y < this.height;
+    }
+
+    public getTile(coord : Coord) : Tile{
+        if (!this.isValidCoord(coord)){
+            return null;
+        }
+        else {
+            return this.tileArray[coord.y * this.height + coord.x];
+        }
+    }
+
+    public isAccessible(coord : Coord) : boolean {
+        if (!(coord.x <= 0 || coord.y <= 0 || coord.x >= this.width - 1 || coord.y >= this.height - 1)){
+            return false;
+        }
+        let tile = this.getTile(coord);
+        if (tile == null){
+            return false;
+        }
+        let tileIdx = tile.tileIndex;
+
+        return tileIdx != 60;
     }
 }
