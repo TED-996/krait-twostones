@@ -11,23 +11,20 @@
             <a class="navbar-brand" id="header-sm-brand">GravedDammit</a>
         </div>
         <div id="navbar-dropdown" class="collapse navbar-collapse" aria-expanded="false">
-            <ul class="nav navbar-nav hidden-md hidden-lg">
-                <li class="active">
-                    <a href="#">@ctrl.username@</a>
-                </li>
-                <li class="active">
-                    <form action="/logout" method="post">
-                        <input type = "submit" value = "logout">
-                    </form>
-                </li>
+            <ul class="nav navbar-nav hidden-md hidden-lg hidden-sm">
                 <li class="active">
                     <a>Level: @ctrl.level@; MMR: @ctrl.mmr@</a>
                 </li>
                 <li class="active">
-                    <a href="#">Welcome, @ctrl.username@</a>
+                    <a href="/dashboard">Welcome, @ctrl.username@</a>
                 </li>
                 <li class="active">
                     <a href="edit_loadout?loadout_id=@ctrl.active_loadout.id@">Active Loadout: @ctrl.active_loadout.name@</a>
+                </li>
+                <li class="active">
+                    <form action="/logout" method="post" class="navbar-text">
+                        <a onclick="$(this).closest('form').submit()"href="#" >Logout</a>
+                    </form>
                 </li>
             </ul>
         </div>
@@ -45,8 +42,8 @@
             <div class="row">
                 <p class="navbar-text">@ctrl.username@</p>
                 <form action="/logout" method="post">
-                        <input type = "submit" value = "logout">
-                    </form>
+                    <a class="navbar-text" onclick="$(this).closest('form').submit()"href="#" >Logout</a>
+                </form>
             </div>
             <div class="row">
                 <p class="navbar-text">Level: @ctrl.level@</p>
@@ -84,3 +81,5 @@
         </div>
     </div>
 </nav>
+
+<script src="js/header.js"></script>
