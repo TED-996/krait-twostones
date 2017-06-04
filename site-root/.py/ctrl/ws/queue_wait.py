@@ -152,7 +152,7 @@ class QueueWaitController(websockets.WebsocketsCtrlBase):
         conn = db_ops.get_connection()
         cursor = conn.cursor()
         troop_list = db_troop.get_by_loadout_id(self.player.loadout_id)
-        y_axis = 1
+        y_axis = 12
         for i in troop_list:
             logging.debug(i.id)
             logging.debug("-------------------------------Start inserting "+str(self.match_id.id))
@@ -163,7 +163,7 @@ class QueueWaitController(websockets.WebsocketsCtrlBase):
             else:
                 cursor.execute(
                     "insert into matchtroop values(matchtroopidseq.nextval, :match_id, :troop_id, :xaxis, :yaxis, :hp,0)",
-                    {"match_id": self.match_id.id, "troop_id": i.id, "xaxis": 10, "yaxis": y_axis, "hp": i.hp})
+                    {"match_id": self.match_id.id, "troop_id": i.id, "xaxis": 62, "yaxis": y_axis, "hp": i.hp})
             y_axis += 2
             logging.debug("-------------------------------Insert troop with id " + str(i.id))
 
