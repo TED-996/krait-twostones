@@ -11,12 +11,14 @@
             <a class="navbar-brand" id="header-sm-brand">GravedDammit</a>
         </div>
         <div id="navbar-dropdown" class="collapse navbar-collapse" aria-expanded="false">
-            <ul class="nav navbar-nav hidden-md hidden-lg hidden-sm">
+            <ul class="nav navbar-nav hidden-md hidden-lg">
                 <li class="active">
                     <a href="#">@ctrl.username@</a>
                 </li>
                 <li class="active">
-                    <a href="#">Logout</a>
+                    <form action="/logout" method="post">
+                        <input type = "submit" value = "logout">
+                    </form>
                 </li>
                 <li class="active">
                     <a>Level: @ctrl.level@; MMR: @ctrl.mmr@</a>
@@ -35,14 +37,16 @@
                 <a class="navbar-text" href="dashboard">Welcome, @ctrl.username@</a>
             </div>
             <div class="row">
-                <a class="navbar-text" id=displayActiveLoadout" href="edit_loadout?loadout_id=@ctrl.active_loadout.id@">Active Loadout: @ctrl.active_loadout.name@</a>
+                <a class="navbar-text" id="displayActiveLoadout" href="edit_loadout?loadout_id=@ctrl.active_loadout.id@">Active Loadout: @ctrl.active_loadout.name@</a>
             </div>
         </div>
 
         <div class="navbar-right visible-lg visible-md">
             <div class="row">
                 <p class="navbar-text">@ctrl.username@</p>
-                <a class="navbar-text" href="#">Logout</a>
+                <form action="/logout" method="post">
+                        <input type = "submit" value = "logout">
+                    </form>
             </div>
             <div class="row">
                 <p class="navbar-text">Level: @ctrl.level@</p>

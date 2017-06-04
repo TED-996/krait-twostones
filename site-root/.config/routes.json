@@ -24,6 +24,10 @@
     "url": "/save_loadout"
   },
   {
+    "verb": "POST",
+    "url": "/logout"
+  },
+  {
     "verb": "WEBSOCKET",
     "url": "/queue_wait"
   },
