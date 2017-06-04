@@ -19,12 +19,18 @@
                     <a href="#">Logout</a>
                 </li>
                 <li class="active">
-                    <p>Level: @ctrl.level@; MMR: @ctrl.mmr@</p>
+                    <a>Level: @ctrl.level@; MMR: @ctrl.mmr@</a>
+                </li>
+                <li class="active">
+                    <a href="#">Welcome, @ctrl.username@</a>
+                </li>
+                <li class="active">
+                    <a href="edit_loadout?loadout_id=@ctrl.active_loadout.id@">Active Loadout: @ctrl.active_loadout.name@</a>
                 </li>
             </ul>
         </div>
 
-        <div class="navbar-header">
+        <div class="navbar-header visible-lg visible-md">
             <a class="navbar-brand" href="#">Welcome, @ctrl.username@</a>
             <a class="navbar-text" id"displayActiveLoadout" href="edit_loadout?loadout_id=@ctrl.active_loadout.id@">Active Loadout: @ctrl.active_loadout.name@</a>
         </div>

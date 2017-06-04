@@ -18,7 +18,16 @@
         <div class="container-fluid">
             @import ".view/header.html"@
             <div class="col-sm-2">
-            <button type="button" id="findMatchBtn" onClick="testLoadout()" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Find Match</button>
+            </div>
+            <div class="col-sm-8">
+            <!--<button type="button" id="findMatchBtn" onClick="testLoadout()" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Find Match</button>-->
+            <div id="findBtn" class="panel panel-success">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <a id="findMatchBtn" onClick="testLoadout()" data-toggle="modal" data-target="#myModal"><h4>Find Match</h4></a>
+                    </h3>
+                </div>
+            </div>
             <div class = panel-group>
                 <div  class="panel panel-success">
                     <div class="panel-heading">
@@ -29,7 +38,7 @@
                 <div id="collapseMain" class="panel-collapse collapse">
                     <div class="panel-group" id="accordion">
                         @for loadout in ctrl.user_loadouts:
-                        <div class="panel panel-info">
+                        <div class="panel <panel-default></panel-default>">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
                                     <a data-toggle="collapse" data-parent="#accordion"
@@ -51,7 +60,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-10">
+        <div class="col-sm-2">
         </div>
 
             <!--Modal for Loading -->

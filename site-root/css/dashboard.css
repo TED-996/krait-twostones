@@ -25,8 +25,15 @@
     border-radius: 10px;
 }
 
+#findBtn{
+    margin-top:400px;
+}
+
 .panel {
-    margin-top: 40px;
+    margin-top: auto;
+    padding: 2px 2px 2px 2px;
+    background-color: #c0c0c0;
+    font: 60px;
 }
 
 html { 
