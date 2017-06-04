@@ -27,7 +27,7 @@ class Tile {
     public static getNeighbours(tile : Tile) : Coord[] {
         let result : Coord[] = [];
 
-        
+
 
         if (tile.y % 2 == 0){
             return [
