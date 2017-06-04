@@ -2,13 +2,13 @@ var TroopMoveLayer = (function () {
     function TroopMoveLayer() {
         this.tiles = [];
     }
-    TroopMoveLayer.prototype.buildTiles = function (map, troop) {
+    TroopMoveLayer.prototype.buildTiles = function (map, troop, onClick) {
         this.tiles = [];
         var x = troop.x;
         var y = troop.y;
-        this.addTiles({ x: x, y: y }, map, troop.troop.moveRange);
+        this.addTiles({ x: x, y: y }, map, troop.troop.moveRange, onClick);
     };
-    TroopMoveLayer.prototype.addTiles = function (coord, map, range) {
+    TroopMoveLayer.prototype.addTiles = function (coord, map, range, onClick) {
         if (range <= 0) {
             return;
         }
@@ -22,22 +22,26 @@ var TroopMoveLayer = (function () {
             var currentDist = queue[qS].d;
             qS++;
             if (currentDist != 0) {
-                this.addTile(current);
+                this.addTile(current, onClick);
             }
             if (currentDist < range) {
-                for (var _i = 0, _a = Tile.getNeighbours(current).filter(function (c) { return map.isAccessible(c); }); _i < _a.length; _i++) {
+                for (var _i = 0, _a = Tile.getNeighbours(current); _i < _a.length; _i++) {
                     var next = _a[_i];
-                    var idx = next.y * map.width + next.x;
-                    if (!visited[idx]) {
-                        visited[idx] = true;
-                        queue[qE++] = { c: next, d: currentDist + 1 };
+                    if (map.isAccessible(next)) {
+                        var idx = next.y * map.width + next.x;
+                        if (!visited[idx]) {
+                            visited[idx] = true;
+                            queue[qE++] = { c: next, d: currentDist + 1 };
+                        }
                     }
                 }
             }
         }
     };
-    TroopMoveLayer.prototype.addTile = function (coord) {
-        this.tiles.push(new Tile(coord.x, coord.y, 12, 5));
+    TroopMoveLayer.prototype.addTile = function (coord, onClick) {
+        var tile = new Tile(coord.x, coord.y, 12, 5);
+        tile.onClick = function () { return onClick(coord); };
+        this.tiles.push(tile);
     };
     TroopMoveLayer.prototype.clear = function () {
         this.tiles = [];

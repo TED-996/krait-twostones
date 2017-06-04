@@ -61,8 +61,12 @@ class GameTroop {
     }
 
     public activate() {
-        this.game.troopMoveLayer.buildTiles(this.game.map, this);
+        this.game.troopMoveLayer.buildTiles(this.game.map, this, this.onMoveClick.bind(this));
         this.game.setRenderDirty();
+    }
+
+    private onMoveClick(to : Coord) {
+        this.move(to.x, to.y);
     }
 
     public move(x: number, y: number) {
