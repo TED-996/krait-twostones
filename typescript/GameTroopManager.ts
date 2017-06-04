@@ -45,3 +45,13 @@ class GameTroopManager implements TileSource {
         return this.troops.map(t => t.getTile());
     }
 }
+
+interface GameTroopTransferObject {
+    id : number,
+    match : number,
+    troop : number,
+    x : number,
+    y : number,
+    hp : number,
+    respawn : number
+}
