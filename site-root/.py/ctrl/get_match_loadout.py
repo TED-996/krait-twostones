@@ -12,8 +12,8 @@ class GetMatchLoadoutController(mvc.CtrlBase):
 
         player = db_player.get_by_username(self.username)
         
-        if self.loadout_owner is "mine":
-            self.loadout = db_loadout.get_by_id(player.loadout_id)
+        if self.loadout_owner == "mine":
+            self.loadout = self.get_in_out_format(db_loadout.get_by_id(player.loadout_id))
         else:
             match = db_match.get_by_player(player)
             if player.id == match.player1_id:

@@ -38,12 +38,12 @@ def get_by_match(match_id):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("select * from MatchTroop where match_id = :match_id",
+    cursor.execute("select id from MatchTroop where matchId = :match_id",
                    {"match_id": match_id})
 
     temp_data = cursor.fetchall()
     cursor.close()
-    return [get_by_id(m_id) for m_id in temp_data]
+    return [get_by_id(m_id) for m_id, in temp_data]
 
 
 def update(mtroop):

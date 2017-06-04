@@ -6,7 +6,7 @@ class GameController {
     private joinSent : boolean;
 
     private troopsGot : boolean;
-    private troopsGetSet : boolean;
+    private troopsGetSent : boolean;
 
 
     constructor(game: WegasGame) {
@@ -41,8 +41,35 @@ class GameController {
         return result;
     }
 
-    private onGetTroops(troops : any) {
-        this.troopsGot = true;
+    private onGetTroops(data : any) {
+        if (data.type != "error") {
+            this.updateTroops(data.data);
+            this.troopsGot = true;
+        }
+        else {
+            throw new Error(data.data);
+        }
+    }
+
+    private updateTroops(troops : GameTroopTransferObject[]) {
+        let troopsById : GameTroopTransferObject[] = [];
+
+        for (let troop of troops){
+            troopsById[troop.troop] = troop
+        }
+
+        for (let troop of this.game.playerTroops){
+            GameController.updateTroop(troop, troopsById[troop.troop.id]);
+        }
+        for (let troop of this.game.opponentTroops){
+            GameController.updateTroop(troop, troopsById[troop.troop.id]);
+        }
+    }
+
+    private static updateTroop(dst: GameTroop, src: GameTroopTransferObject) {
+        dst.x = src.x;
+        dst.y = src.y;
+        dst.hp = src.hp;
     }
 
     public disconnect(reason : string) : void {
@@ -56,15 +83,22 @@ class GameController {
                 this.joinSent = true;
             }
         }
-        if (this.joined ){
+        if (!this.troopsGetSent){
+            let sendResponse = this.getTroops();
+            if (sendResponse != null){
+                this.troopsGetSent = true;
+            }
+        }
+        if (this.joined && this.troopsGot){
             this.updateInGame();
         }
     }
 
     private updateInGame() {
-
+        //console.log("technically in game")
     }
 
     public render() {
     }
 }
+
