@@ -142,12 +142,18 @@ class TileRenderer {
         let hexSizeLength = tileHeight / 2;
 
         for (let t  of TileSourceUtils.concatMerge(this.sources)){
-            this.spriteBatch.create(
+            let newSprite = this.spriteBatch.create(
                 t.x * tileWidth + ((t.y % 2 == 0) ? 0 : (tileWidth / 2)),
                 t.y * tileHeight * 3 / 4,
                 this.tileset.sourceImage,
                 t.tileIndex
-            ).anchor = new Phaser.Point(0.5, 0.5);
+            );
+            newSprite.anchor = new Phaser.Point(0.5, 0.5);
+
+            if (t.onClick != null){
+                newSprite.inputEnabled = true;
+                newSprite.input.pixelPerfectClick = true;
+            }
         }
     }
 }

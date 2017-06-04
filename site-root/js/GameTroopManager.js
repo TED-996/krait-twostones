@@ -29,9 +29,12 @@ var GameTroop = (function () {
         return result;
     };
     GameTroop.prototype.deactivate = function () {
+        this.x -= 1;
+        this.game.setRenderDirty();
     };
     GameTroop.prototype.activate = function () {
         this.x += 1;
+        this.game.setRenderDirty();
     };
     return GameTroop;
 }());

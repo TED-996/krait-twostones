@@ -57,7 +57,7 @@ var Modifier = (function () {
         this.description = this.name + ": " + this.stats.join(", ");
     }
     Modifier.fromObj = function (obj) {
-        if (obj === null) {
+        if (obj == null) {
             return null;
         }
         var id = obj.id;
@@ -147,7 +147,7 @@ var Troop = (function () {
             aRange: this.atkRange,
             mRange: this.moveRange,
             modifiers: this.modifiers.map(function (m) {
-                if (m === null) {
+                if (m == null) {
                     return null;
                 }
                 else {
