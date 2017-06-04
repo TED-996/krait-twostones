@@ -4,6 +4,7 @@ class GameTroop {
     y : number;
     hp : number;
     isEnemy : number;
+    game : WegasGame;
 
 
     constructor(troop: Troop, x: number, y: number, isEnemy : number, hp: number = null) {
@@ -22,7 +23,7 @@ class GameTroop {
     }
 
     private onTroopClick(){
-
+        this.game.onTroopClick(this);
     }
 
     public getTile() : Tile {
@@ -37,6 +38,14 @@ class GameTroop {
         result.onClick = this.onTroopClick.bind(this);
 
         return result;
+    }
+
+    public deactivate() {
+
+    }
+
+    public activate() {
+        this.x += 1;
     }
 }
 

@@ -14,6 +14,7 @@ var GameTroop = (function () {
         }
     }
     GameTroop.prototype.onTroopClick = function () {
+        this.game.onTroopClick(this);
     };
     GameTroop.prototype.getTile = function () {
         var tileIndex;
@@ -26,6 +27,11 @@ var GameTroop = (function () {
         var result = new Tile(this.x, this.y, tileIndex, 1);
         result.onClick = this.onTroopClick.bind(this);
         return result;
+    };
+    GameTroop.prototype.deactivate = function () {
+    };
+    GameTroop.prototype.activate = function () {
+        this.x += 1;
     };
     return GameTroop;
 }());
