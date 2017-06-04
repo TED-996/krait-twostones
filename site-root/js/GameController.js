@@ -5,16 +5,26 @@ var GameController = (function () {
         this.joined = false;
     }
     GameController.prototype.join = function () {
-        var self = this;
         var result = this.networking.sendJoin();
         if (result == null) {
             return null;
         }
-        result.setOnComplete(function () { return self.onJoin(); });
+        result.setOnComplete(this.onJoin.bind(this));
         return result;
     };
     GameController.prototype.onJoin = function () {
         this.joined = true;
+    };
+    GameController.prototype.getTroops = function () {
+        var result = this.networking.sendGetTroops();
+        if (result == null) {
+            return null;
+        }
+        result.setOnComplete(this.onGetTroops.bind(this));
+        return result;
+    };
+    GameController.prototype.onGetTroops = function (troops) {
+        this.troopsGot = true;
     };
     GameController.prototype.disconnect = function (reason) {
         this.networking.sendDisconnect(reason);
@@ -31,7 +41,6 @@ var GameController = (function () {
         }
     };
     GameController.prototype.updateInGame = function () {
-        console.log("in game!");
     };
     GameController.prototype.render = function () {
     };

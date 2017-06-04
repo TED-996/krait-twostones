@@ -96,8 +96,7 @@ class GameWsController(websockets.WebsocketsCtrlBase):
     def get_matchtroops(self, tag=None):
         mtroops = db_match_troop.get_by_match(self.match.id)
 
-
-        self.respond("get_matchtroops, ")
+        self.respond("get_matchtroops", [mt.to_out_obj() for mt in mtroops], tag)
 
     def respond_error(self, data, tag=None):
         self.respond("error", data, tag=tag)
