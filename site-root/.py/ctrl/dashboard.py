@@ -5,6 +5,7 @@ from db_access import db_player
 from db_access import db_loadout
 import logging
 from model import loadout
+import cookie
 
 class DashboardController(object):
     def __init__(self):
@@ -26,3 +27,4 @@ class DashboardController(object):
 
     def make_active_loadout(self, loadout_obj):
         return "makeActiveLoadout({});".format(loadout_obj.id)
+    
