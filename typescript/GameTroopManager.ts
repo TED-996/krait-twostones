@@ -21,6 +21,10 @@ class GameTroop {
         }
     }
 
+    private onTroopClick(){
+
+    }
+
     public getTile() : Tile {
         let tileIndex : number;
         if (this.isEnemy){
@@ -29,7 +33,10 @@ class GameTroop {
         else{
             tileIndex = 14;
         }
-        return new Tile(this.x, this.y, tileIndex, 1); //TODO: tile index? from troop.skin.filename i guess
+        let result = new Tile(this.x, this.y, tileIndex, 1);
+        result.onClick = this.onTroopClick.bind(this);
+
+        return result;
     }
 }
 

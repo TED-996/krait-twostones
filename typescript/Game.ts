@@ -128,7 +128,7 @@ class WegasGame
                 this.cameraMoveDirection = new Phaser.Point(0, 0);
             }
         }
-        
+
         this.cameraMoveDirection = Phaser.Point.add(this.cameraMoveDirection, frameMoveDirection);
         if (!this.cameraMoveDirection.isZero()) {
             this.cameraMoveDirection.normalize();

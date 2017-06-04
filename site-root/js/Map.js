@@ -8,6 +8,7 @@ var Tile = (function () {
         this.y = y;
         this.tileIndex = tileIndex;
         this.zIndex = zIndex;
+        this.onClick = null;
     }
     return Tile;
 }());
