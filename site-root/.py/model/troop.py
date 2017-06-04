@@ -23,16 +23,17 @@ class Troop(object):
         self.hp = self.troop_class.max_hp
         self.dmg = self.troop_class.dmg
         self.atk_range = self.troop_class.atk_range
-        self.move_range = self.troop_class.dmg_range
+        self.move_range = self.troop_class.move_range
         hp = 0
         dmg = 0
         atk_range = 0
         move_range = 0
         for i in self.modifiers:
-            hp += i.max_hp
-            dmg += i.dmg
-            atk_range += i.atk_range
-            move_range += i.move_range
+            if i is not None:
+                hp += i.max_hp
+                dmg += i.dmg
+                atk_range += i.atk_range
+                move_range += i.move_range
         self.hp += max(((self.hp * hp)/100), 0.1)
         self.dmg += max(((self.dmg * dmg)/100),0.1)
         self.atk_range = max(((self.atk_range * atk_range)/100), 1)

@@ -152,10 +152,20 @@ class QueueWaitController(websockets.WebsocketsCtrlBase):
         conn = db_ops.get_connection()
         cursor = conn.cursor()
         troop_list = db_troop.get_by_loadout_id(self.player.loadout_id)
+        y_axis = 1
         for i in troop_list:
+            logging.debug(i.id)
+            logging.debug("-------------------------------Start inserting "+str(self.match_id.id))
             i.calculate_stats()
-            cursor.execute("insert into matchtroop values(matchtroopidseq.nextval, :match_id, :troop_id, :xaxis, :yaxis, :hp)",
-                           {"match_id": self.match_id, "troop_id": i.id, "xaxis": 0, "yaxis": 0, "hp": i.hp})
+            if self.match_id.player1_id == self.player.id:
+                cursor.execute("insert into matchtroop values(matchtroopidseq.nextval, :match_id, :troop_id, :xaxis, :yaxis, :hp,0)",
+                               {"match_id": self.match_id.id, "troop_id": i.id, "xaxis": 1, "yaxis": y_axis, "hp": i.hp})
+            else:
+                cursor.execute(
+                    "insert into matchtroop values(matchtroopidseq.nextval, :match_id, :troop_id, :xaxis, :yaxis, :hp,0)",
+                    {"match_id": self.match_id.id, "troop_id": i.id, "xaxis": 10, "yaxis": y_axis, "hp": i.hp})
+            y_axis += 2
+            logging.debug("-------------------------------Insert troop with id " + str(i.id))
 
         cursor.close()
         conn.commit()
