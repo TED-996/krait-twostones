@@ -1,10 +1,11 @@
 import websockets
 import time
-from db_access import db_match
+from db_access import db_match, db_troop
 from db_access import db_ops
 from db_access import db_player
 from auth_utils import auth_tests
 from db_access import db_queue
+from model import troop
 import logging
 
 
@@ -19,6 +20,7 @@ class QueueWaitController(websockets.WebsocketsCtrlBase):
         self.queue_obj = None
         self.match_accepted = False
         self.time_since_request_sent = 0
+        self.match_id = 0
 
         logging.debug("Constructed.")
 
@@ -71,7 +73,7 @@ class QueueWaitController(websockets.WebsocketsCtrlBase):
                 self.join_sent = True
                 self.time_since_request_sent = time.time()
 
-            if self.join_sent and time.time() - self.time_since_request_sent > 30:
+            if self.join_sent and time.time() - self.time_since_request_sent > 10:
                 if self.match_accepted is False:
                     cursor.execute("delete from queue where playerid = :player_id", {"player_id": self.player.id})
                     conn.commit()
@@ -84,9 +86,11 @@ class QueueWaitController(websockets.WebsocketsCtrlBase):
                     self.join_sent = False
                     self.match_accepted = False
                     self.time_since_request_sent = 0
+                    self.match_id = 0
 
             if self.match_accepted and self.if_in_match() is not False:
                 self.push_out_message("match_ok")
+                self.insert_loadout_in_match()
                 break
 
             if self.is_removed():
@@ -138,9 +142,21 @@ class QueueWaitController(websockets.WebsocketsCtrlBase):
         db_queue.save(self.queue_obj)
 
     def if_in_match(self):
-        match_id = db_match.get_by_player(self.player)
-        if match_id is not None:
-            return match_id
+        self.match_id = db_match.get_by_player(self.player)
+        if self.match_id is not None:
+            return self.match_id
         else:
             return False
+
+    def insert_loadout_in_match(self):
+        conn = db_ops.get_connection()
+        cursor = conn.cursor()
+        troop_list = db_troop.get_by_loadout_id(self.player.loadout_id)
+        for i in troop_list:
+            i.calculate_stats()
+            cursor.execute("insert into matchtroop values(matchtroopidseq.nextval, :match_id, :troop_id, :xaxis, :yaxis, :hp)",
+                           {"match_id": self.match_id, "troop_id": i.id, "xaxis": 0, "yaxis": 0, "hp": i.hp})
+
+        cursor.close()
+        conn.commit()
 

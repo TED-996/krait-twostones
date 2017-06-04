@@ -15,6 +15,8 @@ class MatchmakerController(websockets.WebsocketsCtrlBase):
     def on_thread_start(self):
         logging.debug("MatchmakerController ----- Thread started")
 
+        self.clear_matches()
+
         while not self.should_stop():
             self.player_ids = db_queue.get_players(2)
             if len(self.player_ids) >= 2:
@@ -26,7 +28,6 @@ class MatchmakerController(websockets.WebsocketsCtrlBase):
                     temp_match.append(i)
                 self.matches.append(temp_match)
 
-            self.clear_matches()
             if len(self.matches) > 0:
                 for match in self.matches:
                     if self.if_match_accepted(match[0], match[1]) == 2:

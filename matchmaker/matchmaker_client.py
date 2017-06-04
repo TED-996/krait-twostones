@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.INFO)
 
 class MatchmakerClient(WebSocketClient):
     def __init__(self):
-        super(MatchmakerClient, self).__init__("ws://localhost:80/matchmaker", protocols=["matchmakerProtocol"])
+        super(MatchmakerClient, self).__init__("ws://127.0.0.1:80/matchmaker", protocols=["matchmakerProtocol"])
 
     def received_message(self, message):
         logging.info(message)
@@ -21,8 +21,6 @@ class MatchmakerClient(WebSocketClient):
 
     def unhandled_error(self, error):
         logging.error("[SERIOUS WARNING]: Websocket client error: {}".format(error))
-
-
 
 
 if __name__ == "__main__":
