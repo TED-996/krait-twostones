@@ -67,11 +67,4 @@ def get_password():
 
 
 def refresh_troop_stats():
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    logging.debug("Refreshing stats.")
-    cursor.callproc("refreshStats")
-    conn.commit()
-
-    cursor.close()
+    pass
