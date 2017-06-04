@@ -106,8 +106,6 @@ def delete_long_waits():
     cursor.execute("delete from queue "
                    "where current_timestamp - timeStarted > interval '60' second "
                    "and matchReady = 0")
-    cursor.execute("delete from queue "
-                   "where current_timestamp - timeStarted > interval '120' second ")
 
     cursor.close()
     conn.commit()
