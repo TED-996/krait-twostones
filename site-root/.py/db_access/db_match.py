@@ -1,7 +1,7 @@
 import cx_Oracle
 import logging
 
-from db_access import db_ops
+from db_access import db_ops, db_player
 from model import match
 
 match_cache = {}
@@ -97,6 +97,7 @@ def create(player1, player2):
     try:
         cursor.execute("insert into flag values (:match_id, 1, 3, 14, null)",
                        {"match_id": match_id})
+
         cursor.execute("insert into flag values (:match_id, 2, 60, 14, null)",
                        {"match_id": match_id})
     except ValueError as ex:
