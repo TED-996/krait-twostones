@@ -86,24 +86,24 @@ def update(troop_obj):
 
 @timing.timing
 def populate(troop_obj):
-    logging.debug("populating troop: class")
+    #logging.debug("populating troop: class")
     if troop_obj.troop_class is None:
         troop_obj.troop_class = db_troop_class.get_by_id(troop_obj.class_id)
 
-    logging.debug(", skin")
+    #logging.debug(", skin")
     if troop_obj.skin is None:
         troop_obj.skin = db_skin.get_by_id(troop_obj.skin_id)
 
-    logging.debug(", loadout")
+    #logging.debug(", loadout")
     if troop_obj.loadout is None:
         troop_obj.loadout = db_loadout.get_by_id(troop_obj.loadout_id, skip_update=True)
         troop_obj.loadout.populate()
 
-    logging.debug(", modifiers")
+    #logging.debug(", modifiers")
     if troop_obj.modifiers is None:
         update_modifiers(troop_obj)
 
-    logging.debug(", done")
+    #logging.debug(", done")
 
 
 @timing.timing

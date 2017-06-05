@@ -45,7 +45,7 @@ def get_all_by_id(user_id):
 
     result = []
     for loadout_id, in loadout_ids:
-        logging.debug(loadout_id)
+        # logging.debug(loadout_id)
         result.append(get_by_id(loadout_id))
 
     return result
@@ -77,10 +77,10 @@ def update(loadout_obj):
 
 @timing.timing
 def check_owner(loadout_id, username):
-    logging.debug("pre check owner")
+    # logging.debug("pre check owner")
     loadout_obj = get_by_id(loadout_id)
     owner = db_player.get_by_id(loadout_obj.player_id).name
-    logging.debug("post check owner")
+    # logging.debug("post check owner")
     return True
 
     # return loadout_obj.player.name == username
@@ -108,15 +108,15 @@ def populate(loadout_obj):
 
 @timing.timing
 def update_troops(loadout_obj):
-    logging.debug("update troops: pre import")
+    # logging.debug("update troops: pre import")
     from db_access import db_troop  # Unfortunately I have to do this here.
-    logging.debug("update troops: post import")
+    # logging.debug("update troops: post import")
     result = []
     for troop in db_troop.get_by_loadout_id(loadout_obj.id):
         result.append(troop)
         troop.populate()
 
-    logging.debug("port update troops")
+    # logging.debug("port update troops")
     loadout_obj.troops = result
 
 @timing.timing
@@ -124,7 +124,7 @@ def update_name(loadout_obj, new_loadout_name):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
 
-    logging.debug("pre update loadout name sql")
+    # logging.debug("pre update loadout name sql")
 
     cursor.execute("update Loadout set"
                    "name = :name"
@@ -144,7 +144,7 @@ def save(loadout_obj):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
 
-    logging.debug("pre update loadout sql")
+    # logging.debug("pre update loadout sql")
     cursor.execute("update Loadout set "
                    "playerId = :playerId "
                    "where id = :loadoutId",

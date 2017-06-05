@@ -2,12 +2,14 @@ from __future__ import print_function
 import sys
 import json
 import time
+import logging
 
 import websockets
 from auth_utils import auth_tests
 from db_access import db_match, db_map, db_troop
 from db_access import db_player
 from db_access import db_match_troop
+import traceback
 
 
 class GameWsController(websockets.WebsocketsCtrlBase):
@@ -23,17 +25,50 @@ class GameWsController(websockets.WebsocketsCtrlBase):
             self.player_idx = 2
             self.other_player = db_player.get_by_id(self.match.player1_id)
 
+        self.this_troops, self.other_troops = self.split_match_troops(db_match_troop.get_by_match(self.match.id))
+
     def get_match(self, username):
         return db_match.get_by_player(db_player.get_by_username(username))
+
+    def split_match_troops(self, troops):
+        this_troops = []
+        other_troops = []
+
+        logging.info(troops)
+
+        for troop in troops:
+            troop.populate()
+            player_id = troop.troop.loadout.player_id
+            if player_id == self.this_player.id:
+                this_troops.append(troop)
+            else:
+                other_troops.append(troop)
+
+        return this_troops, other_troops
+
+    def update_match_troops(self):
+        for troop in self.this_troops:
+            db_match_troop.update(troop)
+        for troop in self.other_troops:
+            db_match_troop.update(troop)
+
+    def move_troop(self, troop, dest_x, dest_y, tag):
+        if not self.is_tile_clear(dest_x, dest_y):
+            self.respond_error("Destination not clear", tag)
+            return
+        troop.x_axis = dest_x
+        troop.y_axis = dest_y
+        db_match_troop.save(troop)
+
+        self.respond_ok(tag)
+
 
     def on_thread_start(self):
         while not self.should_stop():
             msg = self.pop_in_message()
             if msg is not None:
-                try:
-                    self.handle_in_message(json.loads(msg))
-                except KeyError as ex:
-                    self.respond_error("Missing data field: {!r}".format(ex.args[0]))
+                self.handle_in_message(json.loads(msg))
+
             self.send_out_messages()
 
             time.sleep(0.008)
@@ -45,14 +80,15 @@ class GameWsController(websockets.WebsocketsCtrlBase):
             "move": self.handle_move,
             "end_turn": self.handle_end_turn,
             "error": self.handle_error,
-            "get_matchtroops": self.get_matchtroops
+            "get_matchtroops": self.handle_get_matchtroops
         }
+        tag = msg_data.get("tag", None)
+
         handler = handlers_by_type.get(msg_data["type"], None)
         if handler is None:
-            self.respond_error("Unrecognized message type {!r}".format(msg_data["type"]))
+            self.respond_error("Unrecognized message type {!r}".format(msg_data["type"]), tag)
         else:
             data = msg_data.get("data", None)
-            tag = msg_data.get("tag", None)
             self.call_handler(handler, data, tag)
 
     def call_handler(self, handler, data, tag):
@@ -60,21 +96,28 @@ class GameWsController(websockets.WebsocketsCtrlBase):
             try:
                 handler(tag=tag)
             except TypeError as err:
-                # TODO: this captures ALL TypeErrors, not no great...
-                self.respond_error("Missing 'data' field in message.")
+                self.respond_error("Missing 'data' field in message.", tag)
+                raise
         else:
             try:
                 handler(data, tag=tag)
             except TypeError as err:
-                # TODO: this captures ALL TypeErrors, not no great...
-                self.respond_error("Extra 'data' field in message.")
+                self.respond_error("Extra 'data' field in message.", tag)
+
+                raise
 
     def send_out_messages(self):
         match_turn = self.match.turn
         db_match.update(self.match)
         if match_turn != self.match.turn and self.match.turn == self.player_idx:
-            self.send("your_turn", "", None)
+            self.send_troops()
+            self.send("your_turn", None, None)
 
+    def send_troops(self):
+        self.update_match_troops()
+        mtroops = self.this_troops + self.other_troops
+
+        self.send("get_matchtroops", [mt.to_out_obj() for mt in mtroops])
 
     def handle_join(self, data, tag=None):
         if self.match is None:
@@ -91,7 +134,17 @@ class GameWsController(websockets.WebsocketsCtrlBase):
         print("Client requested move. Data: {!r}".format(data))
         from_coords = data["from"]
         to_coords = data["to"]
-        self.respond_ok(tag)
+        self.update_match_troops()
+
+        found = False
+        for troop in self.this_troops:
+            if troop.x_axis == from_coords["x"] and troop.y_axis == from_coords["y"]:
+                self.move_troop(troop, to_coords["x"], to_coords["y"], tag)
+                found = True
+                break
+
+        if not found:
+            self.respond_error("Position doesn't exist.", tag)
 
     def handle_end_turn(self, tag=None):
         print("Client requested end turn.")
@@ -107,15 +160,15 @@ class GameWsController(websockets.WebsocketsCtrlBase):
     def handle_error(self, data, tag=None):
         print("Client error:", data, file=sys.stderr)
 
-    def get_matchtroops(self, tag=None):
+    def handle_get_matchtroops(self, tag=None):
         mtroops = db_match_troop.get_by_match(self.match.id)
 
         self.send("get_matchtroops", [mt.to_out_obj() for mt in mtroops], tag)
 
-    def respond_error(self, data, tag=None):
+    def respond_error(self, data, tag):
         self.send("error", data, tag=tag)
 
-    def respond_ok(self, tag=None):
+    def respond_ok(self, tag):
         self.send("ok", None, tag=tag)
 
     def send(self, msg_type, msg_data, tag=None):
@@ -139,14 +192,19 @@ class GameWsController(websockets.WebsocketsCtrlBase):
     def is_tile_clear(self, x, y):
         troops = db_match_troop.get_by_match(self.match.id)
         map = db_map.get_by_id(self.match.map_id)
-        if x <= 0 or x >= map.height - 1:
+        if x <= 0 or x >= map.width - 1:
+            logging.debug("X mismatch: {} vs 1-{}".format(x, map.width - 1))
             return False
-        if y <= 0 or y >= map.width - 1:
+        if y <= 0 or y >= map.height - 1:
+            logging.debug("Y mismatch")
             return False
+
         for i in troops:
             if i.x_axis == x and i.y_axis == y:
+                logging.debug("Tile occupied.")
                 return False
-        if map.data[x * map.width + y] == 76:
+        if map.data[y * map.width + x] == 76:
+            logging.debug("water!")
             return False
         return True
 

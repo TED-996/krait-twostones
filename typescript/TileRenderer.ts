@@ -152,7 +152,7 @@ class TileRenderer {
 
             if (t.mirrored){
                 console.log(newSprite.scale);
-                newSprite.scale.setTo(-0.5, 0.5);
+                newSprite.scale.setTo(-1, 1);
                 console.log(newSprite.scale);
             }
             else{
