@@ -10,6 +10,7 @@ class GameController {
 
     public inTurn : boolean;
 
+    private messageHandlersByType : {[key: string] : (data? : any) => void};
 
     constructor(game: WegasGame) {
         this.game = game;
@@ -19,6 +20,10 @@ class GameController {
         this.networking.onMessage = this.onServerMessage.bind(this);
 
         this.inTurn = false;
+
+        this.messageHandlersByType = {
+            "your_turn": this.onYourTurn.bind(this)
+        };
     }
 
     public onServerMessage(msg : NetworkingMessage){
@@ -117,6 +122,10 @@ class GameController {
         if (data.type != "error"){
             this.game.updateEndTurn(false);
         }
+    }
+
+    public onYourTurn(){
+        this.game.updateEndTurn(true);
     }
 
     public update() {

@@ -34,9 +34,7 @@ class GameWsController(websockets.WebsocketsCtrlBase):
                     self.handle_in_message(json.loads(msg))
                 except KeyError as ex:
                     self.respond_error("Missing data field: {!r}".format(ex.args[0]))
-            out_msg = self.build_out_message()
-            if out_msg is not None:
-                self.push_out_message(out_msg)
+            self.send_out_messages()
 
             time.sleep(0.008)
 
@@ -71,8 +69,12 @@ class GameWsController(websockets.WebsocketsCtrlBase):
                 # TODO: this captures ALL TypeErrors, not no great...
                 self.respond_error("Extra 'data' field in message.")
 
-    def build_out_message(self):
-        return None  # TODO
+    def send_out_messages(self):
+        match_turn = self.match.turn
+        db_match.update(self.match)
+        if match_turn != self.match.turn and self.match.turn == self.player_idx:
+            self.send("your_turn", "", None)
+
 
     def handle_join(self, data, tag=None):
         if self.match is None:
@@ -80,7 +82,7 @@ class GameWsController(websockets.WebsocketsCtrlBase):
         else:
             print("Client joined.")
             db_match.update(self.match)
-            self.respond("join_ok", {"in_turn": self.match.turn == self.player_idx}, tag)
+            self.send("join_ok", {"in_turn": self.match.turn == self.player_idx}, tag)
 
     def handle_disconnect(self, reason, tag=None):
         print("Client disconnected. Reason: {}".format(reason))
@@ -108,15 +110,15 @@ class GameWsController(websockets.WebsocketsCtrlBase):
     def get_matchtroops(self, tag=None):
         mtroops = db_match_troop.get_by_match(self.match.id)
 
-        self.respond("get_matchtroops", [mt.to_out_obj() for mt in mtroops], tag)
+        self.send("get_matchtroops", [mt.to_out_obj() for mt in mtroops], tag)
 
     def respond_error(self, data, tag=None):
-        self.respond("error", data, tag=tag)
+        self.send("error", data, tag=tag)
 
     def respond_ok(self, tag=None):
-        self.respond("ok", None, tag=tag)
+        self.send("ok", None, tag=tag)
 
-    def respond(self, msg_type, msg_data, tag=None):
+    def send(self, msg_type, msg_data, tag=None):
         out_dict = {
             "type": msg_type
         }

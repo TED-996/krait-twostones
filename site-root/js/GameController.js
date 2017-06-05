@@ -5,6 +5,9 @@ var GameController = (function () {
         this.joined = false;
         this.networking.onMessage = this.onServerMessage.bind(this);
         this.inTurn = false;
+        this.messageHandlersByType = {
+            "your_turn": this.onYourTurn.bind(this)
+        };
     }
     GameController.prototype.onServerMessage = function (msg) {
     };
@@ -87,6 +90,9 @@ var GameController = (function () {
         if (data.type != "error") {
             this.game.updateEndTurn(false);
         }
+    };
+    GameController.prototype.onYourTurn = function () {
+        this.game.updateEndTurn(true);
     };
     GameController.prototype.update = function () {
         if (!this.joinSent) {
