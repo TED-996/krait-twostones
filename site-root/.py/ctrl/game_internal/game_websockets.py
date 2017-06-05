@@ -169,7 +169,7 @@ class GameWsController(websockets.WebsocketsCtrlBase):
         for i in range(0,map.width*map.height):
             visited.append(0)
 
-        while (current < count and self.is_tile_clear(queue[current][0],queue[current][1]) is False):
+        while current < count and self.is_tile_clear(queue[current][0], queue[current][1]) is False:
             visited[queue[current][0]*map.width + queue[current][1]] = 1
             for i in range(0, 8):
                 if (queue[current][0] + dx[i], queue[current][1] + dy[i], map) is True and \
