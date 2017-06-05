@@ -183,6 +183,7 @@ class GameWsController(websockets.WebsocketsCtrlBase):
             "join": self.handle_join,
             "disconnect": self.handle_disconnect,
             "move": self.handle_move,
+            "attack": self.handle_attack,
             "end_turn": self.handle_end_turn,
             "error": self.handle_error,
             "get_matchtroops": self.handle_get_matchtroops,
@@ -243,15 +244,31 @@ class GameWsController(websockets.WebsocketsCtrlBase):
         to_coords = data["to"]
         self.update_match_troops()
 
-        found = False
-        for troop in self.this_troops:
-            if troop.x_axis == from_coords["x"] and troop.y_axis == from_coords["y"]:
-                self.move_troop(troop, to_coords["x"], to_coords["y"], tag)
-                found = True
-                break
-
-        if not found:
+        from_troop = self.find_troop(from_coords["x"], from_coords["y"], self.this_troops)
+        if from_troop is None:
             self.respond_error("Position doesn't exist.", tag)
+
+        self.move_troop(from_troop, to_coords["x"], to_coords["y"], tag)
+
+    def find_troop(self, x, y, troops):
+        for troop in troops:
+            if troop.x_axis == x and troop.y_axis == y:
+                return troop
+
+        return None
+
+    def handle_attack(self, data, tag=None):
+        from_coords = data["from"]
+        to_coords = data["to"]
+        self.update_match_troops()
+
+        from_troop = self.find_troop(from_coords["x"], from_coords["y"], self.this_troops)
+        to_troop = self.find_troop(to_coords["x"], to_coords["y"], self.other_troops)
+
+        if from_troop is None or to_troop is None:
+            logging.warning("invalid troops: from_troop: {}, to_troop: {}".format(from_troop, to_troop))
+
+        self.attack_troop(from_troop, to_troop, tag)
 
     def handle_end_turn(self, tag=None):
         print("Client requested end turn.")
@@ -326,14 +343,76 @@ class GameWsController(websockets.WebsocketsCtrlBase):
             return False
         return True
 
-    def atack_troop(self, troop_1, troop_2):
+    def attack_troop(self, troop_1, troop_2, tag):
+        if not self.check_attack(troop_1, troop_2):
+            self.respond_error("Attack failed (out of range?)", tag)
+            return
+
         troop_2.hp -= troop_1.troop.dmg
         if troop_2.hp <= 0:
             troop_2.respawn_time = 4
         db_match_troop.save(troop_2)
         return troop_2
 
-    def find_fisrt_free_tile(self, x, y):
+    def check_attack(self, from_troop, to_troop):
+        if self.bfs_dist((from_troop.x_axis, from_troop.y_axis), (to_troop.x_axis, to_troop.y_axis), False,
+                    from_troop.troop.atk_range) <= from_troop.troop.atk_range:
+            return True
+        else:
+            return False
+
+
+    def bfs_dist(self, from_coords, to_coords, obstacle_sensitive=True, limit=None):
+        if from_coords == to_coords:
+            return 0
+
+        queue = [(from_coords, 0)]
+        q_s = 0
+        q_e = 1
+
+        visited = {from_coords}
+        map = db_map.get_by_id(self.match.map_id)
+        map.parse_map()
+
+        while q_s < q_e:
+            pos, dist = queue[q_s]
+            x, y = pos
+            q_s += 1
+
+            if dist >= limit:
+                continue
+
+            for next_x, next_y in self.get_neighbors(x, y):
+                if next_x <= 0 or next_y <= 0 or next_x >= map.width - 1 or next_y >= map.height - 1:
+                    continue
+
+                if (next_x, next_y) in visited:
+                    continue
+                visited.add((next_x, next_y))
+
+                if visited == to_coords:
+                    return dist + 1
+
+                queue.append(((next_x, next_y), dist + 1))
+                q_e += 1
+
+        return limit + 1
+
+
+    def get_neighbors(self, x, y):
+        offset = 1 if y % 2 == 0 else 0
+        return [
+            (x - 1 + offset, y - 1),
+            (x + offset,     y - 1),
+            (x - 1,          y),
+            (x + 1,          y),
+            (x - 1 + offset, y + 1),
+            (x + offset,     y + 1),
+
+        ]
+
+
+    def find_first_free_tile(self, x, y):
         queue = [[x,y]]
         count = 1
         current = 0
@@ -367,7 +446,7 @@ class GameWsController(websockets.WebsocketsCtrlBase):
                 else:
                     x_start = 63
                     y_start = 15
-                start_point = self.find_fisrt_free_tile(x_start,y_start)
+                start_point = self.find_first_free_tile(x_start, y_start)
                 i.x_axis = start_point[0]
                 i.y_axis = start_point[1]
                 i.hp = i.troop.hp
