@@ -5,6 +5,21 @@ var Flag = (function () {
         this.y = y;
         this.carryingTroop = carryingTroop;
     }
+    Flag.prototype.getTile = function () {
+        var tileIdx;
+        if (this.isOwn) {
+            tileIdx = 28;
+        }
+        else {
+            tileIdx = 44;
+        }
+        if (this.carryingTroop != null) {
+            this.x = this.carryingTroop.x;
+            this.y = this.carryingTroop.y;
+            tileIdx += 4 * 16;
+        }
+        return new Tile(this.x, this.y, tileIdx, 6);
+    };
     return Flag;
 }());
 var FlagManager = (function () {
@@ -34,6 +49,9 @@ var FlagManager = (function () {
         else {
             dst.carryingTroop = null;
         }
+    };
+    FlagManager.prototype.getTiles = function () {
+        return [this.ownFlag.getTile(), this.opponentFlag.getTile()];
     };
     return FlagManager;
 }());

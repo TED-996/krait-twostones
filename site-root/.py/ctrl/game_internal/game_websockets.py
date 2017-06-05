@@ -63,12 +63,110 @@ class GameWsController(websockets.WebsocketsCtrlBase):
         if not self.is_tile_clear(dest_x, dest_y):
             self.respond_error("Destination not clear", tag)
             return
+        if not troop.move_ready:
+            self.respond_error("Move consumed!", tag)
+
         troop.x_axis = dest_x
         troop.y_axis = dest_y
+        troop.move_ready = False
         db_match_troop.save(troop)
+
+        self.check_drop_flag(troop)
+        self.check_pickup_flag(troop)
+        self.check_move_flag(troop)
 
         self.respond_ok(tag)
 
+    def check_pickup_flag(self, troop):
+        if self.other_flag.carrying_troop_id == troop.id or\
+                self.this_flag.carrying_troop_id == troop.id:
+            # cannot pick up another one
+            return
+
+        if self.other_flag.carrying_troop_id is None and\
+                self.other_flag.x_axis == troop.x_axis and\
+                self.other_flag.y_axis == troop.y_axis:
+            self.other_flag.carrying_troop_id = troop.id
+            db_flag.save(self.other_flag)
+            self.other_flag.populate()
+
+            self.handle_get_flags(None)
+        if not self.is_in_base(troop.x_axis, troop.y_axis) and\
+                self.this_flag.carrying_troop_id is None and\
+                self.this_flag.x_axis == troop.x_axis and\
+                self.other_flag.y_axis == troop.y_axis:
+            self.this_flag.carrying_troop_id = troop.id
+            db_flag.save(self.other_flag)
+            self.other_flag.populate()
+
+            self.handle_get_flags(None)
+
+    def check_move_flag(self, troop):
+        if self.other_flag.carrying_troop_id == troop.id:
+            self.other_flag.x_axis = troop.x_axis
+            self.other_flag.y_axis = troop.y_axis
+            db_flag.save(self.other_flag)
+
+            self.handle_get_flags(None)
+
+        if self.this_flag.carrying_troop_id == troop.id:
+            self.this_flag.x_axis = troop.x_axis
+            self.this_flag.y_axis = troop.y_axis
+            db_flag.save(self.this_flag)
+
+            self.handle_get_flags(None)
+
+    def check_drop_flag(self, troop):
+        base_center = (3, 14) if self.player_idx == 1 else (60, 14)
+        if not self.is_in_base(troop.x_axis, troop.y_axis):
+            return
+        logging.debug("in base: troop.x = {}, troop.y = {}".format(troop.x_axis, troop.y_axis))
+
+        if self.other_flag.carrying_troop_id == troop.id:
+            if self.is_in_base(self.this_flag.x_axis, self.this_flag.y_axis):
+                self.on_score_point()
+            else:
+                self.other_flag.x_axis = troop.x_axis
+                self.other_flag.y_axis = troop.y_axis
+                self.other_flag.carrying_troop_id = None
+                db_flag.save(self.other_flag)
+
+            self.handle_get_flags(None)
+
+
+        if self.this_flag.carrying_troop_id == troop.id:
+            self.this_flag.x_axis, self.this_flag.y_axis = base_center
+            self.this_flag.carrying_troop_id = None
+            db_flag.save(self.this_flag)
+
+            if self.is_in_base(self.other_flag.x_axis, self.other_flag.y_axis):
+                self.on_score_point()
+
+            self.handle_get_flags(None)
+
+
+
+    def is_in_base(self, x, y):
+        logging.debug("x: {}, y: {}".format(x, y))
+        base_x = 1 if self.player_idx == 1 else 59
+        base_tiles = [(bx, 13) for bx in xrange(base_x, base_x + 3)] + \
+                     [(bx, 14) for bx in xrange(base_x, base_x + 4)] + \
+                     [(bx, 15) for bx in xrange(base_x, base_x + 3)]
+        logging.debug("{!r} vs {!r}".format((x, y), base_tiles))
+        return (x, y) in base_tiles
+
+    def on_score_point(self):
+        self.other_flag.x_axis, self.other_flag.y_axis = (60, 14) if self.player_idx == 1\
+                                                                    else (3, 14)
+        self.other_flag.carrying_troop_id = None
+        db_flag.save(self.other_flag)
+
+        if self.player_idx == 1:
+            self.match.score1 += 1
+            db_match.save(self.match)
+        else:
+            self.match.score2 += 1
+            db_match.save(self.match)
 
     def on_thread_start(self):
         while not self.should_stop():
@@ -118,7 +216,8 @@ class GameWsController(websockets.WebsocketsCtrlBase):
         match_turn = self.match.turn
         db_match.update(self.match)
         if match_turn != self.match.turn and self.match.turn == self.player_idx:
-            self.send_troops()
+            self.handle_get_matchtroops(None)
+            self.handle_get_flags(None)
             self.send("your_turn", None, None)
 
     def send_troops(self):
@@ -165,6 +264,11 @@ class GameWsController(websockets.WebsocketsCtrlBase):
             db_match.save(self.match)
             self.respond_ok(tag)
 
+        for mtroop in self.this_troops:
+            mtroop.attack_ready = True
+            mtroop.move_ready = True
+            db_match_troop.save(mtroop)
+
     def handle_error(self, data, tag=None):
         print("Client error:", data, file=sys.stderr)
 
@@ -177,7 +281,7 @@ class GameWsController(websockets.WebsocketsCtrlBase):
     def handle_get_flags(self, tag=None):
         self.update_flags()
 
-        self.send("get_flags", [self.this_flag.to_out_obj(True), self.other_flag.to_out_obj(False)], None)
+        self.send("get_flags", [self.this_flag.to_out_obj(True), self.other_flag.to_out_obj(False)], tag)
 
     def respond_error(self, data, tag):
         self.send("error", data, tag=tag)

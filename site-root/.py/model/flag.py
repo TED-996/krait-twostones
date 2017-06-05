@@ -21,6 +21,6 @@ class Flag(object):
             "y": self.y_axis,
         }
         if self.carrying_troop is not None:
-            result["carrying_troop"] = self.carrying_troop.troop_id
+            result["carrying_troop"] = self.carrying_troop.troop.id
 
         return result
