@@ -13,6 +13,7 @@ var GameTroop = (function () {
         else {
             this.hp = troop.maxHp;
         }
+        this.isMirrored = this.isEnemy;
     }
     GameTroop.prototype.onTroopClick = function () {
         this.game.onTroopClick(this);
@@ -25,17 +26,24 @@ var GameTroop = (function () {
         else {
             tileIndex = GameTroop.playerTiles[this.troop.troopClass.name];
         }
-        var result = new Tile(this.x, this.y, tileIndex, 10, this.isEnemy);
+        var result = new Tile(this.x, this.y, tileIndex, 10, this.isMirrored);
         result.onClick = this.onTroopClick.bind(this);
         return result;
+    };
+    GameTroop.prototype.onInitialPlace = function () {
+        this.isMirrored = (this.x > this.game.map.width / 2);
     };
     GameTroop.prototype.deactivate = function () {
         this.game.troopMoveLayer.clear();
         this.game.setRenderDirty();
     };
     GameTroop.prototype.activate = function () {
-        this.game.troopMoveLayer.buildTiles(this.game.map, this);
+        this.game.troopMoveLayer.buildTiles(this.game.map, this, this.onMoveClick.bind(this));
         this.game.setRenderDirty();
+    };
+    GameTroop.prototype.onMoveClick = function (to) {
+        this.move(to.x, to.y);
+        this.game.deactivateTroop();
     };
     GameTroop.prototype.move = function (x, y) {
         var from = { x: this.x, y: this.y };

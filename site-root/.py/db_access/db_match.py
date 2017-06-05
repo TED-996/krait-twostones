@@ -1,4 +1,6 @@
 import cx_Oracle
+import logging
+
 from db_access import db_ops
 from model import match
 
@@ -83,7 +85,7 @@ def update(match_obj):
     match_obj.time_started = time_started
 
 
-def save(player1, player2):
+def create(player1, player2):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
     map_id = 0
@@ -92,8 +94,21 @@ def save(player1, player2):
                        "(select systimestamp from dual))",
                        {"id1": player1.player_id, "id2": player2.player_id})
     except ValueError:
-        print ValueError.message
+        logging.debug(ValueError.message)
     conn.commit()
     cursor.close()
 
-    # TODO: insert matchtroop!
+
+def save(match):
+    conn = db_ops.get_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("update match set score1 = :s1, score2 = :s2, turn = :turn, turnStartTime = :turnTime where id = :match_id",
+                       {"s1": match.score1,"s2": match.score2, "turn": match.turn, "turnTime": match.turn_start_time, "match_id": match.id})
+    except ValueError:
+        logging.debug(ValueError.message)
+        cursor.close()
+        conn.commit()
+    cursor.close()
+    conn.commit()
+

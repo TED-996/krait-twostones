@@ -1,4 +1,5 @@
 /// <reference path="node_modules/@types/phaser/phaser.d.ts" />
+/// <reference path="node_modules/@types/phaser-advanced-debug/phaser-advanced-debug.d.ts" />
 /// <reference path="Map.ts" />
 /// <reference path="TileRenderer.ts" />
 /// <reference path="GameTroop.ts"/>
@@ -28,13 +29,15 @@ class WegasGame
     cameraMoveDirection : Phaser.Point;
     activeTroop : GameTroop;
 
+    endTurn : Phaser.Button;
+
     constructor()
     {
         this.game = new Phaser.Game(
             document.documentElement.clientWidth,
             document.documentElement.clientHeight,
             //1920, 1080,
-            Phaser.AUTO, 'game-div', {
+            Phaser.CANVAS, 'game-div', {
                 preload:this.preload.bind(this),
                 create:this.create.bind(this),
                 update:this.update.bind(this),
@@ -44,12 +47,12 @@ class WegasGame
 
     preload()
     {
-        this.game.stage.backgroundColor = 0x222222;
+        this.game.load.spritesheet('endTurn', '/img/end_turn.png', 190,48);
 
         this.map = new GameMap("/map/medievil.json");
         this.map.tileset.load(this.game);
 
-        this.setScale(0.2);
+        this.setScale(1);
 
         this.networking = new WegasNetworking();
         this.gameController = new GameController(this);
@@ -62,7 +65,20 @@ class WegasGame
     }
 
     create() {
+        this.game.stage.backgroundColor = 0x222222;
+
         this.cursors = this.game.input.keyboard.createCursorKeys();
+        this.tileGroup = this.game.add.group();
+        this.fgGroup = this.game.add.group();
+
+        this.endTurn = this.game.make.button(10, 10, "endTurn",
+            this.onEndTurnPressed.bind(this), this,
+            4, 3, 5, 3
+        );
+        this.fgGroup.add(this.endTurn);
+        this.fgGroup.fixedToCamera = true;
+        this.updateEndTurn(this.gameController.inTurn);
+
 
         AllOptions.loadAjax();
 
@@ -75,9 +91,6 @@ class WegasGame
         this.addLoadout(this.opponentLoadout, this.opponentTroops, true);
 
         this.loadedTroops = new GameTroopManager(this.playerTroops.concat(this.opponentTroops));
-
-        this.tileGroup = this.game.add.group();
-        this.fgGroup = this.game.add.group();
 
         this.tileRenderer = new TileRenderer([this.map], [], [this.loadedTroops, this.troopMoveLayer],
             this.map.tileset, this.tileGroup);
@@ -143,18 +156,20 @@ class WegasGame
             }
         }
 
-        this.cameraMoveDirection = Phaser.Point.add(this.cameraMoveDirection, frameMoveDirection);
+        this.cameraMoveDirection = Phaser.Point.add(this.cameraMoveDirection, frameMoveDirection.multiply(2, 2));
         if (!this.cameraMoveDirection.isZero()) {
             this.cameraMoveDirection.normalize();
         }
 
-        if (frameMoveDirection.isZero()) {
-            this.cameraSpeed = Math.max(this.cameraSpeed - 2, 0);
+        let isAccelerating = !frameMoveDirection.isZero() && this.cameraMoveDirection.dot(frameMoveDirection) > 0;
+
+        if (isAccelerating) {
+            let maxSpeed = 30;
+            let accelerationFactor = 0.03;
+            this.cameraSpeed = (maxSpeed * accelerationFactor + this.cameraSpeed * (1 - accelerationFactor));
         }
         else {
-            let maxSpeed = 15;
-            let accelerationFactor = 0.05;
-            this.cameraSpeed = (maxSpeed * accelerationFactor + this.cameraSpeed * (1 - accelerationFactor));
+            this.cameraSpeed = Math.max(this.cameraSpeed - 2, 0);
         }
 
         if (this.cameraSpeed != 0) {
@@ -165,16 +180,20 @@ class WegasGame
     }
 
     render() {
-        this.game.debug.cameraInfo(this.game.camera, 32, 32);
+        this.game.debug.cameraInfo(this.game.camera, this.game.width - 300, 32);
         this.gameController.render();
 
         if (this.renderDirty) {
+            console.log("dirty, rendering");
             this.tileRenderer.update();
             this.renderDirty = false;
         }
     }
 
     onTroopClick(troop: GameTroop) {
+        if (!this.gameController.inTurn){
+            return;
+        }
         if (!troop.isEnemy) {
             if (troop != this.activeTroop) {
                 if (this.activeTroop != null) {
@@ -183,6 +202,28 @@ class WegasGame
                 this.activeTroop = troop;
                 this.activeTroop.activate();
             }
+        }
+    }
+
+    deactivateTroop() {
+        if (this.activeTroop != null){
+            this.activeTroop.deactivate();
+            this.activeTroop = null;
+        }
+    }
+
+    onEndTurnPressed() {
+        if (this.gameController.inTurn){
+            this.gameController.sendEndTurn();
+        }
+    }
+
+    updateEndTurn(isInTurn : boolean) {
+        if (isInTurn){
+            this.endTurn.setFrames(1, 0, 2, 0);
+        }
+        else{
+            this.endTurn.setFrames(4, 3, 5, 3);
         }
     }
 }

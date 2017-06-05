@@ -57,11 +57,11 @@ CREATE TABLE MATCH(
 
     constraint onDeletePlayer1Match
         FOREIGN key(player1)
-        REFERENCES Player(id),
+        REFERENCES Player(id) on delete cascade,
 
     constraint onDeletePlayer2Match
         FOREIGN key(player2)
-        REFERENCES Player(id)
+        REFERENCES Player(id) on delete cascade
 );
 
 CREATE TABLE MATCHHISTORY (
@@ -76,15 +76,15 @@ CREATE TABLE MATCHHISTORY (
 
     constraint onDeletePlayer1MatchHistory
         FOREIGN key(player1Id)
-        REFERENCES Player(id),
+        REFERENCES Player(id) on delete set null,
 
     constraint onDeletePlayer2MatchHistory
         foreign key(player2Id)
-        references player(id),
+        references player(id) on delete set null,
 
     constraint onDeleteMapMatchHistory
         FOREIGN KEY (mapId)
-        REFERENCES Map(id)
+        REFERENCES Map(id) on delete set null
 );
 
 CREATE TABLE QUEUE(
@@ -96,7 +96,7 @@ CREATE TABLE QUEUE(
 
     constraint onDeletePlayerQueue
         FOREIGN key(playerId)
-        REFERENCES Player(id)
+        REFERENCES Player(id) on delete cascade
 );
 
 CREATE TABLE Loadout(
@@ -106,7 +106,7 @@ CREATE TABLE Loadout(
 
     constraint onDeletePlayerLoadout
         FOREIGN key(playerId)
-        REFERENCES Player(id)
+        REFERENCES Player(id) on delete cascade
 );
 
 create table TroopClass (
@@ -127,7 +127,7 @@ CREATE TABLE Skin(
 
     CONSTRAINT onDeleteTroopClassSkin
         FOREIGN KEY (classId)
-        REFERENCES TroopClass(id)
+        REFERENCES TroopClass(id) on delete cascade
 );
 
 create table Modifier (
@@ -148,11 +148,11 @@ create table Troop (
 
     CONSTRAINT onDeleteTroopClassTroop
         FOREIGN KEY (classId)
-        REFERENCES TroopClass(id),
+        REFERENCES TroopClass(id) on delete cascade,
     
     CONSTRAINT onDeleteSkinTroop
         FOREIGN KEY (skinId)
-        REFERENCES skin(id)
+        REFERENCES skin(id) on delete cascade
 );
 
 
@@ -163,11 +163,11 @@ create table TroopModifier (
     
     CONSTRAINT onDeleteTroopTroopModifier
         FOREIGN KEY (troopId)
-        REFERENCES Troop(id),
+        REFERENCES Troop(id) on delete cascade,
 
     CONSTRAINT onDeleteModifierTroopModifier
         FOREIGN KEY (modifierId)
-        REFERENCES Modifier(id)
+        REFERENCES Modifier(id) on delete cascade
 );
 
 CREATE TABLE MATCHTROOP(
@@ -181,11 +181,11 @@ CREATE TABLE MATCHTROOP(
 
     CONSTRAINT onDeleteMatchMatchTroop
         FOREIGN KEY (matchId)
-        REFERENCES Match(id),
+        REFERENCES Match(id) on delete cascade,
 
     CONSTRAINT onDeleteTroopMatchTroop
         FOREIGN KEY (troopId)
-        REFERENCES Troop(id)
+        REFERENCES Troop(id) on delete cascade
 );
 
 create sequence playerIdSeq
@@ -219,4 +219,7 @@ create sequence troopIdSeq
     start with 1;
 
 create sequence matchTroopIdSeq
-    start with 1;
+    start with 1
+    minvalue 1
+    maxvalue 9999
+    cycle;

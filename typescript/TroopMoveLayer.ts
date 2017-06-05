@@ -5,16 +5,16 @@ class TroopMoveLayer implements TileSource {
         this.tiles = [];
     }
 
-    buildTiles(map : GameMap, troop : GameTroop) : void {
+    buildTiles(map : GameMap, troop : GameTroop, onClick : (c: Coord) => void) : void {
         this.tiles = [];
 
         let x = troop.x;
         let y = troop.y;
 
-        this.addTiles({x: x, y: y}, map, troop.troop.moveRange);
+        this.addTiles({x: x, y: y}, map, troop.troop.moveRange, onClick);
     }
 
-    private addTiles(coord : Coord, map : GameMap, range : number){
+    private addTiles(coord : Coord, map : GameMap, range : number, onClick : (c : Coord) => void){
         if (range <= 0){
             return;
         }
@@ -31,23 +31,27 @@ class TroopMoveLayer implements TileSource {
             qS++;
 
             if (currentDist != 0){
-                this.addTile(current);
+                this.addTile(current, onClick);
             }
 
             if (currentDist < range) {
-                for (let next of Tile.getNeighbours(current).filter(c => map.isAccessible(c))) {
-                    let idx = next.y * map.width + next.x;
-                    if (!visited[idx]) {
-                        visited[idx] = true;
-                        queue[qE++] = {c: next, d: currentDist + 1};
+                for (let next of Tile.getNeighbours(current)) {
+                    if (map.isAccessible(next)) {
+                        let idx = next.y * map.width + next.x;
+                        if (!visited[idx]) {
+                            visited[idx] = true;
+                            queue[qE++] = {c: next, d: currentDist + 1};
+                        }
                     }
                 }
             }
         }
     }
 
-    private addTile(coord: Coord) {
-        this.tiles.push(new Tile(coord.x, coord.y, 12, 5));
+    private addTile(coord: Coord, onClick : (c : Coord) => void) {
+        let tile = new Tile(coord.x, coord.y, 12, 5);
+        tile.onClick = () => onClick(coord);
+        this.tiles.push(tile);
     }
 
     clear() {
