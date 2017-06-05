@@ -142,7 +142,7 @@ class TileRenderer {
         let hexSizeLength = tileHeight / 2;
 
         for (let t  of TileSourceUtils.concatMerge(this.sources)){
-            let newSprite = this.spriteBatch.create(
+            let newSprite : Phaser.Sprite = this.spriteBatch.create(
                 t.x * tileWidth + ((t.y % 2 == 0) ? 0 : (tileWidth / 2)),
                 t.y * tileHeight * 3 / 4,
                 this.tileset.sourceImage,
@@ -151,7 +151,12 @@ class TileRenderer {
             newSprite.anchor = new Phaser.Point(0.5, 0.5);
 
             if (t.mirrored){
-                newSprite.scale.x *= -1;
+                console.log(newSprite.scale);
+                newSprite.scale.setTo(-0.5, 0.5);
+                console.log(newSprite.scale);
+            }
+            else{
+                newSprite.scale.setTo(1, 1);
             }
 
             if (t.onClick != null){
@@ -159,6 +164,11 @@ class TileRenderer {
                 newSprite.input.pixelPerfectClick = true;
                 newSprite.input.pixelPerfectAlpha = 25;
                 newSprite.events.onInputDown.add(t.onClick.bind(this), t);
+
+            }
+
+            if (t.mirrored){
+                console.log(newSprite);
             }
         }
     }

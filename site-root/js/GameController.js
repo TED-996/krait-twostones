@@ -3,7 +3,11 @@ var GameController = (function () {
         this.game = game;
         this.networking = game.networking;
         this.joined = false;
+        this.networking.onMessage = this.onServerMessage.bind(this);
+        this.inTurn = false;
     }
+    GameController.prototype.onServerMessage = function (msg) {
+    };
     GameController.prototype.join = function () {
         var result = this.networking.sendJoin();
         if (result == null) {
@@ -12,8 +16,10 @@ var GameController = (function () {
         result.setOnComplete(this.onJoin.bind(this));
         return result;
     };
-    GameController.prototype.onJoin = function () {
+    GameController.prototype.onJoin = function (data) {
         this.joined = true;
+        this.inTurn = data.data.in_turn;
+        this.game.updateEndTurn(this.inTurn);
     };
     GameController.prototype.getTroops = function () {
         var result = this.networking.sendGetTroops();
@@ -27,6 +33,7 @@ var GameController = (function () {
         if (data.type != "error") {
             this.updateTroops(data.data);
             this.troopsGot = true;
+            this.onTroopsInitialPlace();
         }
         else {
             throw new Error(data.data);
@@ -53,8 +60,33 @@ var GameController = (function () {
         dst.y = src.y;
         dst.hp = src.hp;
     };
+    GameController.prototype.onTroopsInitialPlace = function () {
+        for (var _i = 0, _a = this.game.playerTroops; _i < _a.length; _i++) {
+            var troop = _a[_i];
+            troop.onInitialPlace();
+        }
+        for (var _b = 0, _c = this.game.opponentTroops; _b < _c.length; _b++) {
+            var troop = _c[_b];
+            troop.onInitialPlace();
+        }
+    };
     GameController.prototype.disconnect = function (reason) {
         this.networking.sendDisconnect(reason);
+    };
+    GameController.prototype.sendEndTurn = function () {
+        if (!this.inTurn) {
+            return;
+        }
+        var result = this.networking.sendEndTurn();
+        if (result == null) {
+            return null;
+        }
+        result.setOnComplete(this.onEndTurnComplete.bind(this));
+    };
+    GameController.prototype.onEndTurnComplete = function (data) {
+        if (data.type != "error") {
+            this.game.updateEndTurn(false);
+        }
     };
     GameController.prototype.update = function () {
         if (!this.joinSent) {

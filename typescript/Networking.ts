@@ -1,9 +1,9 @@
 class WebsocketResponseWaitItem {
-    private data : any;
+    private data : NetworkingMessage;
     private onClose : () => void;
     private refcount : number;
     private closed : boolean;
-    private onComplete : (data : any) => void;
+    private onComplete : (data : NetworkingMessage) => void;
 
     constructor(onClose : () => void) {
         this.data = null;
@@ -19,18 +19,18 @@ class WebsocketResponseWaitItem {
         return new WebsocketResponseWaitItem(() => self.refClose);
     }
 
-    public getData(): any {
+    public getData(): NetworkingMessage {
         return this.data;
     }
 
-    public setData(value: any) {
+    public setData(value: NetworkingMessage) {
         this.data = value;
         if (value !== null && this.onComplete !== null){
             this.onComplete(value);
         }
     }
 
-    public setOnComplete(onComplete : (data : any) => void){
+    public setOnComplete(onComplete : (data : NetworkingMessage) => void){
         this.onComplete = onComplete;
         if (this.data !== null){
             this.onComplete(this.data);
@@ -59,11 +59,18 @@ function isUndefined(value) {
     return typeof value == "undefined";
 }
 
+interface NetworkingMessage {
+    type : string;
+    data?: any,
+    tag?: any
+}
+
 class WegasNetworking {
     private socket : WebSocket;
     private inQueue : string[];
     private responseWaitQueue : {[tag: string]: WebsocketResponseWaitItem};
     private opened : boolean;
+    public onMessage : (data : NetworkingMessage) => void;
 
     private static getWebsocketUrl(absolute_url) {
         const loc = window.location;
@@ -78,28 +85,34 @@ class WegasNetworking {
         return new_uri;
     }
 
-    public constructor() {
+    public constructor(onMessage : (data : NetworkingMessage) => void = null) {
         this.socket = new WebSocket(WegasNetworking.getWebsocketUrl("/gameplay_ws"), "WegasNetworking");
         this.inQueue = [];
         this.responseWaitQueue = Object.create(null);
+
+        this.onMessage = onMessage;
 
         let self = this;
 
         this.socket.onopen = () => self.onOpen();
         this.socket.onclose = (ev) => self.onClose(ev);
-        this.socket.onmessage = (ev) => self.onMessage(ev);
+        this.socket.onmessage = (ev) => self.onMessageInternal(ev);
         this.socket.onerror = () => self.onError();
+
     }
 
     private onOpen() {
         this.opened = true;
     }
 
-    private onMessage(ev : MessageEvent) {
+    private onMessageInternal(ev : MessageEvent) {
         let inObj = JSON.parse(ev.data);
 
         if (!isUndefined(inObj.tag) && !isUndefined(this.responseWaitQueue[inObj.tag])){
             this.responseWaitQueue[inObj.tag].setData(inObj);
+        }
+        else if (this.onMessage != null){
+            this.onMessage(inObj);
         }
         else {
             this.inQueue.push(inObj);
@@ -117,11 +130,7 @@ class WegasNetworking {
 
 
     private send(type : string, data : any = null, tag : string = null) : WebsocketResponseWaitItem {
-        let outObj : {
-            type : string;
-            data?: any,
-            tag?: any
-        } = {
+        let outObj : NetworkingMessage = {
             type: type
         };
         let responseWaitItem : WebsocketResponseWaitItem = null;
