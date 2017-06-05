@@ -7,6 +7,8 @@ from misc import timing
 
 mtroop_cache = {}
 
+# TODO: moveReady si attackReady in MatchTroop (DB)
+
 
 @timing.timing
 def get_by_id(match_troop_id, skip_update=False):
@@ -71,13 +73,19 @@ def populate(mtroop):
     if mtroop.match is None:
         mtroop.match = db_match.get_by_id(mtroop.match_id)
     if mtroop.troop is None:
-        mtroop.troop = db_match.get_by_id(mtroop.troop_id)
+        mtroop.troop = db_troop.get_by_id(mtroop.troop_id)
+        mtroop.troop.populate()
+
 
 def save(mtroop):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("update matchTroop set x_axis = :x,y_axis = :y, hp = :hp, respawn_time = :rp",
-                   {"x": mtroop.x_axis, "y": mtroop.y_axis, "hp": mtroop.hp, "rp": mtroop.respawn_time})
+    cursor.execute("update matchTroop set xAxis = :x, yAxis = :y, hp = :hp, respawnTime = :rp where id = :mtroop_id",
+                   {"mtroop_id": mtroop.id,
+                    "x": mtroop.x_axis,
+                    "y": mtroop.y_axis,
+                    "hp": mtroop.hp,
+                    "rp": mtroop.respawn_time})
     cursor.close()
     conn.commit()

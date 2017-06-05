@@ -5,8 +5,13 @@ var GameController = (function () {
         this.joined = false;
         this.networking.onMessage = this.onServerMessage.bind(this);
         this.inTurn = false;
+        this.messageHandlersByType = {
+            "your_turn": this.onYourTurn.bind(this),
+            "get_matchtroops": this.onGetTroops.bind(this)
+        };
     }
     GameController.prototype.onServerMessage = function (msg) {
+        this.messageHandlersByType[msg.type](msg.data);
     };
     GameController.prototype.join = function () {
         var result = this.networking.sendJoin();
@@ -21,15 +26,15 @@ var GameController = (function () {
         this.inTurn = data.data.in_turn;
         this.game.updateEndTurn(this.inTurn);
     };
-    GameController.prototype.getTroops = function () {
+    GameController.prototype.initGetTroops = function () {
         var result = this.networking.sendGetTroops();
         if (result == null) {
             return null;
         }
-        result.setOnComplete(this.onGetTroops.bind(this));
+        result.setOnComplete(this.onInitGetTroops.bind(this));
         return result;
     };
-    GameController.prototype.onGetTroops = function (data) {
+    GameController.prototype.onInitGetTroops = function (data) {
         if (data.type != "error") {
             this.updateTroops(data.data);
             this.troopsGot = true;
@@ -38,6 +43,26 @@ var GameController = (function () {
         else {
             throw new Error(data.data);
         }
+    };
+    GameController.prototype.demandGetTroops = function () {
+        var result = this.networking.sendGetTroops();
+        if (result == null) {
+            return null;
+        }
+        result.setOnComplete(this.onInitGetTroops.bind(this));
+        return result;
+    };
+    GameController.prototype.onDemandGetTroops = function (data) {
+        if (data.type != "error") {
+            this.updateTroops(data.data);
+            this.troopsGot = true;
+        }
+        else {
+            throw new Error(data.data);
+        }
+    };
+    GameController.prototype.onGetTroops = function (data) {
+        this.updateTroops(data);
     };
     GameController.prototype.updateTroops = function (troops) {
         var troopsById = [];
@@ -86,7 +111,15 @@ var GameController = (function () {
     GameController.prototype.onEndTurnComplete = function (data) {
         if (data.type != "error") {
             this.game.updateEndTurn(false);
+            this.inTurn = false;
         }
+        else {
+            this.inTurn = true;
+        }
+    };
+    GameController.prototype.onYourTurn = function () {
+        this.game.updateEndTurn(true);
+        this.inTurn = true;
     };
     GameController.prototype.update = function () {
         if (!this.joinSent) {
@@ -96,7 +129,7 @@ var GameController = (function () {
             }
         }
         if (!this.troopsGetSent) {
-            var sendResponse = this.getTroops();
+            var sendResponse = this.initGetTroops();
             if (sendResponse != null) {
                 this.troopsGetSent = true;
             }
