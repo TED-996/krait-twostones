@@ -93,8 +93,13 @@ def create(player1, player2):
         cursor.execute("insert into match values(matchidseq.nextval,:id1,:id2,1,NULL,0,0,NULL,"
                        "(select systimestamp from dual))",
                        {"id1": player1.player_id, "id2": player2.player_id})
-    except ValueError:
-        logging.debug(ValueError.message)
+    except ValueError as ex:
+        logging.debug(ex.message)
+    try:
+        cursor.execute("insert into flag values (:match_id, 1, 3, 14, null)",
+                       {"match_id"})
+    except ValueError as ex:
+        logging.debug(ex.message)
     conn.commit()
     cursor.close()
 
