@@ -4,7 +4,6 @@ import logging
 from db_access import db_ops
 from model import match
 
-
 match_cache = {}
 
 
@@ -24,8 +23,8 @@ def get_by_id(match_id, skip_update=False):
     temp_data = cursor.fetchone()
     cursor.close()
     if temp_data is not None:
-        match_id, player1, player2, turn, turn_start_time, score1, score2, map_id, time_started =\
-             temp_data
+        match_id, player1, player2, turn, turn_start_time, score1, score2, map_id, time_started = \
+            temp_data
     else:
         return None
 
@@ -76,7 +75,6 @@ def update(match_obj):
     else:
         return
 
-
     match_obj.turn = turn
     match_obj.turn_start_time = turn_start_time
     match_obj.score1 = score1
@@ -108,12 +106,13 @@ def save(match):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
     try:
-        cursor.execute("update match set score1 = :s1, score2 = :s2, turn = :turn, turnStartTime = :turnTime where id = :match_id",
-                       {"s1": match.score1,"s2": match.score2, "turn": match.turn, "turnTime": match.turn_start_time, "match_id": match.id})
+        cursor.execute(
+            "update match set score1 = :s1, score2 = :s2, turn = :turn, turnStartTime = :turnTime where id = :match_id",
+            {"s1": match.score1, "s2": match.score2, "turn": match.turn, "turnTime": match.turn_start_time,
+             "match_id": match.id})
     except ValueError:
         logging.debug(ValueError.message)
         cursor.close()
         conn.commit()
     cursor.close()
     conn.commit()
-

@@ -1,4 +1,4 @@
-function makeActiveLoadout(button_id){
+    function makeActiveLoadout(button_id){
     var activeLoadout = document.getElementById(button_id);
     var allLoadouts = document.getElementsByClassName("active btn btn-default");
     var loadoutLen = allLoadouts.length;
