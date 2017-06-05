@@ -9,7 +9,7 @@ from auth_utils import auth_tests
 from db_access import db_match, db_map, db_troop
 from db_access import db_player
 from db_access import db_match_troop
-import traceback
+from db_access import db_flag
 
 
 class GameWsController(websockets.WebsocketsCtrlBase):
@@ -24,6 +24,9 @@ class GameWsController(websockets.WebsocketsCtrlBase):
         else:
             self.player_idx = 2
             self.other_player = db_player.get_by_id(self.match.player1_id)
+        flags = db_flag.get_by_match(self.match.id)
+        self.this_flag = [f for f in flags if f.flag_idx == self.player_idx][0]
+        self.other_flag = [f for f in flags if f.flag_idx != self.player_idx][0]
 
         self.this_troops, self.other_troops = self.split_match_troops(db_match_troop.get_by_match(self.match.id))
 
@@ -51,6 +54,10 @@ class GameWsController(websockets.WebsocketsCtrlBase):
             db_match_troop.update(troop)
         for troop in self.other_troops:
             db_match_troop.update(troop)
+
+    def update_flags(self):
+        db_flag.update(self.this_flag)
+        db_flag.update(self.other_flag)
 
     def move_troop(self, troop, dest_x, dest_y, tag):
         if not self.is_tile_clear(dest_x, dest_y):
@@ -80,7 +87,8 @@ class GameWsController(websockets.WebsocketsCtrlBase):
             "move": self.handle_move,
             "end_turn": self.handle_end_turn,
             "error": self.handle_error,
-            "get_matchtroops": self.handle_get_matchtroops
+            "get_matchtroops": self.handle_get_matchtroops,
+            "get_flags": self.handle_get_flags
         }
         tag = msg_data.get("tag", None)
 
@@ -161,9 +169,15 @@ class GameWsController(websockets.WebsocketsCtrlBase):
         print("Client error:", data, file=sys.stderr)
 
     def handle_get_matchtroops(self, tag=None):
-        mtroops = db_match_troop.get_by_match(self.match.id)
+        self.update_match_troops()
+        mtroops = self.this_troops + self.other_troops
 
         self.send("get_matchtroops", [mt.to_out_obj() for mt in mtroops], tag)
+
+    def handle_get_flags(self, tag=None):
+        self.update_flags()
+
+        self.send("get_flags", [self.this_flag.to_out_obj(True), self.other_flag.to_out_obj(False)], None)
 
     def respond_error(self, data, tag):
         self.send("error", data, tag=tag)

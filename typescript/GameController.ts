@@ -8,6 +8,9 @@ class GameController {
     private troopsGot : boolean;
     private troopsGetSent : boolean;
 
+    private flagsGot : boolean;
+    private flagsGetSent : boolean;
+
     public inTurn : boolean;
 
     private messageHandlersByType : {[key: string] : (data? : any) => void};
@@ -15,11 +18,17 @@ class GameController {
     constructor(game: WegasGame) {
         this.game = game;
         this.networking = game.networking;
-        this.joined = false;
-
         this.networking.onMessage = this.onServerMessage.bind(this);
 
         this.inTurn = false;
+
+        this.joined = false;
+        this.troopsGot = false;
+        this.flagsGot = false;
+
+        this.joinSent = false;
+        this.troopsGetSent = false;
+        this.flagsGetSent = false;
 
         this.messageHandlersByType = {
             "your_turn": this.onYourTurn.bind(this),
@@ -118,6 +127,25 @@ class GameController {
         dst.hp = src.hp;
     }
 
+    private updateFlags() : WebsocketResponseWaitItem {
+        let result = this.networking.sendGetFlags();
+        if (result == null){
+            return null;
+        }
+
+        result.setOnComplete(this.onUpdateFlags.bind(this));
+
+        return result;
+    }
+
+    private onUpdateFlags(data : NetworkingMessage){
+        if (data.type == "error"){
+            throw new Error(data.data);
+        }
+
+        this.game.flags.update(data.data);
+    }
+
     private onTroopsInitialPlace() {
         for (let troop of this.game.playerTroops){
             troop.onInitialPlace();
@@ -172,7 +200,14 @@ class GameController {
                 this.troopsGetSent = true;
             }
         }
-        if (this.joined && this.troopsGot){
+        if (!this.flagsGetSent){
+            let sendResponse = this.updateFlags();
+            if (sendResponse != null){
+                this.flagsGetSent = true;
+            }
+        }
+
+        if (this.joined && this.troopsGot && this.flagsGot){
             this.updateInGame();
         }
     }

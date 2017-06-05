@@ -11,3 +11,16 @@ class Flag(object):
     def populate(self):
         from db_access import db_flag
         db_flag.populate(self)
+
+    def to_out_obj(self, is_own):
+        self.populate()
+
+        result = {
+            "is_own": is_own,
+            "x": self.x_axis,
+            "y": self.y_axis,
+        }
+        if self.carrying_troop is not None:
+            result["carrying_troop"] = self.carrying_troop.troop_id
+
+        return result

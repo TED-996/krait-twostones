@@ -130,6 +130,10 @@ class WegasNetworking {
 
 
     private send(type : string, data : any = null, tag : string = null) : WebsocketResponseWaitItem {
+        if (!this.opened){
+            return null;
+        }
+
         let outObj : NetworkingMessage = {
             type: type
         };
@@ -186,16 +190,10 @@ class WegasNetworking {
     }
 
     public sendJoin() : WebsocketResponseWaitItem {
-        if (!this.opened){
-            return null;
-        }
         return this.send("join", AuthUtils.getUsername(), WegasNetworking.generateTag());
     }
 
     public sendGetTroops() : WebsocketResponseWaitItem {
-        if (!this.opened){
-            return null;
-        }
         return this.send("get_matchtroops", null, WegasNetworking.generateTag());
     }
 
@@ -214,6 +212,10 @@ class WegasNetworking {
     public sendMove(from : Coord, to : Coord)
             : WebsocketResponseWaitItem {
         return this.send("move", {from: from, to: to}, WegasNetworking.generateTag());
+    }
+
+    public sendGetFlags() : WebsocketResponseWaitItem {
+        return this.send("get_flags", null, WegasNetworking.generateTag());
     }
 
     private static generateTag(size : number = 10) : string {
