@@ -83,7 +83,7 @@ def update(match_obj):
     match_obj.time_started = time_started
 
 
-def save(player1, player2):
+def create(player1, player2):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
     map_id = 0

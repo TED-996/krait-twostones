@@ -14,10 +14,14 @@ class GameWsController(websockets.WebsocketsCtrlBase):
     def __init__(self, request):
         super(GameWsController, self).__init__(True)
         self.username = auth_tests.get_auth()
-        self.other_player = None  # TODO
-        self.this_loadout = None  # TODO
-        self.other_loadout = None  # TODO
         self.match = self.get_match(self.username)
+        self.this_player = db_player.get_by_username(self.username)
+        if self.this_player.id == self.match.player1_id:
+            self.player_idx = 1
+            self.other_player = db_player.get_by_id(self.match.player2_id)
+        else:
+            self.player_idx = 2
+            self.other_player = db_player.get_by_id(self.match.player1_id)
 
     def get_match(self, username):
         return db_match.get_by_player(db_player.get_by_username(username))
@@ -75,7 +79,8 @@ class GameWsController(websockets.WebsocketsCtrlBase):
             self.respond_error("You're not in a match.", tag)
         else:
             print("Client joined.")
-            self.respond_ok(tag)
+            db_match.update(self.match)
+            self.respond("join_ok", {"in_turn": self.match.turn == self.player_idx}, tag)
 
     def handle_disconnect(self, reason, tag=None):
         print("Client disconnected. Reason: {}".format(reason))
@@ -88,7 +93,14 @@ class GameWsController(websockets.WebsocketsCtrlBase):
 
     def handle_end_turn(self, tag=None):
         print("Client requested end turn.")
-        self.respond_ok(tag)
+
+        db_match.update(self.match)
+        if self.match.turn != self.player_idx:
+            self.respond_error("Not your turn.", tag)
+        else:
+            self.match.turn = 2 - self.match.turn + 1
+            db_match.save(self.match)
+            self.respond_ok(tag)
 
     def handle_error(self, data, tag=None):
         print("Client error:", data, file=sys.stderr)

@@ -5,6 +5,7 @@ class GameTroop {
     hp : number;
     isEnemy : boolean;
     game : WegasGame;
+    isMirrored : boolean;
 
     static playerTiles : {[className : string] : number} = {
         "Runner": 15,
@@ -35,6 +36,7 @@ class GameTroop {
         } else {
             this.hp = troop.maxHp;
         }
+        this.isMirrored = this.isEnemy;
     }
 
     private onTroopClick(){
@@ -49,10 +51,14 @@ class GameTroop {
         else{
             tileIndex = GameTroop.playerTiles[this.troop.troopClass.name];
         }
-        let result = new Tile(this.x, this.y, tileIndex, 10, this.isEnemy);
+        let result = new Tile(this.x, this.y, tileIndex, 10, this.isMirrored);
         result.onClick = this.onTroopClick.bind(this);
 
         return result;
+    }
+
+    public onInitialPlace() {
+        this.isMirrored = (this.x > this.game.map.width / 2);
     }
 
     public deactivate() {
@@ -67,6 +73,7 @@ class GameTroop {
 
     private onMoveClick(to : Coord) {
         this.move(to.x, to.y);
+        this.game.deactivateTroop();
     }
 
     public move(x: number, y: number) {

@@ -8,11 +8,21 @@ class GameController {
     private troopsGot : boolean;
     private troopsGetSent : boolean;
 
+    public inTurn : boolean;
+
 
     constructor(game: WegasGame) {
         this.game = game;
         this.networking = game.networking;
         this.joined = false;
+
+        this.networking.onMessage = this.onServerMessage.bind(this);
+
+        this.inTurn = false;
+    }
+
+    public onServerMessage(msg : NetworkingMessage){
+
     }
 
     public join() : WebsocketResponseWaitItem {
@@ -26,8 +36,10 @@ class GameController {
         return result
     }
 
-    private onJoin() {
+    private onJoin(data : NetworkingMessage) {
         this.joined = true;
+        this.inTurn = data.data.in_turn;
+        this.game.updateEndTurn(this.inTurn);
     }
 
     public getTroops() : WebsocketResponseWaitItem {
@@ -45,6 +57,8 @@ class GameController {
         if (data.type != "error") {
             this.updateTroops(data.data);
             this.troopsGot = true;
+
+            this.onTroopsInitialPlace();
         }
         else {
             throw new Error(data.data);
@@ -73,8 +87,36 @@ class GameController {
         dst.hp = src.hp;
     }
 
+    private onTroopsInitialPlace() {
+        for (let troop of this.game.playerTroops){
+            troop.onInitialPlace();
+        }
+        for (let troop of this.game.opponentTroops){
+            troop.onInitialPlace();
+        }
+    }
+
     public disconnect(reason : string) : void {
         this.networking.sendDisconnect(reason);
+    }
+
+    public sendEndTurn() {
+        if (!this.inTurn){
+            return;
+        }
+
+        let result = this.networking.sendEndTurn();
+        if (result == null){
+            return null;
+        }
+
+        result.setOnComplete(this.onEndTurnComplete.bind(this));
+    }
+
+    public onEndTurnComplete(data : NetworkingMessage){
+        if (data.type != "error"){
+            this.game.updateEndTurn(false);
+        }
     }
 
     public update() {

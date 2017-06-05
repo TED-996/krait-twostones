@@ -47,14 +47,16 @@ function isUndefined(value) {
     return typeof value == "undefined";
 }
 var WegasNetworking = (function () {
-    function WegasNetworking() {
+    function WegasNetworking(onMessage) {
+        if (onMessage === void 0) { onMessage = null; }
         this.socket = new WebSocket(WegasNetworking.getWebsocketUrl("/gameplay_ws"), "WegasNetworking");
         this.inQueue = [];
         this.responseWaitQueue = Object.create(null);
+        this.onMessage = onMessage;
         var self = this;
         this.socket.onopen = function () { return self.onOpen(); };
         this.socket.onclose = function (ev) { return self.onClose(ev); };
-        this.socket.onmessage = function (ev) { return self.onMessage(ev); };
+        this.socket.onmessage = function (ev) { return self.onMessageInternal(ev); };
         this.socket.onerror = function () { return self.onError(); };
     }
     WegasNetworking.getWebsocketUrl = function (absolute_url) {
@@ -73,10 +75,13 @@ var WegasNetworking = (function () {
     WegasNetworking.prototype.onOpen = function () {
         this.opened = true;
     };
-    WegasNetworking.prototype.onMessage = function (ev) {
+    WegasNetworking.prototype.onMessageInternal = function (ev) {
         var inObj = JSON.parse(ev.data);
         if (!isUndefined(inObj.tag) && !isUndefined(this.responseWaitQueue[inObj.tag])) {
             this.responseWaitQueue[inObj.tag].setData(inObj);
+        }
+        else if (this.onMessage != null) {
+            this.onMessage(inObj);
         }
         else {
             this.inQueue.push(inObj);
