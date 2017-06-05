@@ -91,9 +91,42 @@ def create(username):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
 
-    user_id = cursor.execute("select id from Player where playername = :username", {"username": username})
-    return cursor.callfunc("loadout_ops.newLoadout", cursor.var(cx_Oracle.NUMBER), [user_id])
+    cursor.execute("select id from Player where playername = :username", {"username": username})
+    temp_data = cursor.fetchone()
+    if temp_data is not None:
+        user_id, = temp_data
+    else:
+        return -1
+    return create_new_loadout(user_id)
 
+@timing.timing
+def create_new_loadout(player_id):
+    logging.debug(player_id)
+    db_conn = db_ops.get_connection()
+    cursor = db_conn.cursor()
+    cursor.execute("insert into loadout values(loadoutidseq.nextval,'Temp Loadout',:id)", {"id": player_id})
+    db_conn.commit()
+    cursor.execute("select id from loadout where playerid = :player_id order by id desc", {"player_id": player_id})
+    temp_data = cursor.fetchone()
+    if temp_data is not None:
+        loadout_id, = temp_data
+    else:
+        cursor.close()
+        logging.debug("eroare la create loadout")
+        return
+    logging.debug("created loadout " + str(loadout_id))
+    class_ids = [1, 2, 3, 4, 3, 2]
+    cursor.executemany("insert into troop values(troopidseq.nextval,:class_id,:loadout_id,:skin_id)",
+                       [{
+                           "loadout_id": loadout_id,
+                           "class_id": c_id,
+                           "skin_id": c_id
+                       } for c_id in class_ids])
+    logging.debug("committing")
+    cursor.close()
+    db_conn.commit()
+    logging.debug("finished")
+    return loadout_id
 
 @timing.timing
 def populate(loadout_obj):
