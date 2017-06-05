@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Report made by
+    -Dragos Aioanei(ADR)
+    -Eduard Budaca(TED)
+    -Mihai Maganu(MAG)
+    -Mihai Vasilache(VIM) -->
+  <title>WeGaS Report Page</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+  <link href="report.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="js/report.js"></script>
+</head>
+<body id="myPage" data-spy="scroll" data-target=".navbar" data-offset="60">
+
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#myPage">GravedDamnit</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#about">About</a></li>
+        <li><a href="#technologies">Technologies</a></li>
+        <li><a href="#server">Server</a></li>
+        <li><a href="#design">Front-end|Game Core</a></li>
+        <li><a href="#databaseAndSecurity">Database|Security</a></li>
+        <li><a href="#contact">Meet our Team</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="jumbotron text-center">
+  <h1  style="margin-top:100px;">GravedDamnit</h1> 
+  <p>Web Gaming at its very best</p> 
+</div>
+
+<!-- Container (About Section) -->
+<div id="about" class="container-fluid">
+  <div class="row">
+    <div class="col-sm-8">
+      <h2>About Project Page</h2><br>
+      <h4>GravedDamnit is a turn-based capture the flag strategy game, developed for the web gaming platform, that uses a wide variety of web services and technologies</h4><br>
+      <p>It was our aim to create a strategy game, that will preserve the old feel and simplicity of traditional strategy games, but as well as give a interesting and enjoyable game to thos who are up for a challenge.</p>
+    </div>
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-king logo"></span>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid bg-grey">
+  <div class="row">
+    <div class="col-sm-4">
+        <div class="row">
+            <span class="glyphicon glyphicon-screenshot logo slideanim" style="color: grey"></span>
+            <span class="glyphicon glyphicon-flag logo slideanim"></span>   
+        </div>
+        <div class="row">
+            <span class="glyphicon glyphicon-tree-conifer logo slideanim" style="color:green"></span>
+            <span class="glyphicon glyphicon-knight logo slideanim" style="color: black"></span>
+        </div>
+    </div>
+    <div class="col-sm-8">
+      <h2>More about the game</h2><br>
+      <h4><strong>GAMEPLAY: </strong>It is a 2-player strategy game(currently). Each player it's ranked on a certain level and it is assigned a specific MMR, according to the number of games lost or won. 
+      A bigger MMR is meant to get you in a match with a better and stronger player. 
+      Each player has a number of troops, with which he must fight and strategies to beat and 
+      steal the flag from the other player. The troops are of 4 types, each of them 
+      having different characteristics and purposes in the game. This gives the player a variety of strategies to choose from and enhances the gameplay diversity. Every troop has certain statistics, like atack damage or resistance which can be upgraded at according to the level of the player.</h4>
+      <h4>The troops are split into:</h4>
+        <!-- The troop list -->
+        <ol>
+            <li id="archers">
+                <p><strong>Archers</strong></p>
+            </li>
+            <li id="tanks">
+                <p><strong>Tanks</strong></p>
+            </li>
+            <li id="runners">
+                <p><strong>Runners</strong></p>
+            </li>
+            <li id="infantry">
+                <p><strong>Infantry</strong></p>
+            </li>
+        </ol>
+      <h4><strong>LOADOUTS: </strong>Loadouts are predefined sets, or sets defined by the player, of 6 
+      troops(whichever type the player wants). Think of a deck of playing cards. 
+      This is a deck of troops. At the start of each game, each player could choose 
+      form an alreay existing loadout or make one of his own with the troops he has.</h4>
+      <h4><strong>MAP: </strong>Being a strategy game, we considered the best option for a map would be a haxagonal one. It is essentially composed of the battlefield, which contains a wide variety of terrain from snow and woods to sand and lakes, and the two camps of player 1 and player 2. The map can as well be chosen just like the troops. We don't have a vast domain of choices, but we could see it in a further development</h4>
+      <h4><strong>WINNING(when the game ends): </strong>The game ends when one the two players captures the others flag and manages to bring it to its own base, without loosing its own flag.<h4> 
+    </div>
+  </div>
+</div>
+
+<!-- Container (Technologies Section) -->
+<div id="technologies" class="container-fluid text-center">
+  <h2>TECHNOLOGIES</h2>
+  <h4>What we used to create it</h4>
+  <br>
+  <div class="row slideanim">
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-cog logo-small"></span>
+      <h4>Server-Side</h4>
+      <p>The server is named Krait.</p>
+    </div>
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-cloud logo-small"></span>
+      <h4>Databases</h4>
+      <p>The database side is covered by Oracle.</p>
+    </div>
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-lock logo-small"></span>
+      <h4>Security</h4>
+      <p>For the security of the data we used SHA-256.</p>
+    </div>
+  </div>
+  <br><br>
+  <div class="row slideanim">
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-blackboard logo-small"></span>
+      <h4>Design</h4>
+      <p>The Holy Trinity: HTML, CSS, JavaScript.</p>
+    </div>
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-move logo-small"></span>
+      <h4>Game Core</h4>
+      <p>The game itself was developed mostly in Phaser.</p>
+    </div>
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-tasks logo-small"></span>
+      <h4 style="color:#303030;">Other honorable mentions</h4>
+      <p>Python, TypeScript, Ajax and Bootstrap.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Container (Server Section) -->
+<div id="server" class="container-fluid text-center bg-grey">
+  <h2>Server</h2><br>
+  <h4>What we have created</h4>
+  <div class="row text-center slideanim">
+    <div class="col-sm-4">
+      <div class="thumbnail">
+        <img src="img/routes.jpg" alt="Routes" width="400" height="300">
+        <p><strong>Routes</strong></p>
+        <p>How it manages them.</p>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="thumbnail">
+        <img src="img/htmlSyntax.jpg" alt="HTML Syntax" width="400" height="300">
+        <p><strong>HTML Syntax</strong></p>
+        <p>How it works inside the HTML.</p>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="thumbnail">
+        <img src="img/pythonSyntax.jpg" alt="Python Syntax" width="400" height="300">
+        <p><strong>Python Syntax</strong></p>
+        <p>Python executable code.</p>
+      </div>
+    </div>
+  </div><br>
+  
+  <h2>More about this</h2>
+  <div id="myCarousel" class="carousel slide text-center" data-ride="carousel">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+      <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+      <li data-target="#myCarousel" data-slide-to="1"></li>
+    </ol>
+
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner" >
+      <div class="item active">
+        <!-- The route list -->
+        <ul>
+            <li>
+                <p><strong>verb: </strong>the HTTP verb on which to match the route. Optional, the default is GET. Valid values are GET, POST, PUT, DELETE, etc. and the wildcard ANY which matches, obviously, any verb.</p>
+            </li>
+            <li>
+                <p><strong>url: </strong>a string to match the route's URL. The URL has to be exactly equal to match. Optional, the default is an empty string. Must have a leading slash, as is the convention for HTTP URLs.</p>
+            </li>
+            <li>
+                <p><strong>regex: </strong>a regex to match the route's URL. Optional, the default is an empty string. Take note that URLs have a leading slash.</p>
+            </li>
+            <li>
+                <p><strong>target: </strong>the name of a file, relative to the site root, to be used be sent (or executed). This can be a directory, in which case /index is appended. Also, the extension can be missing, in which case .html, .htm, .pyml and .py are tried. Optional, the default is the URL (without a leading slash). This should not have a leading slash, since it is a relative path.</p>
+            </li>
+        </ul>
+        <h4>If both url and regex are missing (or default), the route matches any request (as long as the verb matches).<br><span>Route specification</span></h4>
+      </div>
+      <div class="item">
+        <h4>Note the following:</h4>
+        <ul>
+            <li>
+                <p>The space in Python strings did not terminate the expression, nor did spaces inside brackets.</p>
+            </li>
+            <li>
+                <p>The space delimiter after the Python expression in the first two paragraphs is kept.</p>
+            </li>
+            <li>
+                <p>The @ delimiter after the expression in the last two paragraphs is removed. This was used instead of a space because we do not want any spaces between the expression result and punctuation marks.</p>
+            </li>
+            <li>
+                <p>The @expression operator escapes characters relevant in HTML code so you're protected from injection. This is what you'll want to use most of the time.</p>
+            </li>
+            <li>
+                <p>In order to escape the whitespace between the format arguments, the entire expression was surrounded by brackets. This was not strictly necessary in this case, because the spaces in the "{}, {}" were escaped by " characters (' would work too), and the spaces in (city, country) were escaped by ( and ).</p>
+            </li>
+        </ul>
+      </div>
+
+    <!-- Left and right controls -->
+    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+      <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+      <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>
+</div>
+
+<!-- Container (Pricing Section) -->
+<div id="design" class="container-fluid">
+  <div class="text-center">
+    <h2>Front-end and Game Core</h2>
+    <h4>Details and snipets of the HTML and Gameplay</h4>
+  </div>
+  <div class="row slideanim">
+    <div class="col-sm-6 col-xs-12">
+      <div class="panel panel-default text-center">
+        <div class="panel-heading">
+          <h1>Bootstrap</h1>
+        </div>
+        <div class="panel-body">
+          <div class="thumbnail">
+            <img id="myImg" src="img/header.jpg" data-toggle="modal" data-target="#myModal1" alt="Header" width="400" height="300">
+            <p><strong>Header</strong></p>
+            <p>Bootstrap code</p> 
+          </div>
+          <div class="thumbnail">
+            <img id="myImg" src="img/dashboardJS.jpg" data-toggle="modal" data-target="#myModal2" alt="dashboard" width="600" height="300">
+            <p><strong>Dashboard</strong></p>
+            <p>Buttons functionalities.</p>
+          </div>
+        </div>
+        <div class="panel-footer">
+          <h4>For the design part and the HTML pages, we used Bootstrap, a fair and very popular tool to create and develop responsive HTML pages and eye-pleasing content.
+            All pages created can be found inside the project, in the ".view" folder. Additional to this we implemented JavaScript to handle the buttons on the dashboard page and the header integrated in in the HTML view. We also used modals to alert the player about entering the queue and the matchmaking.</h4>
+        </div>
+      </div>      
+    </div>     
+    <div class="col-sm-6 col-xs-12">
+      <div class="panel panel-default text-center">
+        <div class="panel-heading">
+          <h1>Phaser</h1>
+        </div>
+        <div class="panel-body">
+          <div class="thumbnail">
+            <img id="myImg" src="img/phaserGame.jpg" data-toggle="modal" data-target="#myModal3" alt="Header" width="400" height="300">
+            <p><strong>Phaser API</strong></p>
+          </div>
+          <div class="thumbnail">
+            <img id="myImg" src="img/phaserHTML.jpg" data-toggle="modal" data-target="#myModal4" alt="Header" width="400" height="300">
+            <p><strong>In game view</strong></p>
+            <p>Created with Phaser</p>
+          </div>
+        </div>
+        <div class="panel-footer">
+            <h4>The gameplay was created using the Phaser API. The map used was parsed by a tile renderer class, created in typescript from a JSON. The JSON was parsed with Ajax and it was created using Tiled. Physics, keyboard and mouse controls are all implemented in Phaser.</h4>
+        </div>
+      </div>      
+    </div>          
+  </div>
+</div>
+
+<!--Modals for thumbnails-->
+<div id="myModal1" class="modal fade" role="dialog"  style="margin-top:200px;"  >
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">header.html</h4>
+    </div>
+    <div class="modal-body">
+        <img src="img/header.jpg">
+    </div>
+</div>
+  
+<div id="myModal2" class="modal fade" role="dialog"  style="margin-top:200px;"  >
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">JavaScript for Buttons</h4>
+    </div>
+    <div class="modal-body">
+        <img src="img/dashboardJS.jpg">
+    </div>
+</div>
+
+<div id="myModal3" class="modal fade" role="dialog"  style="margin-top:200px;"  >
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">header.html</h4>
+    </div>
+    <div class="modal-body">
+        <img src="img/phaserGame.jpg">
+    </div>
+</div>
+
+<div id="myModal4" class="modal fade" role="dialog"  style="margin-top:200px;"  >
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">header.html</h4>
+    </div>
+    <div class="modal-body">
+        <img src="img/phaserHTML.jpg">
+    </div>
+</div>
+
+<div id="databaseAndSecurity" class="container-fluid">
+  <div class="row">
+    <div class="col-sm-8">
+      <h2>Database Side</h2><br>
+      <h4><strong>Management: </strong>For the database management we used Oracle. It is a database consisting of 12 tables. Each one of them has characteristic constraints, triggers and indexes to handle large chunks of data. For example, the table "Player" was tested with over 10,000 rows.
+        We have tested SQLInjection and ways to combat it and implemented CRUD (Create/Read/Update/Delete). Connection with the server was extablished using Python, more specifically, the cx_Oracle extension module. The scripts that access and manipulalte the
+        database are called by Python controllers, that interact with the HTML and provide different functionalities.</h4><br>
+      <br>
+      <br>
+      <h2>Security</h2><br>
+      <h4><strong>Encryption of data</strong>Data was encrypted using SHA1. It is implemented as a salted password. It is generated as a random string, which is the jump, after it concatenates with the actual passwors, it is being hashed and concatenates again with the jump</h4>
+      <h3>HASH_PASS = concat(JUMP, HASH * concat(JUMP, PASSWORD)</h3>
+    </div>
+    <div class="col-sm-4">
+      <img src="img/database.jpg" class="thumbnail">
+      <span class="glyphicon glyphicon-lock logo"></span>
+    </div>
+  </div>
+</div>
+
+<!-- Container (Contact Section) -->
+<div id="contact" class="container-fluid bg-grey">
+  <div class="row">
+      <div class="col-sm-3">
+        <div class="card">
+          <img src="img/TED.jpg" alt="ted" style="width: 100%;">
+        <div>
+          <h1>Eduard Budaca</h1>
+          <p class="title">Server-side & Gameplay TeamLeader</p>
+            <p>FII University 2-B1</p>
+            <a href="https://github.com/TED-996"><i class="fa fa-github"></i></a> 
+            <a href="https://www.facebook.com/ted996?fref=ts"><i class="fa fa-facebook"></i></a> 
+        </div>
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <div class="card">
+          <img src="img/VIM.jpg" alt="vim" style="width:100%">
+        <div>
+          <h1>Mihai Vasilache</h1>
+          <p class="title">Database & Maps TeamLeader</p>
+            <p>FII University 2-E1</p>
+            <a href="https://github.com/mihaivasilache"><i class="fa fa-github"></i></a> 
+            <a href="https://www.facebook.com/mihai.vasilache1?fref=ts"><i class="fa fa-facebook"></i></a>
+        </div>
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <div class="card">
+          <img src="img/ADR.jpg" alt="adr" style="width:100%">
+        <div>
+          <h1>Dragos Aioanei</h1>
+          <p class="title">Security & BugFixing TeamLeader</p>
+            <p>FII University 2-A5</p>
+            <a href="https://github.com/dragosaioanei"><i class="fa fa-github"></i></a> 
+            <a href="https://www.facebook.com/dragos.aioanei?fref=ts"><i class="fa fa-facebook"></i></a> 
+        </div>
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <div class="card">
+          <img src="img/MAG.jpg" alt="mag" style="width:100%">
+        <div>
+          <h1>Mihai Maganu</h1>
+          <p class="title">Design & Web Interface</p>
+            <p>FII University 2-E1</p>
+            <a href="https://github.com/MihaiMaganu"><i class="fa fa-github"></i></a> 
+            <a href="https://www.facebook.com/mihai.maganu"><i class="fa fa-facebook"></i></a> 
+        </div>
+        </div>
+      </div>
+  </div>
+</div>
+
+<footer class="container-fluid text-center">
+  <a href="#myPage" title="To Top">
+    <span class="glyphicon glyphicon-chevron-up"></span>
+  </a>
+  <p>Project Made By <a>TED, VIM, ADR, MAG</a></p>
+</footer>
+
+</body>
+</html>
