@@ -86,5 +86,14 @@ var GameTroopManager = (function () {
     GameTroopManager.prototype.getTiles = function () {
         return this.troops.map(function (t) { return t.getTile(); });
     };
+    GameTroopManager.prototype.getById = function (id) {
+        for (var _i = 0, _a = this.troops; _i < _a.length; _i++) {
+            var troop = _a[_i];
+            if (troop.troop.id == id) {
+                return troop;
+            }
+        }
+        return null;
+    };
     return GameTroopManager;
 }());
