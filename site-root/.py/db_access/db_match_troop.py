@@ -72,3 +72,12 @@ def populate(mtroop):
         mtroop.match = db_match.get_by_id(mtroop.match_id)
     if mtroop.troop is None:
         mtroop.troop = db_match.get_by_id(mtroop.troop_id)
+
+def save(mtroop):
+    conn = db_ops.get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("update matchTroop set x_axis = :x,y_axis = :y, hp = :hp, respawn_time = :rp",
+                   {"x": mtroop.x_axis, "y": mtroop.y_axis, "hp": mtroop.hp, "rp": mtroop.respawn_time})
+    cursor.close()
+    conn.commit()

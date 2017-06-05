@@ -5,7 +5,7 @@ import time
 
 import websockets
 from auth_utils import auth_tests
-from db_access import db_match
+from db_access import db_match, db_map, db_troop
 from db_access import db_player
 from db_access import db_match_troop
 
@@ -114,3 +114,71 @@ class GameWsController(websockets.WebsocketsCtrlBase):
             out_dict["tag"] = tag
 
         self.push_out_message(json.dumps(out_dict))
+
+    def if_on_map(self, x, y, map):
+        if x <= 0 or x >= map.height - 1:
+            return False
+        if y <= 0 or y >= map.width - 1:
+            return False
+        return True
+
+    def is_tile_clear(self, x, y):
+        troops = db_match_troop.get_by_match(self.match.id)
+        map = db_map.get_by_id(self.match.map_id)
+        if x <= 0 or x >= map.height - 1:
+            return False
+        if y <= 0 or y >= map.width - 1:
+            return False
+        for i in troops:
+            if i.x_axis == x and i.y_axis == y:
+                return False
+        if map.data[x * map.width + y] == 76:
+            return False
+        return True
+
+    def atack_troop(self, troop_1, troop_2):
+        troop_2.hp -= troop_1.troop.dmg
+        if troop_2.hp <= 0:
+            troop_2.respawn_time = 4
+        db_match_troop.save(troop_2)
+        return troop_2
+
+    def find_fisrt_free_tile(self, x, y):
+        queue = [[x,y]]
+        count = 1
+        current = 0
+        dx = [0, -1, -1, -1, 0, 1, 1, 1]
+        dy = [-1, -1, 0, 1, 1, 1, 0, -1]
+        map = db_map.get_by_id(self.match.map_id)
+
+        visited = []
+        for i in range(0,map.width*map.height):
+            visited.append(0)
+
+        while (current < count and self.is_tile_clear(queue[current][0],queue[current][1]) is False):
+            visited[queue[current][0]*map.width + queue[current][1]] = 1
+            for i in range(0, 8):
+                if (queue[current][0] + dx[i], queue[current][1] + dy[i], map) is True and \
+                        visited[(queue[current][0] + dx[i])*map.width + queue[current][1] + dy[i]] == 0:
+                    queue.append([queue[current][0] + dx[i], queue[current][1] + dy[i]])
+                    count += 1
+            current += 1
+
+        return queue[current]
+
+    def respawn_the_dead(self):
+        troops = db_match_troop.get_by_match(self.match.id)
+        for i in troops:
+            i.respawn_time -= 1
+            if i.respawn_time <= 0:
+                if self.match.player1_id == (db_troop.get_by_id(i.troop_id)).loadout.player_id:
+                    x_start = 1
+                    y_start = 15
+                else:
+                    x_start = 63
+                    y_start = 15
+                start_point = self.find_fisrt_free_tile(x_start,y_start)
+                i.x_axis = start_point[0]
+                i.y_axis = start_point[1]
+                i.hp = i.troop.hp
+            db_match_troop.save(i)
