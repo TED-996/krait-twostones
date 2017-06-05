@@ -1,5 +1,6 @@
 class MatchTroop(object):
-    def __init__(self, match_troop_id, match_id, troop_id, x_axis, y_axis, hp, respawn_time):
+    def __init__(self, match_troop_id, match_id, troop_id, x_axis, y_axis, hp, respawn_time,
+                 move_ready, attack_ready):
         self.id = match_troop_id
         self.match_id = match_id
         self.troop_id = troop_id
@@ -7,6 +8,8 @@ class MatchTroop(object):
         self.y_axis = y_axis
         self.hp = hp
         self.respawn_time = respawn_time
+        self.move_ready = move_ready
+        self.attack_ready = attack_ready
 
         self.match = None
         self.troop = None
@@ -23,5 +26,7 @@ class MatchTroop(object):
             "x": self.x_axis,
             "y": self.y_axis,
             "hp": self.hp,
-            "respawn": self.respawn_time
+            "respawn": self.respawn_time,
+            "move_ready": self.move_ready,
+            "attack_ready": self.attack_ready
         }

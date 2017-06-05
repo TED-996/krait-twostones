@@ -43,6 +43,7 @@ var WegasGame = (function () {
         this.addLoadout(this.playerLoadout, this.playerTroops, false);
         this.addLoadout(this.opponentLoadout, this.opponentTroops, true);
         this.loadedTroops = new GameTroopManager(this.playerTroops.concat(this.opponentTroops));
+        this.flags = new FlagManager();
         this.tileRenderer = new TileRenderer([this.map], [], [this.loadedTroops, this.troopMoveLayer], this.map.tileset, this.tileGroup);
     };
     WegasGame.prototype.setScale = function (scale) {
@@ -60,9 +61,7 @@ var WegasGame = (function () {
     };
     WegasGame.prototype.addLoadout = function (loadout, dst, isEnemy) {
         for (var i = 0; i < 6; i++) {
-            var x = Math.floor(Math.random() * this.map.width - 2) + 1;
-            var y = Math.floor(Math.random() * this.map.height - 2) + 1;
-            dst.push(new GameTroop(loadout.troops[i], this, x, y, isEnemy));
+            dst.push(new GameTroop(loadout.troops[i], this, -1, -1, isEnemy));
         }
     };
     WegasGame.prototype.setRenderDirty = function () {

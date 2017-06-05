@@ -26,11 +26,11 @@ def get_by_id(match_troop_id, skip_update=False):
     temp_data = cursor.fetchone()
     cursor.close()
     if temp_data is not None:
-        match_troop_id, match_id, troop_id, x_axis, y_axis, hp, respawn_time = temp_data
+        match_troop_id, match_id, troop_id, x_axis, y_axis, hp, respawn_time, move_ready, attack_ready = temp_data
     else:
         return None
     result = match_troop.MatchTroop(match_troop_id, match_id, troop_id, x_axis, y_axis, hp,
-                                    respawn_time)
+                                    respawn_time, move_ready, attack_ready)
 
     mtroop_cache[match_troop_id] = result
     return result
@@ -58,7 +58,7 @@ def update(mtroop):
     temp_data = cursor.fetchone()
     cursor.close()
     if temp_data is not None:
-        match_troop_id, match_id, troop_id, x_axis, y_axis, hp, respawn_time = temp_data
+        match_troop_id, match_id, troop_id, x_axis, y_axis, hp, respawn_time, move_ready, attack_ready = temp_data
     else:
         return
     mtroop.match_id = match_id
@@ -66,6 +66,8 @@ def update(mtroop):
     mtroop.y_axis = y_axis
     mtroop.hp = hp
     mtroop.respawn_time = respawn_time
+    mtroop.move_ready = move_ready
+    mtroop.attack_ready = attack_ready
     # Neither match_id nor troop_id have absolutely no business changing.
 
 
@@ -81,11 +83,20 @@ def save(mtroop):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("update matchTroop set xAxis = :x, yAxis = :y, hp = :hp, respawnTime = :rp where id = :mtroop_id",
+    cursor.execute("update matchTroop set "
+                   "xAxis = :x, "
+                   "yAxis = :y, "
+                   "hp = :hp, "
+                   "respawnTime = :rp, "
+                   "moveReady = :move_ready, "
+                   "attackReady = :attack_ready "
+                   "where id = :mtroop_id",
                    {"mtroop_id": mtroop.id,
                     "x": mtroop.x_axis,
                     "y": mtroop.y_axis,
                     "hp": mtroop.hp,
-                    "rp": mtroop.respawn_time})
+                    "rp": mtroop.respawn_time,
+                    "move_ready": mtroop.move_ready,
+                    "attack_ready": mtroop.attack_ready})
     cursor.close()
     conn.commit()

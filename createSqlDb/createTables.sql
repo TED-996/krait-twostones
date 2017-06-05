@@ -12,6 +12,7 @@ DROP TABLE TROOP cascade constraints;
 DROP TABLE TROOPMODIFIER cascade constraints;
 DROP TABLE MATCHHISTORY cascade constraints;
 DROP TABLE QUEUE cascade constraints;
+drop table Flag cascade constraints;
 
 drop sequence playerIdSeq;
 drop sequence mapIdSeq;
@@ -178,6 +179,8 @@ CREATE TABLE MATCHTROOP(
     yAxis NUMBER(10),
     hp NUMBER(3),
     respawnTime NUMBER(1),
+    moveReady number(1),
+    attackReady number(1),
 
     CONSTRAINT onDeleteMatchMatchTroop
         FOREIGN KEY (matchId)
@@ -186,6 +189,23 @@ CREATE TABLE MATCHTROOP(
     CONSTRAINT onDeleteTroopMatchTroop
         FOREIGN KEY (troopId)
         REFERENCES Troop(id) on delete cascade
+);
+
+create table Flag(
+    matchId number(10) not null,
+    flagIdx number(1) not null,
+    xAxis number(10),
+    yAxis number(10),
+    carryingTroop number(10),
+    
+    constraint flag_pk
+      primary key(matchId, flagIdx),
+    constraint flagMatchId
+      foreign key (matchId)
+      references match(id) on delete cascade,
+    constraint flagCarryingTroop
+      foreign key(carryingTroop)
+      references gameTroop(id) on delete cascade
 );
 
 create sequence playerIdSeq

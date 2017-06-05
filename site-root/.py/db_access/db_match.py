@@ -1,7 +1,7 @@
 import cx_Oracle
 import logging
 
-from db_access import db_ops
+from db_access import db_ops, db_player
 from model import match
 
 match_cache = {}
@@ -86,13 +86,22 @@ def update(match_obj):
 def create(player1, player2):
     conn = db_ops.get_connection()
     cursor = conn.cursor()
-    map_id = 0
+    cursor.execute("select matchidseq.nextval from dual")
+    match_id, = cursor.fetchone()
     try:
-        cursor.execute("insert into match values(matchidseq.nextval,:id1,:id2,1,NULL,0,0,NULL,"
+        cursor.execute("insert into match values(:match_id,:id1,:id2,1,NULL,0,0,NULL,"
                        "(select systimestamp from dual))",
-                       {"id1": player1.player_id, "id2": player2.player_id})
-    except ValueError:
-        logging.debug(ValueError.message)
+                       {"match_id": match_id, "id1": player1.player_id, "id2": player2.player_id})
+    except ValueError as ex:
+        logging.debug(ex.message)
+    try:
+        cursor.execute("insert into flag values (:match_id, 1, 3, 14, null)",
+                       {"match_id": match_id})
+
+        cursor.execute("insert into flag values (:match_id, 2, 60, 14, null)",
+                       {"match_id": match_id})
+    except ValueError as ex:
+        logging.debug(ex.message)
     conn.commit()
     cursor.close()
 

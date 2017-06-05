@@ -98,6 +98,9 @@ var WegasNetworking = (function () {
         var _this = this;
         if (data === void 0) { data = null; }
         if (tag === void 0) { tag = null; }
+        if (!this.opened) {
+            return null;
+        }
         var outObj = {
             type: type
         };
@@ -147,15 +150,9 @@ var WegasNetworking = (function () {
         }
     };
     WegasNetworking.prototype.sendJoin = function () {
-        if (!this.opened) {
-            return null;
-        }
         return this.send("join", AuthUtils.getUsername(), WegasNetworking.generateTag());
     };
     WegasNetworking.prototype.sendGetTroops = function () {
-        if (!this.opened) {
-            return null;
-        }
         return this.send("get_matchtroops", null, WegasNetworking.generateTag());
     };
     WegasNetworking.prototype.sendDisconnect = function (reason) {
@@ -169,6 +166,9 @@ var WegasNetworking = (function () {
     };
     WegasNetworking.prototype.sendMove = function (from, to) {
         return this.send("move", { from: from, to: to }, WegasNetworking.generateTag());
+    };
+    WegasNetworking.prototype.sendGetFlags = function () {
+        return this.send("get_flags", null, WegasNetworking.generateTag());
     };
     WegasNetworking.generateTag = function (size) {
         if (size === void 0) { size = 10; }

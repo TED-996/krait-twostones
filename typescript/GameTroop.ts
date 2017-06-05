@@ -112,6 +112,15 @@ class GameTroopManager implements TileSource {
     getTiles(): Tile[] {
         return this.troops.map(t => t.getTile());
     }
+
+    getById(id: number) {
+        for (let troop of this.troops){
+            if (troop.troop.id == id){
+                return troop;
+            }
+        }
+        return null;
+    }
 }
 
 interface GameTroopTransferObject {
