@@ -29,6 +29,9 @@
     overflow-y: auto;
 }
 
+#LoadoutNameFormText{
+    background-color: rgba(0, 0, 0, 0);
+}
 
 @media (max-width: 991px) {
     #options-div {

@@ -3,6 +3,9 @@
 /// <reference path="Map.ts" />
 /// <reference path="TileRenderer.ts" />
 /// <reference path="GameTroop.ts"/>
+///<reference path="TroopMoveLayer.ts"/>
+///<reference path="TroopAttackLayer.ts"/>
+///<reference path="Troops.ts"/>
 
 class WegasGame
 {
@@ -21,16 +24,18 @@ class WegasGame
 
     networking : WegasNetworking;
     troopMoveLayer : TroopMoveLayer;
+    troopAttackLayer: TroopAttackLayer;
     loadedTroops: GameTroopManager;
+
     flags : FlagManager;
-
     renderDirty : boolean;
+
     cameraSpeed : number;
-
     cameraMoveDirection : Phaser.Point;
-    activeTroop : GameTroop;
 
+    activeTroop : GameTroop;
     endTurn : Phaser.Button;
+    scoreLabel : Phaser.Text;
 
     constructor()
     {
@@ -57,8 +62,8 @@ class WegasGame
 
         this.networking = new WegasNetworking();
         this.gameController = new GameController(this);
-        this.troopMoveLayer = new TroopMoveLayer();
-
+        this.troopMoveLayer = new TroopMoveLayer(this);
+        this.troopAttackLayer = new TroopAttackLayer(this);
 
         this.renderDirty = false;
 
@@ -78,9 +83,12 @@ class WegasGame
             4, 3, 5, 3
         );
         this.fgGroup.add(this.endTurn);
-        this.fgGroup.fixedToCamera = true;
+        this.scoreLabel = this.game.add.text(this.game.camera.width /2 - 63.5  , 10, '0 : 0', { font: "65px Arial", fill: "##ff0044 ", align: "center" });
+
+        this.fgGroup.add(this.scoreLabel);
         this.updateEndTurn(this.gameController.inTurn);
 
+        this.fgGroup.fixedToCamera = true;
 
         AllOptions.loadAjax();
 
@@ -93,10 +101,14 @@ class WegasGame
         this.addLoadout(this.opponentLoadout, this.opponentTroops, true);
 
         this.loadedTroops = new GameTroopManager(this.playerTroops.concat(this.opponentTroops));
-        this.flags = new FlagManager();
+        this.flags = new FlagManager(this);
 
-        this.tileRenderer = new TileRenderer([this.map], [], [this.loadedTroops, this.troopMoveLayer],
-            this.map.tileset, this.tileGroup);
+        this.tileRenderer = new TileRenderer(
+            [this.map],
+            [],
+            [this.loadedTroops, this.troopMoveLayer, this.troopAttackLayer, this.flags],
+            this.map.tileset,
+            this.tileGroup);
     }
 
     public setScale(scale: number) {

@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "module": "none",
+    "outDir": "../site-root/js",
+    "target": "es5"
+  },
+  "include": [
+    "*"
+  ]
+}

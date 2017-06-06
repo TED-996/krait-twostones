@@ -49,7 +49,7 @@ def save(flag_obj):
     cursor.execute("update flag set "
                    "xAxis = :x_axis, "
                    "yAxis = :y_axis, "
-                   "carryingTroopId = :carrying_troop_id "
+                   "carryingTroop = :carrying_troop_id "
                    "where matchId = :match_id and flagIdx = :flag_idx",
                    {
                        "match_id": flag_obj.match_id,

@@ -3,6 +3,9 @@
 /// <reference path="Map.ts" />
 /// <reference path="TileRenderer.ts" />
 /// <reference path="GameTroop.ts"/>
+///<reference path="TroopMoveLayer.ts"/>
+///<reference path="TroopAttackLayer.ts"/>
+///<reference path="Troops.ts"/>
 var WegasGame = (function () {
     function WegasGame() {
         this.game = new Phaser.Game(document.documentElement.clientWidth, document.documentElement.clientHeight, 
@@ -21,7 +24,8 @@ var WegasGame = (function () {
         this.setScale(1);
         this.networking = new WegasNetworking();
         this.gameController = new GameController(this);
-        this.troopMoveLayer = new TroopMoveLayer();
+        this.troopMoveLayer = new TroopMoveLayer(this);
+        this.troopAttackLayer = new TroopAttackLayer(this);
         this.renderDirty = false;
         this.cameraMoveDirection = new Phaser.Point(0, 0);
         this.cameraSpeed = 0;
@@ -33,8 +37,10 @@ var WegasGame = (function () {
         this.fgGroup = this.game.add.group();
         this.endTurn = this.game.make.button(10, 10, "endTurn", this.onEndTurnPressed.bind(this), this, 4, 3, 5, 3);
         this.fgGroup.add(this.endTurn);
-        this.fgGroup.fixedToCamera = true;
+        this.scoreLabel = this.game.add.text(this.game.camera.width / 2 - 63.5, 10, '0 : 0', { font: "65px Arial", fill: "##ff0044 ", align: "center" });
+        this.fgGroup.add(this.scoreLabel);
         this.updateEndTurn(this.gameController.inTurn);
+        this.fgGroup.fixedToCamera = true;
         AllOptions.loadAjax();
         this.playerLoadout = WegasGame.get_loadout("mine");
         this.opponentLoadout = WegasGame.get_loadout("theirs");
@@ -43,8 +49,8 @@ var WegasGame = (function () {
         this.addLoadout(this.playerLoadout, this.playerTroops, false);
         this.addLoadout(this.opponentLoadout, this.opponentTroops, true);
         this.loadedTroops = new GameTroopManager(this.playerTroops.concat(this.opponentTroops));
-        this.flags = new FlagManager();
-        this.tileRenderer = new TileRenderer([this.map], [], [this.loadedTroops, this.troopMoveLayer], this.map.tileset, this.tileGroup);
+        this.flags = new FlagManager(this);
+        this.tileRenderer = new TileRenderer([this.map], [], [this.loadedTroops, this.troopMoveLayer, this.troopAttackLayer, this.flags], this.map.tileset, this.tileGroup);
     };
     WegasGame.prototype.setScale = function (scale) {
         //this.game.scale.setupScale(1920, 1080);

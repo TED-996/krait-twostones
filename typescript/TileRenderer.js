@@ -104,7 +104,25 @@ var TileRenderer = (function () {
         var hexSizeLength = tileHeight / 2;
         for (var _i = 0, _a = TileSourceUtils.concatMerge(this.sources); _i < _a.length; _i++) {
             var t = _a[_i];
-            this.spriteBatch.create(t.x * tileWidth + ((t.y % 2 == 0) ? 0 : (tileWidth / 2)), t.y * tileHeight * 3 / 4, this.tileset.sourceImage, t.tileIndex).anchor = new Phaser.Point(0.5, 0.5);
+            var newSprite = this.spriteBatch.create(t.x * tileWidth + ((t.y % 2 == 0) ? 0 : (tileWidth / 2)), t.y * tileHeight * 3 / 4, this.tileset.sourceImage, t.tileIndex);
+            newSprite.anchor = new Phaser.Point(0.5, 0.5);
+            if (t.mirrored) {
+                //console.log(newSprite.scale);
+                newSprite.scale.setTo(-1, 1);
+                //console.log(newSprite.scale);
+            }
+            else {
+                newSprite.scale.setTo(1, 1);
+            }
+            if (t.onClick != null) {
+                newSprite.inputEnabled = true;
+                newSprite.input.pixelPerfectClick = true;
+                newSprite.input.pixelPerfectAlpha = 25;
+                newSprite.events.onInputDown.add(t.onClick.bind(this), t);
+            }
+            if (t.mirrored) {
+                //console.log(newSprite);
+            }
         }
     };
     return TileRenderer;

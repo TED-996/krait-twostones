@@ -209,9 +209,12 @@ class WegasNetworking {
         this.send("error", message)
     }
 
-    public sendMove(from : Coord, to : Coord)
-            : WebsocketResponseWaitItem {
+    public sendMove(from : Coord, to : Coord) : WebsocketResponseWaitItem {
         return this.send("move", {from: from, to: to}, WegasNetworking.generateTag());
+    }
+
+    public sendAttack(from : Coord, to : Coord) : WebsocketResponseWaitItem{
+        return this.send("attack", {from: from, to: to}, WegasNetworking.generateTag());
     }
 
     public sendGetFlags() : WebsocketResponseWaitItem {
