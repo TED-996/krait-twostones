@@ -293,6 +293,7 @@ class GameWsController(websockets.WebsocketsCtrlBase):
     def handle_join(self, data, tag=None):
         if self.match is None:
             self.respond_error("You're not in a match.", tag)
+            return
         else:
             print("Client joined.")
             db_match.update(self.match)
@@ -334,6 +335,7 @@ class GameWsController(websockets.WebsocketsCtrlBase):
             logging.warning("invalid troops: from_troop: {}, to_troop: {}".format(from_troop, to_troop))
             self.respond_error("Position doesn't exist.", tag)
             self.handle_get_matchtroops(None)
+            return
 
         self.attack_troop(from_troop, to_troop, tag)
 
@@ -343,6 +345,7 @@ class GameWsController(websockets.WebsocketsCtrlBase):
         db_match.update(self.match)
         if self.match.turn != self.player_idx:
             self.respond_error("Not your turn.", tag)
+            return
         else:
             self.match.turn = 2 - self.match.turn + 1
             db_match.save(self.match)
