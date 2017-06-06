@@ -461,4 +461,4 @@ class GameWsController(websockets.WebsocketsCtrlBase):
             db_match_troop.save(i)
 
     def on_end_game(self):
-        db_match.delete_by_id()
+        db_match.delete_by_id(self.match.id)
