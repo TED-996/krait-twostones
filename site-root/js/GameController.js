@@ -1,3 +1,5 @@
+///<reference path="Networking.ts"/>
+///<reference path="Flags.ts"/>
 var GameController = (function () {
     function GameController(game) {
         this.game = game;
