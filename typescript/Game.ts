@@ -83,7 +83,7 @@ class WegasGame
             4, 3, 5, 3
         );
         this.fgGroup.add(this.endTurn);
-        this.scoreLabel = this.game.add.text(this.game.world.centerX, this.game.world.centerY, '0 : 0', { font: "65px Arial", fill: "##ff0044 ", align: "center" });
+        this.scoreLabel = this.game.add.text(this.game.camera.width /2 - 63.5  , 10, '0 : 0', { font: "65px Arial", fill: "##ff0044 ", align: "center" });
 
         this.fgGroup.add(this.scoreLabel);
         this.updateEndTurn(this.gameController.inTurn);
