@@ -58,7 +58,7 @@ class TroopAttackLayer implements TileSource {
 
     private addTile(coord: Coord, isActive : boolean, onClick : (c : Coord) => void) {
         let tileIdx = isActive? 12 + 3 * 16 : 12 + 7 * 16;
-        let tile = new Tile(coord.x, coord.y, tileIdx, 6);
+        let tile = new Tile(coord.x, coord.y, tileIdx, 20);
         if (onClick != null){
             tile.onClick = () => onClick(coord);
         }

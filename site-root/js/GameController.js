@@ -112,7 +112,7 @@ var GameController = (function () {
         this.game.setRenderDirty();
     };
     GameController.prototype.onGetScore = function (data) {
-        //TODO
+        this.game.scoreLabel.setText(String(data["mine"]) + " : " + String(data["theirs"]));
     };
     GameController.prototype.onTroopsInitialPlace = function () {
         for (var _i = 0, _a = this.game.playerTroops; _i < _a.length; _i++) {

@@ -154,8 +154,8 @@ class GameController {
         this.game.setRenderDirty();
     }
 
-    private onGetScore(data : {score1: number, score2: number}) {
-        this.game.scoreLabel.setText(String(data["score1"])+" : "+ String(data["score2"]))
+    private onGetScore(data : {mine: number, theirs: number}) {
+        this.game.scoreLabel.setText(String(data["mine"])+" : "+ String(data["theirs"]))
     }
 
     private onTroopsInitialPlace() {

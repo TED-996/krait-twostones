@@ -46,7 +46,7 @@ var TroopAttackLayer = (function () {
     };
     TroopAttackLayer.prototype.addTile = function (coord, isActive, onClick) {
         var tileIdx = isActive ? 12 + 3 * 16 : 12 + 7 * 16;
-        var tile = new Tile(coord.x, coord.y, tileIdx, 6);
+        var tile = new Tile(coord.x, coord.y, tileIdx, 20);
         if (onClick != null) {
             tile.onClick = function () { return onClick(coord); };
         }

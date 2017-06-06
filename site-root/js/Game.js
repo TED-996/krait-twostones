@@ -34,8 +34,10 @@ var WegasGame = (function () {
         this.fgGroup = this.game.add.group();
         this.endTurn = this.game.make.button(10, 10, "endTurn", this.onEndTurnPressed.bind(this), this, 4, 3, 5, 3);
         this.fgGroup.add(this.endTurn);
-        this.fgGroup.fixedToCamera = true;
+        this.scoreLabel = this.game.add.text(45, 55, '0 : 0', { font: "65px Arial", fill: "##ff0044 ", align: "center" });
+        this.fgGroup.add(this.scoreLabel);
         this.updateEndTurn(this.gameController.inTurn);
+        this.fgGroup.fixedToCamera = true;
         AllOptions.loadAjax();
         this.playerLoadout = WegasGame.get_loadout("mine");
         this.opponentLoadout = WegasGame.get_loadout("theirs");
