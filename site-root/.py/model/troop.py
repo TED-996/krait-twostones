@@ -36,8 +36,8 @@ class Troop(object):
                 move_range += i.move_range
         self.hp += round(max(((self.hp * hp)/100), 1))
         self.dmg += round(max(((self.dmg * dmg)/100), 0))
-        self.atk_range = round(max(((self.atk_range * atk_range)/100), 1))
-        self.move_range = round(max(((self.move_range * move_range)/100), 1))
+        self.atk_range += round(max(((self.atk_range * atk_range)/100), 1))
+        self.move_range += round(max(((self.move_range * move_range)/100), 1))
 
     def get_stats(self):
         self.calculate_stats()

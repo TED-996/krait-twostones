@@ -1,5 +1,4 @@
 /// <reference path="node_modules/@types/phaser/phaser.d.ts" />
-/// <reference path="node_modules/@types/phaser-advanced-debug/phaser-advanced-debug.d.ts" />
 /// <reference path="Map.ts" />
 /// <reference path="TileRenderer.ts" />
 /// <reference path="GameTroop.ts"/>
@@ -159,6 +158,9 @@ var WegasGame = (function () {
         else {
             this.endTurn.setFrames(4, 3, 5, 3);
         }
+    };
+    WegasGame.prototype.onEndGame = function () {
+        window.location.href = "/dashboard";
     };
     return WegasGame;
 }());

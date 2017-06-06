@@ -13,6 +13,9 @@ class GameController {
     private flagsGot : boolean;
     private flagsGetSent : boolean;
 
+    private scoreGot : boolean;
+    private scoreGetSent : boolean;
+
     public inTurn : boolean;
 
     private messageHandlersByType : {[key: string] : (data? : any) => void};
@@ -27,16 +30,19 @@ class GameController {
         this.joined = false;
         this.troopsGot = false;
         this.flagsGot = false;
+        this.scoreGot = false;
 
         this.joinSent = false;
         this.troopsGetSent = false;
         this.flagsGetSent = false;
+        this.scoreGetSent = false;
 
         this.messageHandlersByType = {
             "your_turn": this.onYourTurn.bind(this),
             "get_matchtroops": this.onGetTroops.bind(this),
             "get_flags": this.onGetFlags.bind(this),
-            "get_score": this.onGetScore.bind(this)
+            "get_score": this.onGetScore.bind(this),
+            "end_game": this.onEndGame.bind(this)
         };
     }
 
@@ -156,6 +162,26 @@ class GameController {
         this.game.setRenderDirty();
     }
 
+    private initGetScore() : WebsocketResponseWaitItem {
+        let result = this.networking.sendGetScore();
+        if (result == null){
+            return null;
+        }
+
+        result.setOnComplete(this.onInitGetScore.bind(this));
+
+        return result;
+    }
+
+    private onInitGetScore(data){
+        if (data.type == "error"){
+            throw new Error(data.data);
+        }
+        else{
+            this.onGetScore(data.data);
+        }
+    }
+
     private onGetScore(data : {mine: number, theirs: number}) {
         this.game.scoreLabel.setText(String(data["mine"])+" : "+ String(data["theirs"]))
     }
@@ -196,6 +222,10 @@ class GameController {
         }
     }
 
+    public onEndGame(data : any) {
+        this.game.onEndGame();
+    }
+
     public onYourTurn(){
         this.game.updateEndTurn(true);
         this.inTurn = true;
@@ -218,6 +248,12 @@ class GameController {
             let sendResponse = this.initUpdateFlags();
             if (sendResponse != null){
                 this.flagsGetSent = true;
+            }
+        }
+        if (!this.scoreGetSent){
+            let sendResponse = this.initGetScore();
+            if (sendResponse != null){
+                this.scoreGetSent = true;
             }
         }
 

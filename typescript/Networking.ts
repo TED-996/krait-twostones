@@ -221,6 +221,10 @@ class WegasNetworking {
         return this.send("get_flags", null, WegasNetworking.generateTag());
     }
 
+    sendGetScore() {
+        return this.send("get_score", null, WegasNetworking.generateTag());
+    }
+
     private static generateTag(size : number = 10) : string {
         let result = "";
         let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

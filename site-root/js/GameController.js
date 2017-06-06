@@ -9,14 +9,17 @@ var GameController = (function () {
         this.joined = false;
         this.troopsGot = false;
         this.flagsGot = false;
+        this.scoreGot = false;
         this.joinSent = false;
         this.troopsGetSent = false;
         this.flagsGetSent = false;
+        this.scoreGetSent = false;
         this.messageHandlersByType = {
             "your_turn": this.onYourTurn.bind(this),
             "get_matchtroops": this.onGetTroops.bind(this),
             "get_flags": this.onGetFlags.bind(this),
-            "get_score": this.onGetScore.bind(this)
+            "get_score": this.onGetScore.bind(this),
+            "end_game": this.onEndGame.bind(this)
         };
     }
     GameController.prototype.onServerMessage = function (msg) {
@@ -113,6 +116,22 @@ var GameController = (function () {
         this.game.flags.update(data);
         this.game.setRenderDirty();
     };
+    GameController.prototype.initGetScore = function () {
+        var result = this.networking.sendGetScore();
+        if (result == null) {
+            return null;
+        }
+        result.setOnComplete(this.onInitGetScore.bind(this));
+        return result;
+    };
+    GameController.prototype.onInitGetScore = function (data) {
+        if (data.type == "error") {
+            throw new Error(data.data);
+        }
+        else {
+            this.onGetScore(data.data);
+        }
+    };
     GameController.prototype.onGetScore = function (data) {
         this.game.scoreLabel.setText(String(data["mine"]) + " : " + String(data["theirs"]));
     };
@@ -148,6 +167,9 @@ var GameController = (function () {
             this.inTurn = true;
         }
     };
+    GameController.prototype.onEndGame = function (data) {
+        this.game.onEndGame();
+    };
     GameController.prototype.onYourTurn = function () {
         this.game.updateEndTurn(true);
         this.inTurn = true;
@@ -169,6 +191,12 @@ var GameController = (function () {
             var sendResponse = this.initUpdateFlags();
             if (sendResponse != null) {
                 this.flagsGetSent = true;
+            }
+        }
+        if (!this.scoreGetSent) {
+            var sendResponse = this.initGetScore();
+            if (sendResponse != null) {
+                this.scoreGetSent = true;
             }
         }
         if (this.joined && this.troopsGot && this.flagsGot) {

@@ -173,6 +173,9 @@ var WegasNetworking = (function () {
     WegasNetworking.prototype.sendGetFlags = function () {
         return this.send("get_flags", null, WegasNetworking.generateTag());
     };
+    WegasNetworking.prototype.sendGetScore = function () {
+        return this.send("get_score", null, WegasNetworking.generateTag());
+    };
     WegasNetworking.generateTag = function (size) {
         if (size === void 0) { size = 10; }
         var result = "";
