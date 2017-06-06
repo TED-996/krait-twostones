@@ -167,6 +167,9 @@ var WegasNetworking = (function () {
     WegasNetworking.prototype.sendMove = function (from, to) {
         return this.send("move", { from: from, to: to }, WegasNetworking.generateTag());
     };
+    WegasNetworking.prototype.sendAttack = function (from, to) {
+        return this.send("attack", { from: from, to: to }, WegasNetworking.generateTag());
+    };
     WegasNetworking.prototype.sendGetFlags = function () {
         return this.send("get_flags", null, WegasNetworking.generateTag());
     };

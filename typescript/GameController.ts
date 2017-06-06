@@ -33,7 +33,8 @@ class GameController {
         this.messageHandlersByType = {
             "your_turn": this.onYourTurn.bind(this),
             "get_matchtroops": this.onGetTroops.bind(this),
-            "get_flags": this.onGetFlags.bind(this)
+            "get_flags": this.onGetFlags.bind(this),
+            "get_score": this.onGetScore.bind(this)
         };
     }
 
@@ -151,6 +152,10 @@ class GameController {
     private onGetFlags(data : FlagTransportObject[]){
         this.game.flags.update(data);
         this.game.setRenderDirty();
+    }
+
+    private onGetScore(data : {score1: number, score2: number}) {
+        //TODO
     }
 
     private onTroopsInitialPlace() {

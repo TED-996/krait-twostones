@@ -95,5 +95,14 @@ var GameTroopManager = (function () {
         }
         return null;
     };
+    GameTroopManager.prototype.getByPosition = function (x, y) {
+        for (var _i = 0, _a = this.troops; _i < _a.length; _i++) {
+            var troop = _a[_i];
+            if (troop.x == x && troop.y == y) {
+                return troop;
+            }
+        }
+        return null;
+    };
     return GameTroopManager;
 }());

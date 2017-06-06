@@ -13,7 +13,8 @@ var GameController = (function () {
         this.messageHandlersByType = {
             "your_turn": this.onYourTurn.bind(this),
             "get_matchtroops": this.onGetTroops.bind(this),
-            "get_flags": this.onGetFlags.bind(this)
+            "get_flags": this.onGetFlags.bind(this),
+            "get_score": this.onGetScore.bind(this)
         };
     }
     GameController.prototype.onServerMessage = function (msg) {
@@ -109,6 +110,9 @@ var GameController = (function () {
     GameController.prototype.onGetFlags = function (data) {
         this.game.flags.update(data);
         this.game.setRenderDirty();
+    };
+    GameController.prototype.onGetScore = function (data) {
+        //TODO
     };
     GameController.prototype.onTroopsInitialPlace = function () {
         for (var _i = 0, _a = this.game.playerTroops; _i < _a.length; _i++) {

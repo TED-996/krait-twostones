@@ -1,6 +1,7 @@
 var TroopMoveLayer = (function () {
-    function TroopMoveLayer() {
+    function TroopMoveLayer(game) {
         this.tiles = [];
+        this.game = game;
     }
     TroopMoveLayer.prototype.buildTiles = function (map, troop, onClick) {
         this.tiles = [];
@@ -27,7 +28,7 @@ var TroopMoveLayer = (function () {
             if (currentDist < range) {
                 for (var _i = 0, _a = Tile.getNeighbours(current); _i < _a.length; _i++) {
                     var next = _a[_i];
-                    if (map.isAccessible(next)) {
+                    if (map.isAccessible(next) && !this.isOccupied(next)) {
                         var idx = next.y * map.width + next.x;
                         if (!visited[idx]) {
                             visited[idx] = true;
@@ -37,6 +38,9 @@ var TroopMoveLayer = (function () {
                 }
             }
         }
+    };
+    TroopMoveLayer.prototype.isOccupied = function (coord) {
+        return this.game.loadedTroops.getByPosition(coord.x, coord.y) != null;
     };
     TroopMoveLayer.prototype.addTile = function (coord, onClick) {
         var tile = new Tile(coord.x, coord.y, 12, 5);

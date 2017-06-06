@@ -21,7 +21,7 @@ var WegasGame = (function () {
         this.setScale(1);
         this.networking = new WegasNetworking();
         this.gameController = new GameController(this);
-        this.troopMoveLayer = new TroopMoveLayer();
+        this.troopMoveLayer = new TroopMoveLayer(this);
         this.renderDirty = false;
         this.cameraMoveDirection = new Phaser.Point(0, 0);
         this.cameraSpeed = 0;

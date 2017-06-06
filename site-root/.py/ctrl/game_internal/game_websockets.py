@@ -355,12 +355,14 @@ class GameWsController(websockets.WebsocketsCtrlBase):
         return troop_2
 
     def check_attack(self, from_troop, to_troop):
+        db_match_troop.update(from_troop)
+        db_match_troop.update(to_troop)
         if self.bfs_dist((from_troop.x_axis, from_troop.y_axis), (to_troop.x_axis, to_troop.y_axis), False,
-                    from_troop.troop.atk_range) <= from_troop.troop.atk_range:
+                from_troop.troop.atk_range) <= from_troop.troop.atk_range and\
+                from_troop.attack_ready and from_troop.hp > 0:
             return True
         else:
             return False
-
 
     def bfs_dist(self, from_coords, to_coords, obstacle_sensitive=True, limit=None):
         if from_coords == to_coords:

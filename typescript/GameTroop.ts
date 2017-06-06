@@ -113,9 +113,18 @@ class GameTroopManager implements TileSource {
         return this.troops.map(t => t.getTile());
     }
 
-    getById(id: number) {
+    getById(id: number) : GameTrop {
         for (let troop of this.troops){
             if (troop.troop.id == id){
+                return troop;
+            }
+        }
+        return null;
+    }
+
+    getByPosition(x : number, y : number) : GameTroop {
+        for (let troop of this.troops){
+            if (troop.x == x && troop.y == y){
                 return troop;
             }
         }

@@ -57,8 +57,7 @@ class WegasGame
 
         this.networking = new WegasNetworking();
         this.gameController = new GameController(this);
-        this.troopMoveLayer = new TroopMoveLayer();
-
+        this.troopMoveLayer = new TroopMoveLayer(this);
 
         this.renderDirty = false;
 

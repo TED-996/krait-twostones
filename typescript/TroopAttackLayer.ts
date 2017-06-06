@@ -1,4 +1,4 @@
-class TroopMoveLayer implements TileSource {
+class TroopAttackLayer implements TileSource {
     tiles : Tile[];
     game : WegasGame;
 
@@ -13,7 +13,7 @@ class TroopMoveLayer implements TileSource {
         let x = troop.x;
         let y = troop.y;
 
-        this.addTiles({x: x, y: y}, map, troop.troop.moveRange, onClick);
+        this.addTiles({x: x, y: y}, map, troop.troop.atkRange, onClick);
     }
 
     private addTiles(coord : Coord, map : GameMap, range : number, onClick : (c : Coord) => void){
@@ -32,31 +32,35 @@ class TroopMoveLayer implements TileSource {
             let currentDist = queue[qS].d;
             qS++;
 
-            if (currentDist != 0){
-                this.addTile(current, onClick);
+            if (this.isEnemy(current)){
+                this.addTile(current, true, onClick);
+            }
+            else if (currentDist != 0){
+                this.addTile(current, false, null);
             }
 
             if (currentDist < range) {
                 for (let next of Tile.getNeighbours(current)) {
-                    if (map.isAccessible(next) && !this.isOccupied(next)) {
-                        let idx = next.y * map.width + next.x;
-                        if (!visited[idx]) {
-                            visited[idx] = true;
-                            queue[qE++] = {c: next, d: currentDist + 1};
-                        }
+                    let idx = next.y * map.width + next.x;
+                    if (!visited[idx]) {
+                        visited[idx] = true;
+                        queue[qE++] = {c: next, d: currentDist + 1};
                     }
                 }
             }
         }
     }
 
-    private isOccupied(coord: Coord) {
-        return this.game.loadedTroops.getByPosition(coord.x, coord.y) != null;
+    private isEnemy(coord: Coord) {
+        let troop = this.game.loadedTroops.getByPosition(coord.x, coord.y);
+        return troop != null && troop.isEnemy;
     }
 
-    private addTile(coord: Coord, onClick : (c : Coord) => void) {
+    private addTile(coord: Coord, isActive : boolean, onClick : (c : Coord) => void) {
         let tile = new Tile(coord.x, coord.y, 12, 5);
-        tile.onClick = () => onClick(coord);
+        if (onClick != null){
+            tile.onClick = () => onClick(coord);
+        }
         this.tiles.push(tile);
     }
 
