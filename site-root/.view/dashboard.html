@@ -47,8 +47,13 @@
                             </div>
                             <div id="collapse@loadout.id@" class="panel-collapse collapse">
                                 <div class="panel-body">
-                                    <a id="active@loadout.id@" class="active btn btn-default"
+                                    @if loadout.id==ctrl.active_loadout.id:
+                                        <a class="active btn btn-success">Make active</a>
+                                    @/if
+                                    @if loadout.id!=ctrl.active_loadout.id:
+                                        <a href="/dashboard" class="active btn btn-danger"
                                        onClick="@ctrl.make_active_loadout(loadout)@">Make active</a>
+                                    @/if
                                     <a id="edit@loadout.id@" class="edit btn btn-default"
                                        href="/edit_loadout?loadout_id=@loadout.id@">EDIT</a>
                                 </div>

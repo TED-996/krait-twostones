@@ -40,6 +40,10 @@
     "url": "/gameplay_ws"
   },
   {
+    "verb": "POST",
+    "url": "/change_loadout_name"
+  },
+  {
     "verb": "GET"
   }
 ]

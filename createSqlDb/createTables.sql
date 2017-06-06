@@ -205,7 +205,7 @@ create table Flag(
       references match(id) on delete cascade,
     constraint flagCarryingTroop
       foreign key(carryingTroop)
-      references matchtroop(id) on delete cascade
+      references matchTroop(id) on delete cascade
 );
 
 create sequence playerIdSeq

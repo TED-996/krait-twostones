@@ -34,5 +34,7 @@ class EditLoadoutController(mvc.CtrlBase):
 
             logging.debug("checked owner")
 
+        self.current_loadout_name = db_loadout.get_by_id(self.loadout_id).name
+
     def get_view(self):
         return ".view/edit_loadout.html"
