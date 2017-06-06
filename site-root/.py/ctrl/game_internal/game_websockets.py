@@ -541,7 +541,7 @@ class GameWsController(websockets.WebsocketsCtrlBase):
                 visited.add(next)
 
                 queue.append(((next_x, next_y), dist + 1))
-                q_e += 1
+                q_e += 12
 
         return None
 
@@ -572,3 +572,19 @@ class GameWsController(websockets.WebsocketsCtrlBase):
 
     def on_end_game(self):
         db_match.delete_by_id(self.match.id)
+        if self.match.score1 > self.match.score2:
+            if self.player_idx == 1:
+                self.this_player.mmr += 50
+                self.other_player.mmr -= 50
+            else:
+                self.this_player.mmr -= 50
+                self.other_player.mmr += 50
+        else:
+            if self.player_idx == 1:
+                self.this_player.mmr -= 50
+                self.other_player.mmr += 50
+            else:
+                self.this_player.mmr += 50
+                self.other_player.mmr -= 50
+        db_player.save(self.this_player)
+        db_player.save(self.other_flag)
