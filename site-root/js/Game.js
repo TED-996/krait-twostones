@@ -3,6 +3,9 @@
 /// <reference path="Map.ts" />
 /// <reference path="TileRenderer.ts" />
 /// <reference path="GameTroop.ts"/>
+///<reference path="TroopMoveLayer.ts"/>
+///<reference path="TroopAttackLayer.ts"/>
+///<reference path="Troops.ts"/>
 var WegasGame = (function () {
     function WegasGame() {
         this.game = new Phaser.Game(document.documentElement.clientWidth, document.documentElement.clientHeight, 
@@ -34,7 +37,7 @@ var WegasGame = (function () {
         this.fgGroup = this.game.add.group();
         this.endTurn = this.game.make.button(10, 10, "endTurn", this.onEndTurnPressed.bind(this), this, 4, 3, 5, 3);
         this.fgGroup.add(this.endTurn);
-        this.scoreLabel = this.game.add.text(45, 55, '0 : 0', { font: "65px Arial", fill: "##ff0044 ", align: "center" });
+        this.scoreLabel = this.game.add.text(this.game.world.centerX, this.game.world.centerY, '0 : 0', { font: "65px Arial", fill: "##ff0044 ", align: "center" });
         this.fgGroup.add(this.scoreLabel);
         this.updateEndTurn(this.gameController.inTurn);
         this.fgGroup.fixedToCamera = true;

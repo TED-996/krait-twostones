@@ -144,9 +144,20 @@ class GameWsController(websockets.WebsocketsCtrlBase):
 
             self.handle_get_flags(None)
 
-    def is_in_base(self, x, y):
-        logging.debug("x: {}, y: {}".format(x, y))
-        base_x = 1 if self.player_idx == 1 else 59
+    def drop_flag(self, flag):
+        theirs = (flag == self.other_flag)
+        if flag.carrying_troop_id is None:
+            # already dropped
+            return
+
+        
+
+    def is_in_base(self, x, y, theirs=False):
+        logging.debug("x: {}, y: {}, theirs: {}".format(x, y, theirs))
+        if self.player_idx == 1 and not theirs or self.player_idx == 2 and theirs:
+            base_x = 1
+        else:
+            base_x = 59
         base_tiles = [(bx, 13) for bx in xrange(base_x, base_x + 3)] + \
                      [(bx, 14) for bx in xrange(base_x, base_x + 4)] + \
                      [(bx, 15) for bx in xrange(base_x, base_x + 3)]
@@ -368,15 +379,20 @@ class GameWsController(websockets.WebsocketsCtrlBase):
 
         troop_2.hp -= troop_1.troop.dmg
         if troop_2.hp <= 0:
-            troop_2.respawn_time = 4
-            troop_2.x_axis = -5
-            troop_2.y_axis = -5
+            self.kill_troop(troop_2)
         db_match_troop.save(troop_2)
-        return troop_2
+
+        self.respond_ok(tag)
+        self.handle_get_matchtroops(None)
 
     def check_attack(self, from_troop, to_troop):
+        logging.debug("in method")
+
         db_match_troop.update(from_troop)
         db_match_troop.update(to_troop)
+        from_troop.troop.calculate_stats()
+        to_troop.troop.calculate_stats()
+
         if self.bfs_dist(
                     (from_troop.x_axis, from_troop.y_axis),
                     (to_troop.x_axis, to_troop.y_axis),
@@ -401,12 +417,14 @@ class GameWsController(websockets.WebsocketsCtrlBase):
         map = db_map.get_by_id(self.match.map_id)
         map.parse_map()
 
+        logging.debug("in bfs; from {} to {} limit={}".format(from_coords, to_coords, limit))
+
         while q_s < q_e:
             pos, dist = queue[q_s]
             x, y = pos
             q_s += 1
 
-            if dist >= limit:
+            if limit is not None and dist >= limit:
                 continue
 
             for next_x, next_y in self.get_neighbors(x, y):
@@ -414,18 +432,19 @@ class GameWsController(websockets.WebsocketsCtrlBase):
                     continue
 
                 next = (next_x, next_y)
+                logging.debug("looking for {}, found {}".format(to_coords, next))
+                if next == to_coords:
+                    logging.debug("found!")
+                    return dist + 1
+
                 if next in visited:
                     continue
-                visited.add((next_x, next_y))
-
-                if (next_x, next_y) == to_coords:
-                    return dist + 1
+                visited.add(next)
 
                 queue.append(((next_x, next_y), dist + 1))
                 q_e += 1
 
         return limit + 1
-
 
     def get_neighbors(self, x, y):
         offset = 1 if y % 2 == 0 else 0
@@ -438,7 +457,6 @@ class GameWsController(websockets.WebsocketsCtrlBase):
             (x + offset,     y + 1),
 
         ]
-
 
     def find_first_free_tile(self, x, y):
         queue = [[x,y]]
