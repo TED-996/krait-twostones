@@ -7,7 +7,7 @@ import time
 class MatchmakerController(websockets.WebsocketsCtrlBase):
     def __init__(self):
         super(MatchmakerController, self).__init__(True)
-        self.player_ids = []
+        self.players = []
         self.matches = []
 
         logging.debug("MatchmakerController ----- Constructed.")
@@ -18,21 +18,21 @@ class MatchmakerController(websockets.WebsocketsCtrlBase):
         self.clear_matches()
 
         while not self.should_stop():
-            self.player_ids = db_queue.get_players(2)
-            if len(self.player_ids) >= 2:
-                logging.debug("-------------Players: " + str(self.player_ids))
+            self.players = db_queue.get_players(2)
+            if len(self.players) >= 2:
+                logging.debug("-------------Players: " + str(self.players))
                 temp_match = []
-                for i in self.player_ids:
-                    i.match_ready = 1
-                    db_queue.save(i)
-                    temp_match.append(i)
+                for player in self.players:
+                    player.match_ready = 1
+                    db_queue.save(player)
+                    temp_match.append(player)
                 self.matches.append(temp_match)
 
             if len(self.matches) > 0:
-                for match in self.matches:
+                for match in self.matches[:]:
                     if self.if_match_accepted(match[0], match[1]) == 2:
                         db_match.create(match[0], match[1])
-                        self.matches.remove([match[0], match[1]])
+                        self.matches.remove(match)
 
             time.sleep(0.5)
 
