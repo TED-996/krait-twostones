@@ -226,6 +226,8 @@ class GameWsController(websockets.WebsocketsCtrlBase):
         troop_2.hp -= troop_1.troop.dmg
         if troop_2.hp <= 0:
             troop_2.respawn_time = 4
+            troop_2.x_axis = -5
+            troop_2.y_axis = -5
         db_match_troop.save(troop_2)
         return troop_2
 

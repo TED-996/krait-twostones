@@ -104,16 +104,11 @@ def create_new_loadout(player_id):
     logging.debug(player_id)
     db_conn = db_ops.get_connection()
     cursor = db_conn.cursor()
-    cursor.execute("insert into loadout values(loadoutidseq.nextval,'Temp Loadout',:id)", {"id": player_id})
+    cursor.execute("select loadoutidseq.nextval from dual")
+    loadout_id, = cursor.fetchone()
+    cursor.execute("insert into loadout values(:loadout_id,'Temp Loadout',:id)",
+                   {"loadout_id": loadout_id, "id": player_id})
     db_conn.commit()
-    cursor.execute("select id from loadout where playerid = :player_id order by id desc", {"player_id": player_id})
-    temp_data = cursor.fetchone()
-    if temp_data is not None:
-        loadout_id, = temp_data
-    else:
-        cursor.close()
-        logging.debug("eroare la create loadout")
-        return
     logging.debug("created loadout " + str(loadout_id))
     class_ids = [1, 2, 3, 4, 3, 2]
     cursor.executemany("insert into troop values(troopidseq.nextval,:class_id,:loadout_id,:skin_id)",
@@ -159,13 +154,11 @@ def update_name(loadout_obj, new_loadout_name):
 
     # logging.debug("pre update loadout name sql")
 
-    cursor.execute("update Loadout set"
-                   "name = :name"
-                   "where id = :loadoutId",
-                   {
-                       "loadoutId": loadout_obj.id,
-                       "name": new_loadout_name
-                   })
+    logging.debug(loadout_obj.id)
+    logging.debug(new_loadout_name)
+
+    cursor.execute("update Loadout set name = :name where id = :loadoutId ",
+                   {"loadoutId": loadout_obj.id, "name": new_loadout_name})
     cursor.close()
     conn.commit()
     

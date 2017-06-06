@@ -2,10 +2,6 @@
     color: green;
 }
 
-#active1, #active2, #active3, #active4 {
-    background-color: #4CAF50;
-}
-
 #activeLoadout {
     width: 500px;
     height: 0px;
