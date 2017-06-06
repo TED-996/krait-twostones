@@ -144,8 +144,6 @@ class GameWsController(websockets.WebsocketsCtrlBase):
 
             self.handle_get_flags(None)
 
-
-
     def is_in_base(self, x, y):
         logging.debug("x: {}, y: {}".format(x, y))
         base_x = 1 if self.player_idx == 1 else 59
@@ -168,6 +166,8 @@ class GameWsController(websockets.WebsocketsCtrlBase):
             self.match.score2 += 1
             db_match.save(self.match)
 
+        self.handle_get_score(None)
+
     def on_thread_start(self):
         while not self.should_stop():
             msg = self.pop_in_message()
@@ -187,7 +187,8 @@ class GameWsController(websockets.WebsocketsCtrlBase):
             "end_turn": self.handle_end_turn,
             "error": self.handle_error,
             "get_matchtroops": self.handle_get_matchtroops,
-            "get_flags": self.handle_get_flags
+            "get_flags": self.handle_get_flags,
+            "get_score": self.handle_get_score
         }
         tag = msg_data.get("tag", None)
 
@@ -219,6 +220,7 @@ class GameWsController(websockets.WebsocketsCtrlBase):
         if match_turn != self.match.turn and self.match.turn == self.player_idx:
             self.handle_get_matchtroops(None)
             self.handle_get_flags(None)
+            self.handle_get_score(None)
             self.send("your_turn", None, None)
 
     def send_troops(self):
@@ -304,6 +306,18 @@ class GameWsController(websockets.WebsocketsCtrlBase):
 
         self.send("get_flags", [self.this_flag.to_out_obj(True), self.other_flag.to_out_obj(False)], tag)
 
+    def handle_get_score(self, tag=None):
+        db_match.update(self.match)
+
+        if self.player_idx == 1:
+            mine = self.match.score1
+            theirs = self.match.score2
+        else:
+            mine = self.match.score2
+            theirs = self.match.score1
+
+        self.send("get_score", {"mine": mine, "theirs": theirs}, tag)
+
     def respond_error(self, data, tag):
         self.send("error", data, tag=tag)
 
@@ -363,9 +377,14 @@ class GameWsController(websockets.WebsocketsCtrlBase):
     def check_attack(self, from_troop, to_troop):
         db_match_troop.update(from_troop)
         db_match_troop.update(to_troop)
-        if self.bfs_dist((from_troop.x_axis, from_troop.y_axis), (to_troop.x_axis, to_troop.y_axis), False,
-                from_troop.troop.atk_range) <= from_troop.troop.atk_range and\
-                from_troop.attack_ready and from_troop.hp > 0:
+        if self.bfs_dist(
+                    (from_troop.x_axis, from_troop.y_axis),
+                    (to_troop.x_axis, to_troop.y_axis),
+                    False,
+                    from_troop.troop.atk_range) <= from_troop.troop.atk_range and\
+                from_troop.attack_ready and\
+                from_troop.hp > 0 and\
+                to_troop.hp > 0:
             return True
         else:
             return False
@@ -394,11 +413,12 @@ class GameWsController(websockets.WebsocketsCtrlBase):
                 if next_x <= 0 or next_y <= 0 or next_x >= map.width - 1 or next_y >= map.height - 1:
                     continue
 
-                if (next_x, next_y) in visited:
+                next = (next_x, next_y)
+                if next in visited:
                     continue
                 visited.add((next_x, next_y))
 
-                if visited == to_coords:
+                if (next_x, next_y) == to_coords:
                     return dist + 1
 
                 queue.append(((next_x, next_y), dist + 1))
