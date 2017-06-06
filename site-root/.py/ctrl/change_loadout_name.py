@@ -10,7 +10,7 @@ def get_response():
     loadout_id = post_form.get("loadout_id")
 
     if new_name is "" or loadout_id is None or new_name is None:
-        return krait.ResponseRedirect("/edit_loadout?loadout_id=:loadout_id", {"loadout_id": loadout_id})
+        return krait.ResponseRedirect("/edit_loadout?loadout_id={}".format(loadout_id))
 
     logging.debug(new_name)
     new_name = str(new_name).strip()
