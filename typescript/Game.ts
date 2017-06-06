@@ -3,6 +3,9 @@
 /// <reference path="Map.ts" />
 /// <reference path="TileRenderer.ts" />
 /// <reference path="GameTroop.ts"/>
+///<reference path="TroopMoveLayer.ts"/>
+///<reference path="TroopAttackLayer.ts"/>
+///<reference path="Troops.ts"/>
 
 class WegasGame
 {
@@ -80,7 +83,7 @@ class WegasGame
             4, 3, 5, 3
         );
         this.fgGroup.add(this.endTurn);
-        this.scoreLabel = this.game.add.text(45, 55, '0 : 0', { font: "65px Arial", fill: "##ff0044 ", align: "center" });
+        this.scoreLabel = this.game.add.text(this.game.world.centerX, this.game.world.centerY, '0 : 0', { font: "65px Arial", fill: "##ff0044 ", align: "center" });
 
         this.fgGroup.add(this.scoreLabel);
         this.updateEndTurn(this.gameController.inTurn);

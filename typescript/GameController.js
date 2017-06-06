@@ -1,9 +1,27 @@
+///<reference path="Networking.ts"/>
+///<reference path="Flags.ts"/>
 var GameController = (function () {
     function GameController(game) {
         this.game = game;
-        this.networking = new WegasNetworking();
+        this.networking = game.networking;
+        this.networking.onMessage = this.onServerMessage.bind(this);
+        this.inTurn = false;
         this.joined = false;
+        this.troopsGot = false;
+        this.flagsGot = false;
+        this.joinSent = false;
+        this.troopsGetSent = false;
+        this.flagsGetSent = false;
+        this.messageHandlersByType = {
+            "your_turn": this.onYourTurn.bind(this),
+            "get_matchtroops": this.onGetTroops.bind(this),
+            "get_flags": this.onGetFlags.bind(this),
+            "get_score": this.onGetScore.bind(this)
+        };
     }
+    GameController.prototype.onServerMessage = function (msg) {
+        this.messageHandlersByType[msg.type](msg.data);
+    };
     GameController.prototype.join = function () {
         var result = this.networking.sendJoin();
         if (result == null) {
@@ -12,18 +30,38 @@ var GameController = (function () {
         result.setOnComplete(this.onJoin.bind(this));
         return result;
     };
-    GameController.prototype.onJoin = function () {
+    GameController.prototype.onJoin = function (data) {
         this.joined = true;
+        this.inTurn = data.data.in_turn;
+        this.game.updateEndTurn(this.inTurn);
     };
-    GameController.prototype.getTroops = function () {
+    GameController.prototype.initGetTroops = function () {
         var result = this.networking.sendGetTroops();
         if (result == null) {
             return null;
         }
-        result.setOnComplete(this.onGetTroops.bind(this));
+        result.setOnComplete(this.onInitGetTroops.bind(this));
         return result;
     };
-    GameController.prototype.onGetTroops = function (data) {
+    GameController.prototype.onInitGetTroops = function (data) {
+        if (data.type != "error") {
+            this.updateTroops(data.data);
+            this.troopsGot = true;
+            this.onTroopsInitialPlace();
+        }
+        else {
+            throw new Error(data.data);
+        }
+    };
+    GameController.prototype.demandGetTroops = function () {
+        var result = this.networking.sendGetTroops();
+        if (result == null) {
+            return null;
+        }
+        result.setOnComplete(this.onInitGetTroops.bind(this));
+        return result;
+    };
+    GameController.prototype.onDemandGetTroops = function (data) {
         if (data.type != "error") {
             this.updateTroops(data.data);
             this.troopsGot = true;
@@ -31,6 +69,9 @@ var GameController = (function () {
         else {
             throw new Error(data.data);
         }
+    };
+    GameController.prototype.onGetTroops = function (data) {
+        this.updateTroops(data);
     };
     GameController.prototype.updateTroops = function (troops) {
         var troopsById = [];
@@ -53,8 +94,63 @@ var GameController = (function () {
         dst.y = src.y;
         dst.hp = src.hp;
     };
+    GameController.prototype.initUpdateFlags = function () {
+        var result = this.networking.sendGetFlags();
+        if (result == null) {
+            return null;
+        }
+        result.setOnComplete(this.onInitUpdateFlags.bind(this));
+        return result;
+    };
+    GameController.prototype.onInitUpdateFlags = function (data) {
+        if (data.type == "error") {
+            throw new Error(data.data);
+        }
+        this.game.flags.update(data.data);
+        this.game.setRenderDirty();
+    };
+    GameController.prototype.onGetFlags = function (data) {
+        this.game.flags.update(data);
+        this.game.setRenderDirty();
+    };
+    GameController.prototype.onGetScore = function (data) {
+        this.game.scoreLabel.setText(String(data["mine"]) + " : " + String(data["theirs"]));
+    };
+    GameController.prototype.onTroopsInitialPlace = function () {
+        for (var _i = 0, _a = this.game.playerTroops; _i < _a.length; _i++) {
+            var troop = _a[_i];
+            troop.onInitialPlace();
+        }
+        for (var _b = 0, _c = this.game.opponentTroops; _b < _c.length; _b++) {
+            var troop = _c[_b];
+            troop.onInitialPlace();
+        }
+    };
     GameController.prototype.disconnect = function (reason) {
         this.networking.sendDisconnect(reason);
+    };
+    GameController.prototype.sendEndTurn = function () {
+        if (!this.inTurn) {
+            return;
+        }
+        var result = this.networking.sendEndTurn();
+        if (result == null) {
+            return null;
+        }
+        result.setOnComplete(this.onEndTurnComplete.bind(this));
+    };
+    GameController.prototype.onEndTurnComplete = function (data) {
+        if (data.type != "error") {
+            this.game.updateEndTurn(false);
+            this.inTurn = false;
+        }
+        else {
+            this.inTurn = true;
+        }
+    };
+    GameController.prototype.onYourTurn = function () {
+        this.game.updateEndTurn(true);
+        this.inTurn = true;
     };
     GameController.prototype.update = function () {
         if (!this.joinSent) {
@@ -64,12 +160,18 @@ var GameController = (function () {
             }
         }
         if (!this.troopsGetSent) {
-            var sendResponse = this.getTroops();
+            var sendResponse = this.initGetTroops();
             if (sendResponse != null) {
                 this.troopsGetSent = true;
             }
         }
-        if (this.joined && this.troopsGot) {
+        if (!this.flagsGetSent) {
+            var sendResponse = this.initUpdateFlags();
+            if (sendResponse != null) {
+                this.flagsGetSent = true;
+            }
+        }
+        if (this.joined && this.troopsGot && this.flagsGot) {
             this.updateInGame();
         }
     };
