@@ -119,6 +119,7 @@ class GameWsController(websockets.WebsocketsCtrlBase):
     def check_drop_flag(self, troop):
         base_center = (3, 14) if self.player_idx == 1 else (60, 14)
         if not self.is_in_base(troop.x_axis, troop.y_axis):
+            logging.debug("not in base!");
             return
         logging.debug("in base: troop.x = {}, troop.y = {}".format(troop.x_axis, troop.y_axis))
 
@@ -129,6 +130,7 @@ class GameWsController(websockets.WebsocketsCtrlBase):
             self.drop_flag(self.this_flag)
 
     def drop_flag(self, flag):
+        logging.debug("trying to drop flag")
         theirs = (flag == self.other_flag)
         if flag.carrying_troop_id is None:
             # already dropped
@@ -150,7 +152,8 @@ class GameWsController(websockets.WebsocketsCtrlBase):
             flag.x_axis, flag.y_axis = (x, y)
 
         flag.carrying_troop_id = None
-        db_flag.update(flag)
+
+        db_flag.save(flag)
 
         self.check_flag_points()
         self.handle_get_flags(None)
