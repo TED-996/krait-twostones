@@ -191,6 +191,27 @@ class WegasGame
         }
     }
 
+    private getInitCamera() : Coord {
+        let xs = 0;
+        let ys = 0;
+        for (let troop of this.playerTroops){
+            xs += troop.x;
+            ys += troop.y;
+        }
+
+        return {x: xs / this.playerTroops.length, y: ys / this.playerTroops.length};
+    }
+
+    private setCamera(coord : Coord) {
+        let x = coord.x * this.tileRenderer.tileset.tileWidth;
+        let y = coord.y * this.tileRenderer.tileset.tileHeight * 3 / 4;
+        console.log(x, y);
+        console.log(coord);
+
+        this.game.camera.x = x - this.game.width / 2;
+        this.game.camera.y = y - this.game.height / 2;
+    }
+
     render() {
         this.game.debug.cameraInfo(this.game.camera, this.game.width - 300, 32);
         this.gameController.render();
@@ -200,6 +221,10 @@ class WegasGame
             this.tileRenderer.update();
             this.renderDirty = false;
         }
+    }
+
+    onInitialPlace() {
+        this.setCamera(this.getInitCamera());
     }
 
     onTroopClick(troop: GameTroop) {

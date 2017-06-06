@@ -144,6 +144,7 @@ var GameController = (function () {
             var troop = _c[_b];
             troop.onInitialPlace();
         }
+        this.game.onInitialPlace();
     };
     GameController.prototype.disconnect = function (reason) {
         this.networking.sendDisconnect(reason);

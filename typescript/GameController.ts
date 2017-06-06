@@ -193,6 +193,8 @@ class GameController {
         for (let troop of this.game.opponentTroops){
             troop.onInitialPlace();
         }
+
+        this.game.onInitialPlace();
     }
 
     public disconnect(reason : string) : void {

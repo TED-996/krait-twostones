@@ -117,6 +117,24 @@ var WegasGame = (function () {
             this.game.camera.y += resultVector.y;
         }
     };
+    WegasGame.prototype.getInitCamera = function () {
+        var xs = 0;
+        var ys = 0;
+        for (var _i = 0, _a = this.playerTroops; _i < _a.length; _i++) {
+            var troop = _a[_i];
+            xs += troop.x;
+            ys += troop.y;
+        }
+        return { x: xs / this.playerTroops.length, y: ys / this.playerTroops.length };
+    };
+    WegasGame.prototype.setCamera = function (coord) {
+        var x = coord.x * this.tileRenderer.tileset.tileWidth;
+        var y = coord.y * this.tileRenderer.tileset.tileHeight * 3 / 4;
+        console.log(x, y);
+        console.log(coord);
+        this.game.camera.x = x - this.game.width / 2;
+        this.game.camera.y = y - this.game.height / 2;
+    };
     WegasGame.prototype.render = function () {
         this.game.debug.cameraInfo(this.game.camera, this.game.width - 300, 32);
         this.gameController.render();
@@ -125,6 +143,9 @@ var WegasGame = (function () {
             this.tileRenderer.update();
             this.renderDirty = false;
         }
+    };
+    WegasGame.prototype.onInitialPlace = function () {
+        this.setCamera(this.getInitCamera());
     };
     WegasGame.prototype.onTroopClick = function (troop) {
         if (!this.gameController.inTurn) {
