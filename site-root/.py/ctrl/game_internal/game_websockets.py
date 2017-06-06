@@ -70,6 +70,7 @@ class GameWsController(websockets.WebsocketsCtrlBase):
             return
         if not troop.move_ready:
             self.respond_error("Move consumed!", tag)
+            return
 
         troop.x_axis = dest_x
         troop.y_axis = dest_y
