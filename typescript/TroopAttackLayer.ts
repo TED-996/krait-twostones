@@ -35,7 +35,7 @@ class TroopAttackLayer implements TileSource {
             if (this.isEnemy(current)){
                 this.addTile(current, true, onClick);
             }
-            else if (currentDist != 0){
+            else if (currentDist != 0 && map.isAccessible(current)){
                 this.addTile(current, false, null);
             }
 
@@ -57,7 +57,8 @@ class TroopAttackLayer implements TileSource {
     }
 
     private addTile(coord: Coord, isActive : boolean, onClick : (c : Coord) => void) {
-        let tile = new Tile(coord.x, coord.y, 12, 5);
+        let tileIdx = isActive? 12 + 3 * 16 : 12 + 7 * 16;
+        let tile = new Tile(coord.x, coord.y, tileIdx, 6);
         if (onClick != null){
             tile.onClick = () => onClick(coord);
         }

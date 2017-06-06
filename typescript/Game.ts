@@ -21,15 +21,16 @@ class WegasGame
 
     networking : WegasNetworking;
     troopMoveLayer : TroopMoveLayer;
+    troopAttackLayer: TroopAttackLayer;
     loadedTroops: GameTroopManager;
+
     flags : FlagManager;
-
     renderDirty : boolean;
+
     cameraSpeed : number;
-
     cameraMoveDirection : Phaser.Point;
-    activeTroop : GameTroop;
 
+    activeTroop : GameTroop;
     endTurn : Phaser.Button;
 
     constructor()
@@ -58,6 +59,7 @@ class WegasGame
         this.networking = new WegasNetworking();
         this.gameController = new GameController(this);
         this.troopMoveLayer = new TroopMoveLayer(this);
+        this.troopAttackLayer = new TroopAttackLayer(this);
 
         this.renderDirty = false;
 
@@ -97,7 +99,7 @@ class WegasGame
         this.tileRenderer = new TileRenderer(
             [this.map],
             [],
-            [this.loadedTroops, this.troopMoveLayer, this.flags],
+            [this.loadedTroops, this.troopMoveLayer, this.troopAttackLayer, this.flags],
             this.map.tileset,
             this.tileGroup);
     }

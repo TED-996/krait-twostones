@@ -22,6 +22,7 @@ var WegasGame = (function () {
         this.networking = new WegasNetworking();
         this.gameController = new GameController(this);
         this.troopMoveLayer = new TroopMoveLayer(this);
+        this.troopAttackLayer = new TroopAttackLayer(this);
         this.renderDirty = false;
         this.cameraMoveDirection = new Phaser.Point(0, 0);
         this.cameraSpeed = 0;
@@ -44,7 +45,7 @@ var WegasGame = (function () {
         this.addLoadout(this.opponentLoadout, this.opponentTroops, true);
         this.loadedTroops = new GameTroopManager(this.playerTroops.concat(this.opponentTroops));
         this.flags = new FlagManager(this);
-        this.tileRenderer = new TileRenderer([this.map], [], [this.loadedTroops, this.troopMoveLayer, this.flags], this.map.tileset, this.tileGroup);
+        this.tileRenderer = new TileRenderer([this.map], [], [this.loadedTroops, this.troopMoveLayer, this.troopAttackLayer, this.flags], this.map.tileset, this.tileGroup);
     };
     WegasGame.prototype.setScale = function (scale) {
         //this.game.scale.setupScale(1920, 1080);
