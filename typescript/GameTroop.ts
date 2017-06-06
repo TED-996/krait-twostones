@@ -63,16 +63,23 @@ class GameTroop {
 
     public deactivate() {
         this.game.troopMoveLayer.clear();
+        this.game.troopAttackLayer.clear();
         this.game.setRenderDirty();
     }
 
     public activate() {
         this.game.troopMoveLayer.buildTiles(this.game.map, this, this.onMoveClick.bind(this));
+        this.game.troopAttackLayer.buildTiles(this.game.map, this, this.onAttackClick.bind(this));
         this.game.setRenderDirty();
     }
 
     private onMoveClick(to : Coord) {
         this.move(to.x, to.y);
+        this.game.deactivateTroop();
+    }
+
+    private onAttackClick(to : Coord){
+        this.attack(to.x, to.y);
         this.game.deactivateTroop();
     }
 
@@ -91,13 +98,28 @@ class GameTroop {
         }
     }
 
+    public attack(x : number, y : number) {
+        let from = {x: this.x, y: this.y};
+        let to = {x: x, y: y};
+        let responseWait = this.game.networking.sendAttack(from, to);
+
+        if (responseWait != null) {
+            let self = this;
+            responseWait.setOnComplete((data) => self.onAttackResponse(data, from, to));
+        }
+    }
+
     //noinspection JSUnusedLocalSymbols
-    public onMoveResponse(data : any, from : Coord, to : Coord){
+    private onMoveResponse(data : any, from : Coord, to : Coord){
         if (data.type != "ok"){
             this.x = from.x;
             this.y = from.y;
             this.game.setRenderDirty();
         }
+    }
+
+    //noinspection JSUnusedLocalSymbols
+    private onAttackResponse(data: NetworkingMessage, from: Coord, to: Coord) {
     }
 }
 
@@ -113,7 +135,7 @@ class GameTroopManager implements TileSource {
         return this.troops.map(t => t.getTile());
     }
 
-    getById(id: number) : GameTrop {
+    getById(id: number) : GameTroop {
         for (let troop of this.troops){
             if (troop.troop.id == id){
                 return troop;

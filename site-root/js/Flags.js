@@ -18,7 +18,7 @@ var Flag = (function () {
             this.y = this.carryingTroop.y;
             tileIdx += 4 * 16;
         }
-        return new Tile(this.x, this.y, tileIdx, 6);
+        return new Tile(this.x, this.y, tileIdx, 8);
     };
     return Flag;
 }());

@@ -151,9 +151,9 @@ class TileRenderer {
             newSprite.anchor = new Phaser.Point(0.5, 0.5);
 
             if (t.mirrored){
-                console.log(newSprite.scale);
+                //console.log(newSprite.scale);
                 newSprite.scale.setTo(-1, 1);
-                console.log(newSprite.scale);
+                //console.log(newSprite.scale);
             }
             else{
                 newSprite.scale.setTo(1, 1);
@@ -168,7 +168,7 @@ class TileRenderer {
             }
 
             if (t.mirrored){
-                console.log(newSprite);
+                //console.log(newSprite);
             }
         }
     }

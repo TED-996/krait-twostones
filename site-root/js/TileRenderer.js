@@ -107,9 +107,9 @@ var TileRenderer = (function () {
             var newSprite = this.spriteBatch.create(t.x * tileWidth + ((t.y % 2 == 0) ? 0 : (tileWidth / 2)), t.y * tileHeight * 3 / 4, this.tileset.sourceImage, t.tileIndex);
             newSprite.anchor = new Phaser.Point(0.5, 0.5);
             if (t.mirrored) {
-                console.log(newSprite.scale);
+                //console.log(newSprite.scale);
                 newSprite.scale.setTo(-1, 1);
-                console.log(newSprite.scale);
+                //console.log(newSprite.scale);
             }
             else {
                 newSprite.scale.setTo(1, 1);
@@ -121,7 +121,7 @@ var TileRenderer = (function () {
                 newSprite.events.onInputDown.add(t.onClick.bind(this), t);
             }
             if (t.mirrored) {
-                console.log(newSprite);
+                //console.log(newSprite);
             }
         }
     };

@@ -247,6 +247,8 @@ class GameWsController(websockets.WebsocketsCtrlBase):
         from_troop = self.find_troop(from_coords["x"], from_coords["y"], self.this_troops)
         if from_troop is None:
             self.respond_error("Position doesn't exist.", tag)
+            self.handle_get_matchtroops(None)
+            return
 
         self.move_troop(from_troop, to_coords["x"], to_coords["y"], tag)
 
@@ -267,6 +269,8 @@ class GameWsController(websockets.WebsocketsCtrlBase):
 
         if from_troop is None or to_troop is None:
             logging.warning("invalid troops: from_troop: {}, to_troop: {}".format(from_troop, to_troop))
+            self.respond_error("Position doesn't exist.", tag)
+            self.handle_get_matchtroops(None)
 
         self.attack_troop(from_troop, to_troop, tag)
 

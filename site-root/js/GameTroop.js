@@ -35,14 +35,20 @@ var GameTroop = (function () {
     };
     GameTroop.prototype.deactivate = function () {
         this.game.troopMoveLayer.clear();
+        this.game.troopAttackLayer.clear();
         this.game.setRenderDirty();
     };
     GameTroop.prototype.activate = function () {
         this.game.troopMoveLayer.buildTiles(this.game.map, this, this.onMoveClick.bind(this));
+        this.game.troopAttackLayer.buildTiles(this.game.map, this, this.onAttackClick.bind(this));
         this.game.setRenderDirty();
     };
     GameTroop.prototype.onMoveClick = function (to) {
         this.move(to.x, to.y);
+        this.game.deactivateTroop();
+    };
+    GameTroop.prototype.onAttackClick = function (to) {
+        this.attack(to.x, to.y);
         this.game.deactivateTroop();
     };
     GameTroop.prototype.move = function (x, y) {
@@ -57,6 +63,15 @@ var GameTroop = (function () {
             responseWait.setOnComplete(function (data) { return self_1.onMoveResponse(data, from, to); });
         }
     };
+    GameTroop.prototype.attack = function (x, y) {
+        var from = { x: this.x, y: this.y };
+        var to = { x: x, y: y };
+        var responseWait = this.game.networking.sendAttack(from, to);
+        if (responseWait != null) {
+            var self_2 = this;
+            responseWait.setOnComplete(function (data) { return self_2.onAttackResponse(data, from, to); });
+        }
+    };
     //noinspection JSUnusedLocalSymbols
     GameTroop.prototype.onMoveResponse = function (data, from, to) {
         if (data.type != "ok") {
@@ -64,6 +79,9 @@ var GameTroop = (function () {
             this.y = from.y;
             this.game.setRenderDirty();
         }
+    };
+    //noinspection JSUnusedLocalSymbols
+    GameTroop.prototype.onAttackResponse = function (data, from, to) {
     };
     return GameTroop;
 }());

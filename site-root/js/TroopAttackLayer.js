@@ -25,7 +25,7 @@ var TroopAttackLayer = (function () {
             if (this.isEnemy(current)) {
                 this.addTile(current, true, onClick);
             }
-            else if (currentDist != 0) {
+            else if (currentDist != 0 && map.isAccessible(current)) {
                 this.addTile(current, false, null);
             }
             if (currentDist < range) {
@@ -45,7 +45,8 @@ var TroopAttackLayer = (function () {
         return troop != null && troop.isEnemy;
     };
     TroopAttackLayer.prototype.addTile = function (coord, isActive, onClick) {
-        var tile = new Tile(coord.x, coord.y, 12, 5);
+        var tileIdx = isActive ? 12 + 3 * 16 : 12 + 7 * 16;
+        var tile = new Tile(coord.x, coord.y, tileIdx, 6);
         if (onClick != null) {
             tile.onClick = function () { return onClick(coord); };
         }

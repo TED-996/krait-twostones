@@ -27,7 +27,7 @@ class Flag {
             tileIdx += 4 * 16;
         }
 
-        return new Tile(this.x, this.y, tileIdx, 6);
+        return new Tile(this.x, this.y, tileIdx, 8);
     }
 }
 
