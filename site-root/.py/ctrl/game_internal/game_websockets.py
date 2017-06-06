@@ -17,6 +17,11 @@ class GameWsController(websockets.WebsocketsCtrlBase):
         super(GameWsController, self).__init__(True)
         self.username = auth_tests.get_auth()
         self.match = self.get_match(self.username)
+
+        if self.match is None:
+            self.handle_end_game()
+            return
+
         self.this_player = db_player.get_by_username(self.username)
         if self.this_player.id == self.match.player1_id:
             self.player_idx = 1
@@ -117,9 +122,8 @@ class GameWsController(websockets.WebsocketsCtrlBase):
             self.handle_get_flags(None)
 
     def check_drop_flag(self, troop):
-        base_center = (3, 14) if self.player_idx == 1 else (60, 14)
         if not self.is_in_base(troop.x_axis, troop.y_axis):
-            logging.debug("not in base!");
+            logging.debug("not in base!")
             return
         logging.debug("in base: troop.x = {}, troop.y = {}".format(troop.x_axis, troop.y_axis))
 
@@ -217,11 +221,20 @@ class GameWsController(websockets.WebsocketsCtrlBase):
 
     def on_thread_start(self):
         while not self.should_stop():
-            msg = self.pop_in_message()
-            if msg is not None:
-                self.handle_in_message(json.loads(msg))
+            try:
+                msg = self.pop_in_message()
+                if msg is not None:
+                    self.handle_in_message(json.loads(msg))
 
-            self.send_out_messages()
+                self.send_out_messages()
+
+                if self.match_over():
+                    self.handle_end_game()
+            except ValueError:
+                if self.match_over():
+                    self.handle_end_game()
+                else:
+                    raise
 
             time.sleep(0.008)
 
@@ -339,7 +352,6 @@ class GameWsController(websockets.WebsocketsCtrlBase):
             mtroop.attack_ready = True
             mtroop.move_ready = True
             db_match_troop.save(mtroop)
-
 
     def handle_error(self, data, tag=None):
         print("Client error:", data, file=sys.stderr)
@@ -591,3 +603,6 @@ class GameWsController(websockets.WebsocketsCtrlBase):
                 self.other_player.mmr -= 50
         db_player.save(self.this_player)
         db_player.save(self.other_flag)
+
+    def match_over(self):
+        return db_match.is_deleted(self.match.id)

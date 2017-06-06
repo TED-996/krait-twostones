@@ -133,3 +133,17 @@ def delete_by_id(match_id):
         conn.commit()
     cursor.close()
     conn.commit()
+
+
+def is_deleted(match_id):
+    conn = db_ops.get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("select * from Match m "
+                   "where m.id = :match_id",
+                   {"match_id": match_id})
+
+    temp_data = cursor.fetchone()
+    cursor.close()
+
+    return (temp_data is None)
