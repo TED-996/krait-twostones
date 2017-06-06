@@ -32,7 +32,8 @@ class GameController {
 
         this.messageHandlersByType = {
             "your_turn": this.onYourTurn.bind(this),
-            "get_matchtroops": this.onGetTroops.bind(this)
+            "get_matchtroops": this.onGetTroops.bind(this),
+            "get_flags": this.onGetFlags.bind(this)
         };
     }
 
@@ -127,23 +128,29 @@ class GameController {
         dst.hp = src.hp;
     }
 
-    private updateFlags() : WebsocketResponseWaitItem {
+    private initUpdateFlags() : WebsocketResponseWaitItem {
         let result = this.networking.sendGetFlags();
         if (result == null){
             return null;
         }
 
-        result.setOnComplete(this.onUpdateFlags.bind(this));
+        result.setOnComplete(this.onInitUpdateFlags.bind(this));
 
         return result;
     }
 
-    private onUpdateFlags(data : NetworkingMessage){
+    private onInitUpdateFlags(data : NetworkingMessage){
         if (data.type == "error"){
             throw new Error(data.data);
         }
 
         this.game.flags.update(data.data);
+        this.game.setRenderDirty();
+    }
+
+    private onGetFlags(data : FlagTransportObject[]){
+        this.game.flags.update(data);
+        this.game.setRenderDirty();
     }
 
     private onTroopsInitialPlace() {
@@ -201,7 +208,7 @@ class GameController {
             }
         }
         if (!this.flagsGetSent){
-            let sendResponse = this.updateFlags();
+            let sendResponse = this.initUpdateFlags();
             if (sendResponse != null){
                 this.flagsGetSent = true;
             }

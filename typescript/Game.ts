@@ -93,10 +93,14 @@ class WegasGame
         this.addLoadout(this.opponentLoadout, this.opponentTroops, true);
 
         this.loadedTroops = new GameTroopManager(this.playerTroops.concat(this.opponentTroops));
-        this.flags = new FlagManager();
+        this.flags = new FlagManager(this);
 
-        this.tileRenderer = new TileRenderer([this.map], [], [this.loadedTroops, this.troopMoveLayer],
-            this.map.tileset, this.tileGroup);
+        this.tileRenderer = new TileRenderer(
+            [this.map],
+            [],
+            [this.loadedTroops, this.troopMoveLayer, this.flags],
+            this.map.tileset,
+            this.tileGroup);
     }
 
     public setScale(scale: number) {

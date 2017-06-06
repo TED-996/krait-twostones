@@ -43,8 +43,8 @@ var WegasGame = (function () {
         this.addLoadout(this.playerLoadout, this.playerTroops, false);
         this.addLoadout(this.opponentLoadout, this.opponentTroops, true);
         this.loadedTroops = new GameTroopManager(this.playerTroops.concat(this.opponentTroops));
-        this.flags = new FlagManager();
-        this.tileRenderer = new TileRenderer([this.map], [], [this.loadedTroops, this.troopMoveLayer], this.map.tileset, this.tileGroup);
+        this.flags = new FlagManager(this);
+        this.tileRenderer = new TileRenderer([this.map], [], [this.loadedTroops, this.troopMoveLayer, this.flags], this.map.tileset, this.tileGroup);
     };
     WegasGame.prototype.setScale = function (scale) {
         //this.game.scale.setupScale(1920, 1080);

@@ -11,6 +11,24 @@ class Flag {
         this.y = y;
         this.carryingTroop = carryingTroop;
     }
+
+    getTile() : Tile {
+        let tileIdx;
+        if (this.isOwn){
+            tileIdx = 28;
+        }
+        else{
+            tileIdx = 44;
+        }
+
+        if (this.carryingTroop != null){
+            this.x = this.carryingTroop.x;
+            this.y = this.carryingTroop.y;
+            tileIdx += 4 * 16;
+        }
+
+        return new Tile(this.x, this.y, tileIdx, 6);
+    }
 }
 
 interface FlagTransportObject {
@@ -21,7 +39,7 @@ interface FlagTransportObject {
 }
 
 
-class FlagManager {
+class FlagManager implements TileSource {
     ownFlag : Flag;
     opponentFlag : Flag;
     game : WegasGame;
@@ -54,5 +72,10 @@ class FlagManager {
         else{
             dst.carryingTroop = null;
         }
+    }
+
+
+    getTiles(): Tile[] {
+        return [this.ownFlag.getTile(), this.opponentFlag.getTile()];
     }
 }
