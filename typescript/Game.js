@@ -1,10 +1,16 @@
 /// <reference path="node_modules/@types/phaser/phaser.d.ts" />
+/// <reference path="node_modules/@types/phaser-advanced-debug/phaser-advanced-debug.d.ts" />
 /// <reference path="Map.ts" />
 /// <reference path="TileRenderer.ts" />
-/// <reference path="GameTroopManager.ts"/>
+/// <reference path="GameTroop.ts"/>
+///<reference path="TroopMoveLayer.ts"/>
+///<reference path="TroopAttackLayer.ts"/>
+///<reference path="Troops.ts"/>
 var WegasGame = (function () {
     function WegasGame() {
-        this.game = new Phaser.Game(800, 600, Phaser.AUTO, 'game-div', {
+        this.game = new Phaser.Game(document.documentElement.clientWidth, document.documentElement.clientHeight, 
+        //1920, 1080,
+        Phaser.CANVAS, 'game-div', {
             preload: this.preload.bind(this),
             create: this.create.bind(this),
             update: this.update.bind(this),
@@ -12,45 +18,56 @@ var WegasGame = (function () {
         });
     }
     WegasGame.prototype.preload = function () {
-        this.game.load.image('moveSprite', "img/moveSprite.jpg");
-        this.game.stage.backgroundColor = 0x222222;
-        this.map = new GameMap("/map/map.json");
+        this.game.load.spritesheet('endTurn', '/img/end_turn.png', 190, 48);
+        this.map = new GameMap("/map/medievil.json");
         this.map.tileset.load(this.game);
+        this.setScale(1);
+        this.networking = new WegasNetworking();
         this.gameController = new GameController(this);
+        this.troopMoveLayer = new TroopMoveLayer(this);
+        this.troopAttackLayer = new TroopAttackLayer(this);
         this.renderDirty = false;
         this.cameraMoveDirection = new Phaser.Point(0, 0);
         this.cameraSpeed = 0;
     };
     WegasGame.prototype.create = function () {
-        var bounds = this.map.bounds;
-        this.game.world.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
+        this.game.stage.backgroundColor = 0x222222;
         this.cursors = this.game.input.keyboard.createCursorKeys();
+        this.tileGroup = this.game.add.group();
+        this.fgGroup = this.game.add.group();
+        this.endTurn = this.game.make.button(10, 10, "endTurn", this.onEndTurnPressed.bind(this), this, 4, 3, 5, 3);
+        this.fgGroup.add(this.endTurn);
+        this.scoreLabel = this.game.add.text(this.game.world.centerX, this.game.world.centerY, '0 : 0', { font: "65px Arial", fill: "##ff0044 ", align: "center" });
+        this.fgGroup.add(this.scoreLabel);
+        this.updateEndTurn(this.gameController.inTurn);
+        this.fgGroup.fixedToCamera = true;
         AllOptions.loadAjax();
         this.playerLoadout = WegasGame.get_loadout("mine");
         this.opponentLoadout = WegasGame.get_loadout("theirs");
         this.playerTroops = [];
         this.opponentTroops = [];
-        console.log(typeof (this));
-        console.log(this.addLoadout);
-        this.addLoadout(this.playerLoadout, this.playerTroops);
-        this.addLoadout(this.opponentLoadout, this.opponentTroops);
+        this.addLoadout(this.playerLoadout, this.playerTroops, false);
+        this.addLoadout(this.opponentLoadout, this.opponentTroops, true);
         this.loadedTroops = new GameTroopManager(this.playerTroops.concat(this.opponentTroops));
-        this.tileGroup = this.game.add.group();
-        this.fgGroup = this.game.add.group();
-        var logo = this.tileGroup.create(this.game.world.centerX, this.game.world.centerY, 'moveSprite');
-        logo.anchor.setTo(0.5, 0.5);
-        this.tileRenderer = new TileRenderer([this.map], [], [this.loadedTroops], this.map.tileset, this.tileGroup);
-        this.troopSprite = this.game.add.sprite(300, 20, 'moveSprite');
-        this.game.physics.arcade.enable(logo);
+        this.flags = new FlagManager(this);
+        this.tileRenderer = new TileRenderer([this.map], [], [this.loadedTroops, this.troopMoveLayer, this.troopAttackLayer, this.flags], this.map.tileset, this.tileGroup);
+    };
+    WegasGame.prototype.setScale = function (scale) {
+        //this.game.scale.setupScale(1920, 1080);
+        this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        this.game.scale.pageAlignHorizontally = true;
+        this.game.scale.pageAlignVertically = true;
+        this.game.scale.scaleFactor = new Phaser.Point(scale, scale);
+        var bounds = this.map.bounds;
+        this.game.world.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
+        this.game.scale.refresh();
     };
     WegasGame.get_loadout = function (which) {
         return Loadout.fromObj(JSON.parse(ajax_raw_sync("/get_match_loadout?which=" + which)));
     };
-    WegasGame.prototype.addLoadout = function (loadout, dst) {
+    WegasGame.prototype.addLoadout = function (loadout, dst, isEnemy) {
         for (var i = 0; i < 6; i++) {
-            var x = Math.floor(Math.random() * this.map.width - 2) + 1;
-            var y = Math.floor(Math.random() * this.map.height - 2) + 1;
-            dst.push(new GameTroop(loadout.troops[i], x, y, null));
+            dst.push(new GameTroop(loadout.troops[i], this, -1, -1, isEnemy));
         }
     };
     WegasGame.prototype.setRenderDirty = function () {
@@ -82,18 +99,18 @@ var WegasGame = (function () {
                 this.cameraMoveDirection = new Phaser.Point(0, 0);
             }
         }
-        this.cameraMoveDirection = Phaser.Point.add(this.cameraMoveDirection, frameMoveDirection);
+        this.cameraMoveDirection = Phaser.Point.add(this.cameraMoveDirection, frameMoveDirection.multiply(2, 2));
         if (!this.cameraMoveDirection.isZero()) {
             this.cameraMoveDirection.normalize();
         }
-        if (frameMoveDirection.isZero()) {
-            this.cameraSpeed = Math.max(this.cameraSpeed - 2, 0);
+        var isAccelerating = !frameMoveDirection.isZero() && this.cameraMoveDirection.dot(frameMoveDirection) > 0;
+        if (isAccelerating) {
+            var maxSpeed = 30;
+            var accelerationFactor = 0.03;
+            this.cameraSpeed = (maxSpeed * accelerationFactor + this.cameraSpeed * (1 - accelerationFactor));
         }
         else {
-            var maxSpeed = 15;
-            var accelerationFactor = 0.05;
-            this.cameraSpeed = (maxSpeed * accelerationFactor + this.cameraSpeed * (1 - accelerationFactor));
-            console.log(this.cameraSpeed);
+            this.cameraSpeed = Math.max(this.cameraSpeed - 2, 0);
         }
         if (this.cameraSpeed != 0) {
             var resultVector = this.cameraMoveDirection.multiply(this.cameraSpeed, this.cameraSpeed);
@@ -102,20 +119,45 @@ var WegasGame = (function () {
         }
     };
     WegasGame.prototype.render = function () {
-        this.game.debug.cameraInfo(this.game.camera, 32, 32);
+        this.game.debug.cameraInfo(this.game.camera, this.game.width - 300, 32);
         this.gameController.render();
         if (this.renderDirty) {
+            console.log("dirty, rendering");
             this.tileRenderer.update();
             this.renderDirty = false;
         }
     };
     WegasGame.prototype.onTroopClick = function (troop) {
+        if (!this.gameController.inTurn) {
+            return;
+        }
         if (!troop.isEnemy) {
             if (troop != this.activeTroop) {
-                this.activeTroop.deactivate();
+                if (this.activeTroop != null) {
+                    this.activeTroop.deactivate();
+                }
                 this.activeTroop = troop;
                 this.activeTroop.activate();
             }
+        }
+    };
+    WegasGame.prototype.deactivateTroop = function () {
+        if (this.activeTroop != null) {
+            this.activeTroop.deactivate();
+            this.activeTroop = null;
+        }
+    };
+    WegasGame.prototype.onEndTurnPressed = function () {
+        if (this.gameController.inTurn) {
+            this.gameController.sendEndTurn();
+        }
+    };
+    WegasGame.prototype.updateEndTurn = function (isInTurn) {
+        if (isInTurn) {
+            this.endTurn.setFrames(1, 0, 2, 0);
+        }
+        else {
+            this.endTurn.setFrames(4, 3, 5, 3);
         }
     };
     return WegasGame;

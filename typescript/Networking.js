@@ -4,6 +4,7 @@ var WebsocketResponseWaitItem = (function () {
         this.onClose = onClose;
         this.refcount = 1;
         this.closed = false;
+        this.onComplete = null;
     }
     WebsocketResponseWaitItem.prototype.copy = function () {
         var self = this;
@@ -15,6 +16,15 @@ var WebsocketResponseWaitItem = (function () {
     };
     WebsocketResponseWaitItem.prototype.setData = function (value) {
         this.data = value;
+        if (value !== null && this.onComplete !== null) {
+            this.onComplete(value);
+        }
+    };
+    WebsocketResponseWaitItem.prototype.setOnComplete = function (onComplete) {
+        this.onComplete = onComplete;
+        if (this.data !== null) {
+            this.onComplete(this.data);
+        }
     };
     WebsocketResponseWaitItem.prototype.close = function () {
         if (!this.closed) {
@@ -37,17 +47,19 @@ function isUndefined(value) {
     return typeof value == "undefined";
 }
 var WegasNetworking = (function () {
-    function WegasNetworking() {
-        this.socket = new WebSocket(WegasNetworking.get_websocket_url("/gameplay_ws"), "WegasNetworking");
+    function WegasNetworking(onMessage) {
+        if (onMessage === void 0) { onMessage = null; }
+        this.socket = new WebSocket(WegasNetworking.getWebsocketUrl("/gameplay_ws"), "WegasNetworking");
         this.inQueue = [];
         this.responseWaitQueue = Object.create(null);
+        this.onMessage = onMessage;
         var self = this;
         this.socket.onopen = function () { return self.onOpen(); };
         this.socket.onclose = function (ev) { return self.onClose(ev); };
-        this.socket.onmessage = function (ev) { return self.onMessage(ev); };
+        this.socket.onmessage = function (ev) { return self.onMessageInternal(ev); };
         this.socket.onerror = function () { return self.onError(); };
     }
-    WegasNetworking.get_websocket_url = function (absolute_url) {
+    WegasNetworking.getWebsocketUrl = function (absolute_url) {
         var loc = window.location;
         var new_uri;
         if (loc.protocol === "https:") {
@@ -63,10 +75,13 @@ var WegasNetworking = (function () {
     WegasNetworking.prototype.onOpen = function () {
         this.opened = true;
     };
-    WegasNetworking.prototype.onMessage = function (ev) {
+    WegasNetworking.prototype.onMessageInternal = function (ev) {
         var inObj = JSON.parse(ev.data);
         if (!isUndefined(inObj.tag) && !isUndefined(this.responseWaitQueue[inObj.tag])) {
             this.responseWaitQueue[inObj.tag].setData(inObj);
+        }
+        else if (this.onMessage != null) {
+            this.onMessage(inObj);
         }
         else {
             this.inQueue.push(inObj);
@@ -83,6 +98,9 @@ var WegasNetworking = (function () {
         var _this = this;
         if (data === void 0) { data = null; }
         if (tag === void 0) { tag = null; }
+        if (!this.opened) {
+            return null;
+        }
         var outObj = {
             type: type
         };
@@ -134,6 +152,9 @@ var WegasNetworking = (function () {
     WegasNetworking.prototype.sendJoin = function () {
         return this.send("join", AuthUtils.getUsername(), WegasNetworking.generateTag());
     };
+    WegasNetworking.prototype.sendGetTroops = function () {
+        return this.send("get_matchtroops", null, WegasNetworking.generateTag());
+    };
     WegasNetworking.prototype.sendDisconnect = function (reason) {
         this.send("disconnect", reason);
     };
@@ -145,6 +166,12 @@ var WegasNetworking = (function () {
     };
     WegasNetworking.prototype.sendMove = function (from, to) {
         return this.send("move", { from: from, to: to }, WegasNetworking.generateTag());
+    };
+    WegasNetworking.prototype.sendAttack = function (from, to) {
+        return this.send("attack", { from: from, to: to }, WegasNetworking.generateTag());
+    };
+    WegasNetworking.prototype.sendGetFlags = function () {
+        return this.send("get_flags", null, WegasNetworking.generateTag());
     };
     WegasNetworking.generateTag = function (size) {
         if (size === void 0) { size = 10; }

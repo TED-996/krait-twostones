@@ -1,3 +1,5 @@
+///<reference path="Networking.ts"/>
+///<reference path="Flags.ts"/>
 class GameController {
     private game : WegasGame;
     private networking : WegasNetworking;
