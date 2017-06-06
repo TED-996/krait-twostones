@@ -155,7 +155,7 @@ class GameController {
     }
 
     private onGetScore(data : {score1: number, score2: number}) {
-        //TODO
+        this.game.scoreLabel.setText(String(data["score1"])+" : "+ String(data["score2"]))
     }
 
     private onTroopsInitialPlace() {

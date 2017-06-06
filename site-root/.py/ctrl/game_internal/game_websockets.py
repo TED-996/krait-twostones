@@ -459,3 +459,6 @@ class GameWsController(websockets.WebsocketsCtrlBase):
                 i.y_axis = start_point[1]
                 i.hp = i.troop.hp
             db_match_troop.save(i)
+
+    def on_end_game(self):
+        db_match.delete_by_id()

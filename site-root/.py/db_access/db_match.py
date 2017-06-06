@@ -120,3 +120,16 @@ def save(match):
         conn.commit()
     cursor.close()
     conn.commit()
+
+def delete_by_id(match_id):
+    conn = db_ops.get_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("delete from match where id = :match_id", {"match_id": match_id})
+    except ValueError:
+        logging.debug(ValueError.message)
+        cursor.close()
+        conn.commit()
+    cursor.close()
+    conn.commit()
