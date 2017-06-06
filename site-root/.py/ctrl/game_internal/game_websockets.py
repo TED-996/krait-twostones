@@ -534,7 +534,7 @@ class GameWsController(websockets.WebsocketsCtrlBase):
                     continue
 
                 next = (next_x, next_y)
-                logging.debug("found {}".format(next))
+                # logging.debug("found {}".format(next))
 
                 if next in visited:
                     continue
@@ -546,20 +546,29 @@ class GameWsController(websockets.WebsocketsCtrlBase):
         return None
 
     def respawn_the_dead(self):
-        for i in self.this_troops:
-            i.respawn_time -= 1
-            if i.respawn_time <= 0:
-                if self.match.player1_id == (db_troop.get_by_id(i.troop_id)).loadout.player_id:
+        for troop in self.this_troops:
+            troop.troop.calculate_stats()
+            logging.debug("updating id {}; hp = {}; rt = {}".format(troop.id, troop.hp, troop.respawn_time))
+            updated = False
+            if troop.hp <= 0 and troop.respawn_time >= 1:
+                troop.respawn_time -= 1
+                updated = True
+
+            if troop.hp <= 0 and troop.respawn_time <= 0:
+                if self.match.player1_id == (db_troop.get_by_id(troop.troop_id)).loadout.player_id:
                     x_start = 1
                     y_start = 15
                 else:
                     x_start = 63
                     y_start = 15
-                start_point = self.find_first_free_tile(x_start, y_start)
-                i.x_axis = start_point[0]
-                i.y_axis = start_point[1]
-                i.hp = i.troop.hp
-            db_match_troop.save(i)
+                start_x, start_y = self.find_first_free_tile(x_start, y_start)
+                troop.x_axis = start_x
+                troop.y_axis = start_y
+                troop.hp = troop.troop.hp
+                updated = True
+
+            if updated:
+                db_match_troop.save(troop)
 
     def on_end_game(self):
         db_match.delete_by_id(self.match.id)
